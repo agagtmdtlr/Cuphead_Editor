@@ -3,7 +3,6 @@
 #include "Objects/Player.h"
 #include "Viewer/Following.h"
 #include "Objects/Bullet.h"
-#include "Objects/Fire.h"
 
 Stage1::Stage1(SceneValues* values)
 	:Scene(values)
@@ -25,7 +24,6 @@ Stage1::Stage1(SceneValues* values)
 
 	player = new Player(D3DXVECTOR2(130, 100), D3DXVECTOR2(2.5f, 2.5f));
 	bullet = new Bullet(Shaders + L"008_Sprite.fx", D3DXVECTOR2(300, 300), 0, 0);
-	fire = new Fire(Shaders + L"008_Sprite.fx", D3DXVECTOR2(300, 100));
 
 
 }
@@ -52,7 +50,7 @@ void Stage1::Update()
 
 	player->Update(V, P);
 	bullet->Update(V, P);
-	fire->Update(V, P);
+	
 }
 
 void Stage1::Render()
@@ -62,17 +60,13 @@ void Stage1::Render()
 	static bool check = false;
 
 	Sprite* a = bullet->GetClip()->GetSprite();
-	Sprite* b = fire->GetClip()->GetSprite();
 
-	check = Sprite::OBB(a, b);
 
 	a->DrawCollision(check);
-	b->DrawCollision(check);
 	ImGui::LabelText("OBB", "%d", check ? 1 : 0);
 
 	player->Render();
 	bullet->Render();
-	fire->Render();
 }
 
 void Stage1::RenderBackground()
