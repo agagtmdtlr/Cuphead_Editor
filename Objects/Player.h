@@ -1,0 +1,121 @@
+#pragma once
+#include "../Viewer/IFollowing.h"
+#include "Object.h"
+
+enum class Graphics
+{
+	Aim_Diagonal_Down,
+	Aim_Diagonal_Up,
+	Aim_Down,
+	Aim_Straight,
+	Aim_Up,
+	
+	Dash_Air,
+	Dash_Ground,
+	
+	Death,
+	
+	Duck_Idle,
+	Duck_Shoot,
+	
+	Ghost,
+	
+	Hit_Air,
+	Hit_Ground,
+	
+	Idle,
+	Intro,
+	Jump,
+	Parry,
+	
+	Run_Normal,
+	Run_Shoot_Diagonal_Up,
+	Run_Shoot_Straight,
+	
+	Shoot_Diagonal_Down,
+	Shoot_Diagonal_Up,
+	Shoot_Down,
+	Shoot_Straight,
+	Shoot_Up,
+
+	Air_SpecialAttack_Diagonal_Down,
+	Air_SpecialAttack_Diagonal_Up,
+	Air_SpecialAttack_Down,
+	Air_SpecialAttack_Straight,
+	Air_SpecialAttack_Up,
+
+	Super_Beam
+};
+
+class Player : public IFollowing , public Object
+{
+	friend class PlayerState;
+	friend class AimState;
+	friend class DashState;
+	friend class DuckState;
+	friend class IdleState;
+	friend class JumpState;
+	friend class OnAirState;
+	friend class OnGroundState;
+	friend class ParryState;
+	friend class RunState;
+
+	friend class Sonic;
+public:
+	Player(D3DXVECTOR2 position, D3DXVECTOR2 scale, RenderType type = RenderType::center_bottom);
+	~Player();
+
+	virtual void Update(D3DXMATRIX& V, D3DXMATRIX& P) override;
+	virtual void Render() override;
+
+	virtual D3DXVECTOR2 Position() override;
+	virtual void Position(D3DXVECTOR2) override;
+
+	void Focus(D3DXVECTOR2* position, D3DXVECTOR2* size);
+	Sprite* GetSprite();
+
+	void SetGraphics(Graphics graphics);
+
+private:
+	void StartJump();
+	void EndJump();
+
+
+private:
+	RenderType type;
+	
+	class State* state;
+
+	float moveSpeed;
+	Animation* animation;
+
+	bool bOnGround;
+
+	float zDegree;
+	float yDegree;
+
+	float velocity;
+	float cosVel;
+
+	float gravity;
+
+	float startJumpVelocity;
+	float endJumpVelocity;
+
+	
+
+	D3DXVECTOR2 moveDir;
+	D3DXVECTOR2 shootDir;
+	D3DXVECTOR2 focusOffset;
+
+private:
+	AimState* aimState;
+	DashState* dashState;
+	DuckState* duckState;
+	IdleState* idleState;
+	JumpState* jumpState;
+	OnAirState* onAirState;
+	OnGroundState* onGroundState;
+	ParryState* parryState;
+	RunState* runState;
+};
