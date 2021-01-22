@@ -10,8 +10,11 @@ bool Path::ExistFile(string path)
 
 bool Path::ExistFile(wstring path)
 {
+	// 파일이나 폴던의 속성을 알보는 용도
+	// 파일이 없는 경우 -1
 	DWORD fileValue = GetFileAttributes(path.c_str());
-
+	// INVALID_FILE_ATTRIBUTES
+	// unsigned data type 에서 -1은 순회하여 가장큰 값이 된다.
 	return fileValue < 0xFFFFFFFF;
 }
 
@@ -22,10 +25,11 @@ bool Path::ExistDirectory(string path)
 
 bool Path::ExistDirectory(wstring path)
 {
+	// 폴더가 존재하는지 확인한다.
 	DWORD attribute = GetFileAttributes(path.c_str());
-
-	BOOL temp = (attribute != INVALID_FILE_ATTRIBUTES &&
-		(attribute & FILE_ATTRIBUTE_DIRECTORY));
+	
+	BOOL temp = (attribute != INVALID_FILE_ATTRIBUTES && // 폴더가 존재하는가?
+		(attribute & FILE_ATTRIBUTE_DIRECTORY)); // 해당 경로가 폴더가 맞는가?
 
 	return temp == TRUE;
 }
@@ -58,6 +62,7 @@ wstring Path::Combine(vector<wstring> paths)
 	return temp;
 }
 
+// 폴더 경로를 찾는다.
 string Path::GetDirectoryName(string path)
 {
 	String::Replace(&path, "\\", "/");
@@ -74,6 +79,7 @@ wstring Path::GetDirectoryName(wstring path)
 	return path.substr(0, index + 1);
 }
 
+// 확장자를 찾는다.
 string Path::GetExtension(string path)
 {
 	String::Replace(&path, "\\", "/");
@@ -90,6 +96,7 @@ wstring Path::GetExtension(wstring path)
 	return path.substr(index + 1, path.length());;
 }
 
+// 경로에서 파일 이름을 가져온다. (확장자 포함)
 string Path::GetFileName(string path)
 {
 	String::Replace(&path, "\\", "/");
@@ -106,6 +113,7 @@ wstring Path::GetFileName(wstring path)
 	return path.substr(index + 1, path.length());
 }
 
+// 경로에서 파일 이름을 가져온다. (확장자 미포함)
 string Path::GetFileNameWithoutExtension(string path)
 {
 	string fileName = GetFileName(path);

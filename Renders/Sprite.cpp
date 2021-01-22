@@ -463,7 +463,7 @@ void Sprites::Remove(wstring file)
 	spriteMap[file].RefCount--;
 	if (spriteMap[file].RefCount < 1)
 	{
-		SAFE_DELETE(spriteMap[file].SRV);
+		SAFE_RELEASE(spriteMap[file].SRV);
 
 		spriteMap.erase(file);
 	}
