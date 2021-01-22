@@ -273,7 +273,18 @@ void Sonic::Render()
 {
 	editor->Render();
 
-	
+	if (ImGui::Button("Save Binary") == true)
+	{
+		function<void(wstring)> f = bind(&Sonic::SaveComplete, this, placeholders::_1);
+		Path::SaveFileDialog(L"", L"Binary\0*.bin", L".", f, Hwnd);
+	}
+
+	if (ImGui::Button("Load Binary") == true)
+	{
+		function<void(wstring)> f = bind(&Sonic::OpenComplete, this, placeholders::_1);
+		Path::OpenFileDialog(L"", L"Binary\0*.bin", L".", f, Hwnd);
+
+	}
 
 	D3DXVECTOR2 mouse = Mouse->Position();
 	mouse.x = mouse.x - (float)Width * 0.5f;
@@ -340,4 +351,85 @@ bool Sonic::CheckLineColl(Player * player, Liner * liner)
 	
 
 	return result;
+}
+
+
+void Sonic::OpenComplete(wstring name)
+{
+
+	if (Path::ExistFile(name) == true)
+	{
+		int i = 0;
+		for (Marker* marker : markers)
+		{
+			SAFE_DELETE(marker);
+			i++;
+		}
+
+		markers.clear();
+
+		BinaryReader* r = new BinaryReader();
+		r->Open(name);
+
+		UINT count;
+		count = r->UInt();
+
+		vector<D3DXVECTOR2> v;
+		v.assign(count, D3DXVECTOR2());
+
+		void* ptr = (void *)&(v[0]);
+		r->Byte(&ptr, sizeof(D3DXVECTOR2) * count);
+
+		for (UINT i = 0; i < count; i++)
+		{
+			Marker* marker = new Marker(grid, Shaders + L"008_Sprite.fx", v[i]);
+			markers.push_back(marker);
+			imsiMarkers.push_back(marker); // 라인에 사용할 마카
+
+			if (imsiMarkers.size() >= 2)
+			{
+				auto ends = imsiMarkers.end();
+				--ends;
+				for (auto begin = imsiMarkers.begin(); begin != ends;)
+				{
+					//Liner* liner = new Liner(imsiMarkers[0], imsiMarkers[1]);
+					Marker* first = *begin;
+					begin++;
+					Marker* second = *begin;
+					Liner* liner = new Liner(first, second);
+					liners.push_back(liner);
+
+				}
+				imsiMarkers.clear();
+			}
+		}
+
+		r->Close();
+		SAFE_DELETE(r);
+	}
+
+	MessageBox(Hwnd, name.c_str(), L"Open", MB_OK);
+
+}
+
+void Sonic::SaveComplete(wstring name)
+{
+	BinaryWriter* w = new BinaryWriter();
+	w->Open(name);
+
+	vector<D3DXVECTOR2> v;
+	for (Marker* marker : markers)
+	{
+		v.push_back(marker->Position());
+	}
+
+	w->UInt(v.size());
+	w->Byte(&v[0], sizeof(D3DXVECTOR2) * v.size());
+
+	w->Close();
+	SAFE_DELETE(w);
+
+	wstring temp = name + L"\n저장이 완료되었음";
+
+	MessageBox(Hwnd, temp.c_str(), L"save complte", MB_OK);
 }

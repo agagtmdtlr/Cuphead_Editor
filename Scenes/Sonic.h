@@ -57,7 +57,9 @@ public:
 			return 0;
 		}
 	}
-
+private:
+	void OpenComplete(wstring name);
+	void SaveComplete(wstring name);
 
 private:
 	class Marker* clickedMarker;

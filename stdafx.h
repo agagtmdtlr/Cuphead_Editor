@@ -74,6 +74,8 @@ interface:
 #include "Utilities/Math.h"	
 #include "Utilities/Path.h"
 #include "Utilities/String.h"
+#include "Utilities/BinaryFile.h"
+#include "Utilities/Xml.h"
 
 #include "Sounds/Sound.h"
 #include "Sounds/soundclass.h"

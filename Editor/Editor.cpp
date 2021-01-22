@@ -15,6 +15,8 @@ void Editor::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 
 void Editor::Render()
 {
+	
+
 	if (ImGui::TreeNode("Child windows"))
 	{
 		static bool disable_mouse_wheel = false;
