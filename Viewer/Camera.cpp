@@ -11,6 +11,14 @@ Camera::~Camera()
 {
 }
 
+void Camera::Position(D3DXVECTOR2)
+{
+}
+
+void Camera::Position(D3DXVECTOR2 &)
+{
+}
+
 void Camera::Update()
 {
 	D3DXMatrixTranslation(&view, -position.x, -position.y, 0.0f); // 카메라 이동

@@ -137,13 +137,7 @@ void Sprite::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 	default:
 		break;
 	}
-	
-
-	/*D3DXMatrixScaling(&S, scale.x * textureSize.x, scale.y * textureSize.y, 1.0f);
-	D3DXMatrixRotationYawPitchRoll(&R, rotation.y, rotation.x, rotation.z);
-	D3DXMatrixTranslation(&T, position.x, position.y, 0.0f);*/
-
-	world = S * R * T;
+	world *= T;
 
 	shader->AsMatrix("World")->SetMatrix(world);
 	boundShader->AsMatrix("World")->SetMatrix(world);
@@ -173,6 +167,13 @@ void Sprite::Render()
 	//ImGui::LabelText("world", "%f , %f", world._11 + world._21 + +world._31, world._12 + world._22 + world._32);
 	//ImGui::LabelText("direct1", "%f , %f", world._11, world._12);
 	//ImGui::LabelText("direct2", "%f , %f", world._21, world._22);
+}
+
+RECT Sprite::BoundBox()
+{
+	
+	
+	return boundbox;
 }
 
 bool Sprite::AABB(D3DXVECTOR2 & position)
@@ -343,6 +344,29 @@ void Sprite::CreateBound()
 		assert(SUCCEEDED(hr));
 	}
 
+	switch (renderType)
+	{
+	case RenderType::center:
+		boundbox.left = position.x - scale.x * textureSize.x * 0.5f;
+		boundbox.right = position.x + scale.x * textureSize.x * 0.5f;
+		boundbox.bottom = position.y - scale.y * textureSize.y * 0.5f;
+		boundbox.top = position.y + scale.y * textureSize.y * 0.5f;
+		break;
+	case RenderType::left_bottom:
+		boundbox.left = position.x;
+		boundbox.right = position.x + scale.x * textureSize.x;
+		boundbox.bottom = position.y;
+		boundbox.top = position.y + scale.y * textureSize.y;
+		break;
+	case RenderType::center_bottom:
+		boundbox.left = position.x - scale.x * textureSize.x * 0.5f;
+		boundbox.right = position.x + scale.x * textureSize.x * 0.5f;
+		boundbox.bottom = position.y;
+		boundbox.top = position.y + scale.y * textureSize.y;
+		break;
+	default:
+		break;
+	}
 
 }
 

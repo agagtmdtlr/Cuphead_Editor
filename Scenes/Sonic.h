@@ -1,6 +1,7 @@
 #pragma once
 #include "Scene.h"
 #include "Systems/Grid.h"
+#include "Objects/Object.h"
 
 class Sonic : public Scene
 {
@@ -65,7 +66,7 @@ private:
 	void SaveComplete(wstring name);
 
 private:
-	class Object* clickedObject;
+	Object* clickedObject;
 	D3DXVECTOR2 clickedStartClickedPosition;
 	D3DXVECTOR2 markerStartPosition;
 

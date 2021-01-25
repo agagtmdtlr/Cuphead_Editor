@@ -9,7 +9,8 @@ public:
 
 	void Update();
 	void Position(float x, float y);
-	void Position(D3DXVECTOR2& vec);
+	virtual void Position(D3DXVECTOR2 & vec) override;
+	virtual void Position(D3DXVECTOR2  vec) override;
 
 private:
 	void Move(D3DXVECTOR2& translation);

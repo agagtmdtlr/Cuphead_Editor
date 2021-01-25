@@ -3,11 +3,6 @@
 #include "Viewer/Freedom.h"
 #include "Editor/Editor.h"
 
-
-//D3DXVECTOR2 horizontal, vertical;
-
-
-
 Sonic::Sonic(SceneValues * values)
 	: Scene(values), clickedObject(nullptr)
 {
@@ -268,6 +263,8 @@ void Sonic::Update()
 	backGround->Update(V, P);
 	player->state->handleInput(player);
 	player->state->Update(player,V, P);
+
+	editor->Update(V, P);
 }
 int vol = 0;
 

@@ -1,5 +1,12 @@
 #pragma once
 
+enum class Edit_Category
+{
+	Camera,
+	Line,
+	Layer
+};
+
 class Editor
 {
 public:
@@ -10,7 +17,7 @@ public:
 	void Render();
 
 public:
-	/*D3DXVECTOR2 ClickPosition()
+	D3DXVECTOR2 ClickPosition()
 	{
 		D3DXVECTOR2 mouse = Mouse->Position();
 
@@ -26,7 +33,7 @@ public:
 		position += camera;
 
 		return position;
-	}*/
+	}
 	
 private:
 	SceneValues * values;
@@ -36,21 +43,30 @@ private:
 
 	int selected_layer = -1;
 
-	//Grid* grid;
+	Grid* grid;
 
 
-//private:
-//	class Object* clickedObject;
-//	D3DXVECTOR2 clickedStartClickedPosition;
-//	D3DXVECTOR2 markerStartPosition;
-//
-//private:
-//	Sprite* backGround;
-//
-//	class Player* player;
-//	vector<class Object*> objects;
-//
-//	// Mode to Draw Liner
-//	vector<class Marker*> markerToDrawLiner;
-//	vector<class Liner*> liners;
+private:
+	class Object* clickedObject;
+	D3DXVECTOR2 clickedStartClickedPosition;
+	D3DXVECTOR2 markerStartPosition;
+
+private:
+	Edit_Category edit_category;
+
+	Sprite* backGround;
+
+	class Player* player;
+	vector<class Object*> objects;
+
+	// Mode to Draw Liner
+	vector<class Marker*> markerToDrawLiner;
+	vector<class Liner*> liners;
+
+
+private:
+	void Camera_Edit(D3DXMATRIX &V, D3DXMATRIX &P);
+	void Line_Edit(D3DXMATRIX &V, D3DXMATRIX &P);
+	void Layer_Edit(D3DXMATRIX &V, D3DXMATRIX &P);
+
 };

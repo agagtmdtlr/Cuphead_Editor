@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Grid.h"
-#include "Objects/Marker.h"
 
 Grid::Grid()
 {
@@ -93,10 +92,11 @@ Object * Grid::Pop(D3DXVECTOR2 & clickPosition)
 		{
 			Object* cmpobject = cells[cellX+i][cellY+j];
 			if (cmpobject == nullptr) continue;
-			float left = cmpobject->position.x - 20;
-			float right = cmpobject->position.x + 20;
-			float bottom = cmpobject->position.y - 20;
-			float top = cmpobject->position.y + 20;
+			RECT box = cmpobject->GetHitBox();
+			float left = box.left;
+			float right = box.right;
+			float bottom = box.bottom;
+			float top = box.top;
 
 			if (
 				left <= clickPosition.x

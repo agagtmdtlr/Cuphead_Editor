@@ -21,7 +21,11 @@ public:
 
 	void DrawBound(bool val) { bDrawBound = val; }
 	void DrawCollision(bool val) { bDrawCollision = val; }
+
+	
 public:
+	RECT BoundBox();
+
 	bool AABB(D3DXVECTOR2& position);
 	bool AABB(Sprite* b);
 	bool OBB(Sprite* b);
@@ -90,6 +94,8 @@ private:
 	D3DXVECTOR2 scale;
 	D3DXVECTOR2 textureSize;
 	D3DXVECTOR3 rotation;
+
+	RECT boundbox;
 
 	D3DXMATRIX world;
 

@@ -11,6 +11,12 @@ Object::~Object()
 {
 }
 
+RECT Object::GetHitBox()
+{
+	return RECT();
+}
+
 void Object::SetHitBox(RECT hitbox)
 {
 }
+

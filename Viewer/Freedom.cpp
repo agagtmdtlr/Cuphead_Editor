@@ -36,6 +36,11 @@ void Freedom::Position(D3DXVECTOR2 & vec)
 	position = vec;
 }
 
+void Freedom::Position(D3DXVECTOR2  vec)
+{
+	position = vec;
+}
+
 void Freedom::Move(D3DXVECTOR2& translation)
 {
 	position += translation * Timer->Elapsed();

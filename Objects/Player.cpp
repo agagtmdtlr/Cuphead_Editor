@@ -105,6 +105,35 @@ void Player::Position(D3DXVECTOR2 pos)
 	state->animation->Position(position);
 }
 
+D3DXVECTOR2 Player::Scale()
+{
+	return scale;
+}
+
+void Player::Scale(D3DXVECTOR2 scale_)
+{
+	scale = scale_;
+	state->animation->Scale(scale_);
+}
+
+D3DXVECTOR3 Player::Rotation()
+{
+	return rotation;
+}
+
+void Player::Rotation(D3DXVECTOR3 rotation_)
+{
+	rotation = rotation_;
+	state->animation->Rotation(rotation_);
+}
+
+RECT Player::GetHitBox()
+{
+	return state->animation->GetSprite()->BoundBox();
+}
+
+
+
 void Player::Focus(D3DXVECTOR2 * position, D3DXVECTOR2 * size)
 {
 	*position = animation->Position() - focusOffset;

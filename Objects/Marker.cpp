@@ -40,6 +40,33 @@ void Marker::Position(D3DXVECTOR2 pos)
 	clip->Position(position);
 }
 
+D3DXVECTOR2 Marker::Scale()
+{
+	return scale;
+}
+
+void Marker::Scale(D3DXVECTOR2 scale_)
+{
+	scale = scale_;
+	clip->Scale(scale_);
+}
+
+D3DXVECTOR3 Marker::Rotation()
+{
+	return rotation;
+}
+
+void Marker::Rotation(D3DXVECTOR3 rotation_)
+{
+	rotation = rotation_;
+	clip->Rotation(rotation_);
+}
+
+RECT Marker::GetHitBox()
+{
+	return clip->GetSprite()->BoundBox();
+}
+
 void Marker::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 {
 	clip->Position(position);

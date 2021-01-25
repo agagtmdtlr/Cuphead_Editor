@@ -8,7 +8,9 @@ public:
 
 	D3DXMATRIX View() { return view; }
 	D3DXVECTOR2 Position() { return position; }
-	
+	virtual void Position(D3DXVECTOR2);
+	virtual void Position(D3DXVECTOR2 &);
+
 	virtual void Update();
 protected:
 	D3DXVECTOR2 position;
