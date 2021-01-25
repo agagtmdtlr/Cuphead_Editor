@@ -215,8 +215,8 @@ WPARAM Running()
 		{
 			Timer->Update();
 			Mouse->Update();
-			Update();
 			ImGui::Update();
+			Update();
 
 			Render();
 		}

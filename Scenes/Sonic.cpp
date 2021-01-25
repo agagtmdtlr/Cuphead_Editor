@@ -1,26 +1,24 @@
 #include "stdafx.h"
 #include "Sonic.h"
-#include "Objects/Player.h"
-#include "Objects/Marker.h"
-#include "Objects/Liner.h"
 #include "Viewer/Freedom.h"
-
 #include "Editor/Editor.h"
 
 
 //D3DXVECTOR2 horizontal, vertical;
 
-Editor* editor;
+
 
 Sonic::Sonic(SceneValues * values)
-	: Scene(values),clickedMarker(nullptr)
+	: Scene(values), clickedObject(nullptr)
 {
+	grid = new Grid();
+
 	wstring shaderFile = Shaders + L"008_Sprite.fx";
 
 	backGround = new Sprite(Textures + L"cuphead/pipe/background/clown_bg_track.png", shaderFile);
 	backGround->Position(0, -300);
 
-	player = new Player(D3DXVECTOR2(0, 500), D3DXVECTOR2(1.0f, 1.0f));
+	player = new Player(grid, D3DXVECTOR2(0, 500), D3DXVECTOR2(1.0f, 1.0f));
 
 	((Freedom*)(values->MainCamera))->Position(0, 0);
 
@@ -32,29 +30,25 @@ Sonic::Sonic(SceneValues * values)
 	//soundClass = new SoundClass();
 	//soundClass->Initialize(Hwnd);
 	//
-	editor = new Editor(values);
-	
-	grid = new Grid();
-	{
+	editor = new Editor(values);	
 
+	{		
 		Marker* marker1 = new Marker(grid, Shaders + L"008_Sprite.fx",
 			D3DXVECTOR2(-300, -225));
 		Marker* marker2 = new Marker(grid, Shaders + L"008_Sprite.fx",
 			D3DXVECTOR2(300, -225));
 		Liner* liner = new Liner(marker1, marker2);
 
-		markers.push_back(marker1);
-		markers.push_back(marker2);
-		grid->Add(marker1);
-		grid->Add(marker2);
+		objects.push_back(marker1);
+		objects.push_back(marker2);
 		liners.push_back(liner);
 	}
 }
 
 Sonic::~Sonic()
 {
-	for (Marker* marker : markers)
-		SAFE_DELETE(marker);
+	for (Object* object : objects)
+		SAFE_DELETE(object);
 
 	SAFE_DELETE(player);
 	SAFE_DELETE(backGround);
@@ -73,28 +67,28 @@ void Sonic::Update()
 	{
 		D3DXVECTOR2 position = ClickPosition();
 
-		clickedMarker = grid->Pop(position);
-		if (clickedMarker != nullptr)
+		clickedObject = grid->Pop(position);
+		if (clickedObject != nullptr)
 		{
 			clickedStartClickedPosition = position;
-			markerStartPosition = clickedMarker->Position();
+			markerStartPosition = clickedObject->Position();
 		}		
 	}
 
 	// 클릭한 마커 드래그 하기
-	if (Key->Press(VK_LBUTTON) && clickedMarker != nullptr)
+	if (Key->Press(VK_LBUTTON) && clickedObject != nullptr)
 	{
 		D3DXVECTOR2 movePos = ClickPosition() - clickedStartClickedPosition;		
-		clickedMarker->position = movePos + markerStartPosition;
+		clickedObject->position = movePos + markerStartPosition;
 	}
 
 	// 클릭한 마커 설정 끝
-	if (Key->Up(VK_LBUTTON) && clickedMarker != nullptr)
+	if (Key->Up(VK_LBUTTON) && clickedObject != nullptr)
 	{
 		D3DXVECTOR2 movePos = ClickPosition() - clickedStartClickedPosition;
-		clickedMarker->position = movePos + markerStartPosition;
-		grid->Add(clickedMarker);
-		clickedMarker = nullptr;
+		clickedObject->position = movePos + markerStartPosition;
+		grid->Add(clickedObject);
+		clickedObject = nullptr;
 	}
 
 
@@ -104,9 +98,9 @@ void Sonic::Update()
 		// 해당 마우스의 월드 좌표에 마커 넣기
 		D3DXVECTOR2 position = ClickPosition();
 
-		if (Key->Press(VK_LSHIFT) && imsiMarkers.size() > 0)
+		if (Key->Press(VK_LSHIFT) && markerToDrawLiner.size() > 0)
 		{
-			D3DXVECTOR2 backPos = imsiMarkers.back()->Position();
+			D3DXVECTOR2 backPos = markerToDrawLiner.back()->Position();
 			float xDest = abs(position.x - backPos.x);
 			float yDest = abs(position.y - backPos.y);
 
@@ -123,17 +117,17 @@ void Sonic::Update()
 
 
 		Marker* marker = new Marker(grid, Shaders + L"008_Sprite.fx", position);
-		markers.push_back(marker);
-		imsiMarkers.push_back(marker); // 라인에 사용할 마카
+		objects.push_back(marker);
+		markerToDrawLiner.push_back(marker); // 라인에 사용할 마카
 	}
 
 	
 
-	if (imsiMarkers.size() >= 2 && !Key->Press(VK_CONTROL))
+	if (markerToDrawLiner.size() >= 2 && !Key->Press(VK_CONTROL))
 	{
-		auto ends = imsiMarkers.end();
+		auto ends = markerToDrawLiner.end();
 		--ends;
-		for (auto begin = imsiMarkers.begin(); begin != ends;)
+		for (auto begin = markerToDrawLiner.begin(); begin != ends;)
 		{
 			//Liner* liner = new Liner(imsiMarkers[0], imsiMarkers[1]);
 			Marker* first = *begin;
@@ -143,7 +137,7 @@ void Sonic::Update()
 			liners.push_back(liner);
 			
 		}
-		imsiMarkers.clear();
+		markerToDrawLiner.clear();
 	}
 
 	player->GetSprite()->DrawCollision(false);
@@ -251,16 +245,24 @@ void Sonic::Update()
 		}
 	}
 
-
-	for (Marker* marker : markers)
-		marker->Update(V, P);
-
-	for (Liner* liner : liners)
-		liner->Update(V, P);
-
-	if (clickedMarker != nullptr)
+	int i = 0;
+	for (Object* object : objects)
 	{
-		clickedMarker->Update(V, P);
+		i += 1;
+		object->Update(V, P);
+	}
+
+	i = 0;
+	for (Liner* liner : liners)
+	{
+		i += 1;
+		liner->Update(V, P);
+	}
+		
+
+	if (clickedObject != nullptr)
+	{
+		clickedObject->Update(V, P);
 	}
 
 	backGround->Update(V, P);
@@ -307,11 +309,12 @@ void Sonic::Render()
 
 	backGround->Render();
 
-	for (Marker* marker : markers)
-		marker->Render();
+	for (Object* object : objects)
+		object->Render();
 
 	for (Liner* liner : liners)
 		liner->Render();
+		
 
 	D3DXVECTOR2 pos = player->state->animation->Position();
 	ImGui::LabelText("Position", "%.0f, %.0f", pos.x, pos.y);
@@ -359,14 +362,19 @@ void Sonic::OpenComplete(wstring name)
 
 	if (Path::ExistFile(name) == true)
 	{
-		int i = 0;
-		for (Marker* marker : markers)
+		for (Object* object : objects)
 		{
-			SAFE_DELETE(marker);
-			i++;
+			SAFE_DELETE(object);
 		}
 
-		markers.clear();
+		for (Liner* liner : liners)
+		{
+			SAFE_DELETE(liner)				
+		}
+
+		objects.clear();
+		liners.clear();
+		grid->Reset();
 
 		BinaryReader* r = new BinaryReader();
 		r->Open(name);
@@ -383,14 +391,14 @@ void Sonic::OpenComplete(wstring name)
 		for (UINT i = 0; i < count; i++)
 		{
 			Marker* marker = new Marker(grid, Shaders + L"008_Sprite.fx", v[i]);
-			markers.push_back(marker);
-			imsiMarkers.push_back(marker); // 라인에 사용할 마카
+			objects.push_back(marker);
+			markerToDrawLiner.push_back(marker); // 라인에 사용할 마카
 
-			if (imsiMarkers.size() >= 2)
+			if (markerToDrawLiner.size() >= 2)
 			{
-				auto ends = imsiMarkers.end();
+				auto ends = markerToDrawLiner.end();
 				--ends;
-				for (auto begin = imsiMarkers.begin(); begin != ends;)
+				for (auto begin = markerToDrawLiner.begin(); begin != ends;)
 				{
 					//Liner* liner = new Liner(imsiMarkers[0], imsiMarkers[1]);
 					Marker* first = *begin;
@@ -400,7 +408,7 @@ void Sonic::OpenComplete(wstring name)
 					liners.push_back(liner);
 
 				}
-				imsiMarkers.clear();
+				markerToDrawLiner.clear();
 			}
 		}
 
@@ -418,9 +426,9 @@ void Sonic::SaveComplete(wstring name)
 	w->Open(name);
 
 	vector<D3DXVECTOR2> v;
-	for (Marker* marker : markers)
+	for (Object* object : objects)
 	{
-		v.push_back(marker->Position());
+		v.push_back(object->Position());
 	}
 
 	w->UInt(v.size());

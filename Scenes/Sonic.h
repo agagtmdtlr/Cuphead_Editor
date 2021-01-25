@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.h"
+#include "Systems/Grid.h"
 
 class Sonic : public Scene
 {
@@ -14,8 +15,10 @@ public:
 	class Sound* sound2;
 	class SoundClass* soundClass;
 	
+public:
+	Grid* grid;
 
-	class Grid* grid;
+public:
 
 	D3DXVECTOR2 ClickPosition()
 	{
@@ -62,17 +65,17 @@ private:
 	void SaveComplete(wstring name);
 
 private:
-	class Marker* clickedMarker;
+	class Object* clickedObject;
 	D3DXVECTOR2 clickedStartClickedPosition;
 	D3DXVECTOR2 markerStartPosition;
 
 	Sprite* backGround;
 
 	class Player* player;
-	vector<class Marker*> markers;
+	vector<class Object*> objects;
 
-	vector<class Marker*> imsiMarkers;
+	vector<class Marker*> markerToDrawLiner;
 	vector<class Liner*> liners;
 
-
+	class Editor* editor;
 };

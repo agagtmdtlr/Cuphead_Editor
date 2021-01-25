@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include "Player.h"
 
-Player::Player(D3DXVECTOR2 position, D3DXVECTOR2 scale, RenderType type)
-	:moveSpeed(400.0f), focusOffset(-180, -120), bOnGround(false), cosVel(1),
+Player::Player(Grid* grid_, D3DXVECTOR2 position_, D3DXVECTOR2 scale_, RenderType type)
+	:Object(grid_)
+	,moveSpeed(400.0f), focusOffset(-180, -120), bOnGround(false), cosVel(1),
 	zDegree(0), yDegree(0), moveDir(1, 0),
 	velocity(0), gravity(-1.95f), type(type)
 	, startJumpVelocity(0.75)
@@ -23,7 +24,8 @@ Player::Player(D3DXVECTOR2 position, D3DXVECTOR2 scale, RenderType type)
 	wstring spriteFile = Textures + L"Metalslug.png";
 	wstring shaderFile = Shaders + L"008_Sprite.fx";
 
-	type = RenderType::center;
+	//rendertype
+	this->type = RenderType::center;
 
 	Clip* clip;
 	//Idle
@@ -56,13 +58,18 @@ Player::Player(D3DXVECTOR2 position, D3DXVECTOR2 scale, RenderType type)
 	animation = idleState->animation;
 
 	animation->Rotation(0, 0, 0);
-	animation->Position(position);
-	animation->Scale(scale);
+	animation->Position(position_);
+	animation->Scale(scale_);
 	animation->Play(0);
 
 	//animation->DrawBound(true);
 
+	position = position_;
+	rotation = { 0,0,0 };
+	scale = scale_;
 	state = idleState;
+
+	grid->Add(this);
 }
 
 Player::~Player()

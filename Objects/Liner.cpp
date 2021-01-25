@@ -23,7 +23,7 @@ Liner::Liner(Marker * firstPoint, Marker * secondPoint)
 Liner::~Liner()
 {
 	SAFE_DELETE(shader);
-	SAFE_DELETE(vertexBuffer);
+	SAFE_RELEASE(vertexBuffer);
 }
 
 void Liner::Update(D3DXMATRIX & V, D3DXMATRIX & P)

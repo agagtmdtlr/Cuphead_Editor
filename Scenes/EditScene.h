@@ -20,16 +20,10 @@ public:
 	D3DXVECTOR2 ClickPosition()
 	{
 		D3DXVECTOR2 mouse = Mouse->Position();
-		// 마우스 & 메인카메라 동차좌표
-		// 메인카메라 중심 위치가 0,0
-		// 마우스 기준 좌상단 기준을 중심 기준으로 변경하여 메인카메라와 중심 위치 동일시키지
 		mouse.x = mouse.x - (float)Width * 0.5f;
-		// 좌상단 기준에선 증가지만 중심좌표 기준에선 감소 이므로 -1.0f로 부호 변경
 		mouse.y = (mouse.y - (float)Height * 0.5f) * -1.0f;
 
-		// 현재 카메라 위치 (0,0)에서 얼마나 움직였는가
 		D3DXVECTOR2 camera = values->MainCamera->Position();
-		// 현재 화면 마우스 좌표와 카메라가 월드에서 움직임 좌표가 더해져 마우스과 월드에 가리키는 상대적인 좌표를 얻는다.
 
 		D3DXVECTOR2 position = mouse;
 
@@ -60,17 +54,23 @@ public:
 
 
 private:
-	class Marker* clickedMarker;
+	class Object* clickedObject;
 	D3DXVECTOR2 clickedStartClickedPosition;
 	D3DXVECTOR2 markerStartPosition;
 
 	Sprite* backGround;
 
 	class Player* player;
-	vector<class Marker*> markers;
+	vector<class Object*> objects;
 
-	vector<class Marker*> imsiMarkers;
+	vector<class Marker*> markerToDrawLiner;
 	vector<class Liner*> liners;
 
+private:
 
+	function<void(D3DXMATRIX &, D3DXMATRIX &)> updateFunc;
+
+	void MoveObject(D3DXMATRIX & V, D3DXMATRIX & P);
+	void CreateObject(D3DXMATRIX & V, D3DXMATRIX & P);
 };
+

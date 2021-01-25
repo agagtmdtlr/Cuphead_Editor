@@ -3,7 +3,7 @@
 
 
 Marker::Marker(Grid* grid_, wstring shaderFile, D3DXVECTOR2 start)
-	:grid(grid_),prev(nullptr),next(nullptr)
+	:Object(grid_)
 {
 	clip = new Clip(PlayMode::Loop);
 	for (UINT i = 0; i < 7; i++)
@@ -16,7 +16,12 @@ Marker::Marker(Grid* grid_, wstring shaderFile, D3DXVECTOR2 start)
 	clip->Position(position);
 	clip->Play();
 
-	grid->Add(this);
+	if (grid != nullptr)
+	{
+		grid->Add((Object*)this);
+	}
+
+	
 }
 
 Marker::~Marker()

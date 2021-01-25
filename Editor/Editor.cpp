@@ -3,6 +3,10 @@
 
 Editor::Editor(SceneValues * values)
 {
+	for (layers_n = 0; layers_n < 9; layers_n++)
+	{
+		layers.push_back(layers_n);
+	}
 }
 
 Editor::~Editor()
@@ -15,7 +19,25 @@ void Editor::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 
 void Editor::Render()
 {
-	
+	if (ImGui::TreeNode("In columns"))
+	{
+		ImGui::Columns(3, NULL, false);
+		static bool selected[16] = { 0 };
+		for (int i = 0; i < 16; i++)
+		{
+			char label[32]; sprintf(label, "Item %d", i);
+			if (ImGui::Selectable(label, &selected[i])) {}
+			ImGui::NextColumn();
+		}
+		ImGui::Columns(1);
+
+		static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput;
+		ImGui::CheckboxFlags("ImGuiInputTextFlags_ReadOnly", (unsigned int*)&flags, ImGuiInputTextFlags_ReadOnly);
+		ImGui::CheckboxFlags("ImGuiInputTextFlags_AllowTabInput", (unsigned int*)&flags, ImGuiInputTextFlags_AllowTabInput);
+		ImGui::CheckboxFlags("ImGuiInputTextFlags_CtrlEnterForNewLine", (unsigned int*)&flags, ImGuiInputTextFlags_CtrlEnterForNewLine);
+		
+		ImGui::TreePop();
+	}
 
 	if (ImGui::TreeNode("Child windows"))
 	{
@@ -69,8 +91,8 @@ void Editor::Render()
 	sizes.x = ImGui::GetWindowWidth();
 	sizes.y = ImGui::GetWindowHeight();
 	
-	ImGui::LabelText("imPos", "%.0f, %.0f", imPos.x, imPos.y);
-	ImGui::LabelText("sizes", "%.0f, %.0f", sizes.x, sizes.y);
+	ImGui::LabelText("imgui Pos", "%.0f, %.0f", imPos.x, imPos.y);
+	ImGui::LabelText("imgui sizes", "%.0f, %.0f", sizes.x, sizes.y);
 
 	/*enum Mode
 	{
@@ -83,49 +105,57 @@ void Editor::Render()
 	if (ImGui::RadioButton("Move", mode == Mode_Move)) { mode = Mode_Move; } ImGui::SameLine();
 	if (ImGui::RadioButton("Swap", mode == Mode_Swap)) { mode = Mode_Swap; }*/
 
-	if (ImGui::TreeNode("Drag and Drop"))
+	
+
+	if (ImGui::TreeNode("Layer"))
 	{
-		{
-			// ColorEdit widgets automatically act as drag source and drag target.
-			// They are using standardized payload strings IMGUI_PAYLOAD_TYPE_COLOR_3F and IMGUI_PAYLOAD_TYPE_COLOR_4F to allow your own widgets
-			// to use colors in their drag and drop interaction. Also see the demo in Color Picker -> Palette demo.
-			ImGui::BulletText("Drag and drop in standard widgets");
-			ImGui::Indent();
-			static float col1[3] = { 1.0f,0.0f,0.2f };
-			static float col2[4] = { 0.4f,0.7f,0.0f,0.5f };
-			ImGui::ColorEdit3("color 1", col1);
-			ImGui::ColorEdit4("color 2", col2);
-			ImGui::Unindent();
-		}
 
 		{
-			ImGui::BulletText("Drag and drop to copy/swap items");
+			ImGui::BulletText("Drag and drop to swap layers");
 			ImGui::Indent();
 			enum Mode
 			{
-				Mode_Copy,
-				Mode_Move,
+				Mode_Add,
+				Mode_Delete,
 				Mode_Swap
 			};
 			static int mode = 0;
-			if (ImGui::RadioButton("Copy", mode == Mode_Copy)) { mode = Mode_Copy; } ImGui::SameLine();
-			if (ImGui::RadioButton("Move", mode == Mode_Move)) { mode = Mode_Move; } ImGui::SameLine();
+			if (ImGui::RadioButton("Add", mode == Mode_Add)) { mode = Mode_Add; } ImGui::SameLine();
+			if (ImGui::RadioButton("Delete", mode == Mode_Delete)) { mode = Mode_Delete; } ImGui::SameLine();
 			if (ImGui::RadioButton("Swap", mode == Mode_Swap)) { mode = Mode_Swap; }
-			static const char* names[9] = { "Bobby", "Beatrice", "Betty", "Brianna", "Barry", "Bernard", "Bibi", "Blaine", "Bryn" };
-			for (int n = 0; n < IM_ARRAYSIZE(names); n++)
+
+			if (mode == Mode_Add)
+			{
+				if(ImGui::Button("Add layer"))
+				{ 
+					layers.push_back(layers_n++);
+				}
+			}
+
+			for (int n = 0; n <layers.size(); n++)
 			{
 				ImGui::PushID(n);
 				if ((n % 3) != 0)
 					ImGui::SameLine();
-				ImGui::Button(names[n], ImVec2(60, 60));
+				string bt_str = "layer" + to_string(layers[n]);
+				if (ImGui::Button(bt_str.c_str(), ImVec2(60, 60)))
+				{
+					if (mode == Mode_Delete)
+					{
+						layers.erase(layers.begin() + n);
+					}
+					else
+					{
+						selected_layer = n;
+					}
+				}
 
 				// Our buttons are both drag sources and drag targets here!
 				if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 				{
 					ImGui::SetDragDropPayload("DND_DEMO_CE", &n, sizeof(int));        // Set payload to carry the index of our item (could be anything)
-					if (mode == Mode_Copy) { ImGui::Text("Copy %s", names[n]); }        // Display preview (could be anything, e.g. when dragging an image we could decide to display the filename and a small preview of the image, etc.)
-					if (mode == Mode_Move) { ImGui::Text("Move %s", names[n]); }
-					if (mode == Mode_Swap) { ImGui::Text("Swap %s", names[n]); }
+					if (mode == Mode_Swap) { ImGui::Text("Swap %s", bt_str.c_str()); }
+					else{ ImGui::Text("Please Check Swap Radio and Swap %s", bt_str.c_str()); }
 					ImGui::EndDragDropSource();
 				}
 				if (ImGui::BeginDragDropTarget())
@@ -134,20 +164,12 @@ void Editor::Render()
 					{
 						IM_ASSERT(payload->DataSize == sizeof(int));
 						int payload_n = *(const int*)payload->Data;
-						if (mode == Mode_Copy)
-						{
-							names[n] = names[payload_n];
-						}
-						if (mode == Mode_Move)
-						{
-							names[n] = names[payload_n];
-							names[payload_n] = "";
-						}
+						
 						if (mode == Mode_Swap)
 						{
-							const char* tmp = names[n];
-							names[n] = names[payload_n];
-							names[payload_n] = tmp;
+							int tmp = layers[n];
+							layers[n] = layers[payload_n];
+							layers[payload_n] = tmp;
 						}
 					}
 					ImGui::EndDragDropTarget();

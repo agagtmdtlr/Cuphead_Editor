@@ -88,6 +88,8 @@ interface:
 
 #include "Objects/Object.h" // 모든 객체는 object의 자손이다. (editor 와 모드에서 이 모든걸 관리한다)
 #include "Objects/Player.h"
+#include "Objects/Marker.h"
+#include "Objects/Liner.h"
 
 #include "PlayerState/PlayerState.h"
 #include "PlayerState/AimState.h"
@@ -100,6 +102,20 @@ interface:
 #include "PlayerState/ParryState.h"
 #include "PlayerState/RunState.h"
 
+
+enum Edit_Mode
+{
+	Mode_Create,
+	Mode_Delete,
+	Mode_Move,
+	Mode_Draw
+};
+
+enum class Edit_Target
+{
+	BackGround,
+	Marker
+};
 
 
 const wstring Shaders = L"../_Shaders/";

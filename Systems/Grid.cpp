@@ -2,36 +2,54 @@
 #include "Grid.h"
 #include "Objects/Marker.h"
 
-void Grid::Add(Marker * marker)
+Grid::Grid()
 {
-	int cellX = (int)((marker->position.x + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
-	int cellY = (int)((marker->position.y + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
+	Reset();
+}
 
-	marker->prev = nullptr;
-	marker->next = cells[cellX][cellY];
-
-	if (marker->next != nullptr)
+void Grid::Reset()
+{
+	// 격자를 싹 지운다.
+	for (int x = 0; x < NUM_CELLS; x++)
 	{
-		marker->next->prev = marker;
+		for (int y = 0; y < NUM_CELLS; y++)
+		{
+			cells[x][y] = nullptr;		
+		}
 	}
 
-	if (marker->next == nullptr)
+}
+
+void Grid::Add(Object * object)
+{
+	int cellX = (int)((object->position.x + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
+	int cellY = (int)((object->position.y + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
+
+	object->prev = nullptr;
+	object->next = this->cells[cellX][cellY];
+
+	if (object->next != nullptr)
 	{
-		cells[cellX][cellY] = marker;
+		object->next->prev = object;
+	}
+
+	if (object->next == nullptr)
+	{
+		cells[cellX][cellY] = object;
 	}
 
 
 }
 
-void Grid::Move(Marker * marker, D3DXVECTOR2 position)
+void Grid::Move(Object * object, D3DXVECTOR2 position)
 {
-	int oldCellX = (int)(int)((marker->position.x + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
-	int oldCellY = (int)(int)((marker->position.y + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
+	int oldCellX = (int)(int)((object->position.x + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
+	int oldCellY = (int)(int)((object->position.y + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
 
 	int cellX = (int)(int)((position.x + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
 	int cellY = (int)(int)((position.y + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
 
-	marker->position = position;
+	object->position = position;
 
 	if (oldCellX == cellX && oldCellY == cellY)
 	{
@@ -39,33 +57,33 @@ void Grid::Move(Marker * marker, D3DXVECTOR2 position)
 	}
 	
 	// unlinking prev node
-	if (marker->prev != nullptr)
+	if (object->prev != nullptr)
 	{
-		marker->prev->next = marker->next;
+		object->prev->next = object->next;
 	}
 	// unlinking next node
-	if (marker->next != nullptr)
+	if (object->next != nullptr)
 	{
-		marker->next->prev = marker->prev;
+		object->next->prev = object->prev;
 	}
 	// update cell head
-	if (cells[oldCellX][oldCellY] == marker)
+	if (cells[oldCellX][oldCellY] == object)
 	{
-		cells[oldCellX][oldCellY] = marker->next;
+		cells[oldCellX][oldCellY] = object->next;
 	}
 
-	Add(marker);
+	Add(object);
 }
 
-Marker * Grid::Pop(D3DXVECTOR2 & clickPosition)
+Object * Grid::Pop(D3DXVECTOR2 & clickPosition)
 {
 
 	int cellX = (int)((clickPosition.x + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
 	int cellY = (int)((clickPosition.y + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
 
-	Marker* cmpMarker = cells[cellX][cellY];
+	Object* cmpobject = cells[cellX][cellY];
 
-	Marker* clickedMarker = NULL;
+	Object* clickedobject = NULL;
 
 	bool out = false;
 
@@ -73,12 +91,12 @@ Marker * Grid::Pop(D3DXVECTOR2 & clickPosition)
 	{
 		for (int j = -1; j <= 1; j++)
 		{
-			Marker* cmpMarker = cells[cellX+i][cellY+j];
-			if (cmpMarker == nullptr) continue;
-			float left = cmpMarker->position.x - 20;
-			float right = cmpMarker->position.x + 20;
-			float bottom = cmpMarker->position.y - 20;
-			float top = cmpMarker->position.y + 20;
+			Object* cmpobject = cells[cellX+i][cellY+j];
+			if (cmpobject == nullptr) continue;
+			float left = cmpobject->position.x - 20;
+			float right = cmpobject->position.x + 20;
+			float bottom = cmpobject->position.y - 20;
+			float top = cmpobject->position.y + 20;
 
 			if (
 				left <= clickPosition.x
@@ -86,22 +104,22 @@ Marker * Grid::Pop(D3DXVECTOR2 & clickPosition)
 				&& bottom <= clickPosition.y
 				&& top >= clickPosition.y)
 			{
-				clickedMarker = cmpMarker;
+				clickedobject = cmpobject;
 
 				// unlinking prev node
-				if (cmpMarker->prev != nullptr)
+				if (cmpobject->prev != nullptr)
 				{
-					cmpMarker->prev->next = cmpMarker->next;
+					cmpobject->prev->next = cmpobject->next;
 				}
 				// unlinking next node
-				if (cmpMarker->next != nullptr)
+				if (cmpobject->next != nullptr)
 				{
-					cmpMarker->next->prev = cmpMarker->prev;
+					cmpobject->next->prev = cmpobject->prev;
 				}
 				// update cell head
-				if (cells[cellX][cellY] == cmpMarker)
+				if (cells[cellX][cellY] == cmpobject)
 				{
-					cells[cellX][cellY] = cmpMarker->next;
+					cells[cellX][cellY] = cmpobject->next;
 				}
 				out = true;
 				break;
@@ -111,5 +129,5 @@ Marker * Grid::Pop(D3DXVECTOR2 & clickPosition)
 		if (out)break;
 	}
 
-	return clickedMarker;
+	return clickedobject;
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include "Object.h"
 
 class Marker : public Object
 {
@@ -18,18 +19,11 @@ public:
 	virtual void Update(D3DXMATRIX& V, D3DXMATRIX& P) override;
 	virtual void Render() override;
 
-	Clip* GetClip() { return clip; }
-
-	
+	Clip* GetClip() { return clip; }	
 
 private:
 	Clip* clip;
 
 	
 
-private:
-	Grid* grid;
-
-	Marker* prev;
-	Marker* next;
 };

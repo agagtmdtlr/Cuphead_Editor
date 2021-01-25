@@ -62,7 +62,7 @@ class Player : public IFollowing , public Object
 
 	friend class Sonic;
 public:
-	Player(D3DXVECTOR2 position, D3DXVECTOR2 scale, RenderType type = RenderType::center_bottom);
+	Player(class Grid* grid,D3DXVECTOR2 position, D3DXVECTOR2 scale, RenderType type = RenderType::center_bottom);
 	~Player();
 
 	virtual void Update(D3DXMATRIX& V, D3DXMATRIX& P) override;
