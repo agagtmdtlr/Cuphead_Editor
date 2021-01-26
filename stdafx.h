@@ -90,6 +90,7 @@ interface:
 #include "Objects/Player.h"
 #include "Objects/Marker.h"
 #include "Objects/Liner.h"
+#include "Objects/StaticObject.h"
 
 #include "PlayerState/PlayerState.h"
 #include "PlayerState/AimState.h"

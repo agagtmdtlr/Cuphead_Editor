@@ -13,7 +13,7 @@ Freedom::~Freedom()
 
 void Freedom::Update()
 {
-	if (Key->Press('A'))
+	/*if (Key->Press('A'))
 		Move(D3DXVECTOR2(-1, 0) * speed);
 	else if (Key->Press('D'))
 		Move(D3DXVECTOR2(1, 0) * speed);
@@ -21,8 +21,8 @@ void Freedom::Update()
 	if (Key->Press('W'))
 		Move(D3DXVECTOR2(0, 1) * speed);
 	else if (Key->Press('S'))
-		Move(D3DXVECTOR2(0, -1) * speed);
-
+		Move(D3DXVECTOR2(0, -1) * speed);*/
+	
 	__super::Update();
 }
 

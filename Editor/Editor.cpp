@@ -8,10 +8,22 @@ Editor::Editor(SceneValues * values)
 	{
 		layers.push_back(layers_n);
 	}
+
+	grid = new Grid();
+
+	wstring shaderFile = Shaders + L"008_Sprite.fx";
+
+
+	backGround = new Sprite(Textures + L"cuphead/pipe/background/clown_bg_track.png", shaderFile);
+	
+	
+	backGround->Position(0, -300);
 }
 
 Editor::~Editor()
 {
+
+	SAFE_DELETE(grid);
 }
 
 void Editor::Update(D3DXMATRIX & V, D3DXMATRIX & P)
@@ -19,61 +31,32 @@ void Editor::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 	if (ImGui::RadioButton("Camera", edit_category == Edit_Category::Camera)) { edit_category = Edit_Category::Camera; } ImGui::SameLine();
 	if (ImGui::RadioButton("Line", edit_category == Edit_Category::Line)) { edit_category = Edit_Category::Line; } ImGui::SameLine();
 	if (ImGui::RadioButton("Layer", edit_category == Edit_Category::Layer)) { edit_category = Edit_Category::Layer; }
-
-	if (ImGui::TreeNode("In columns"))
-	{
-		ImGui::Columns(3, NULL, false);
-		static bool selected[16] = { 0 };
-		for (int i = 0; i < 16; i++)
-		{
-			char label[32]; sprintf(label, "Item %d", i);
-			if (ImGui::Selectable(label, &selected[i])) {}
-			ImGui::NextColumn();
-		}
-		ImGui::Columns(1);
-
-		static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput;
-		ImGui::CheckboxFlags("ImGuiInputTextFlags_ReadOnly", (unsigned int*)&flags, ImGuiInputTextFlags_ReadOnly);
-		ImGui::CheckboxFlags("ImGuiInputTextFlags_AllowTabInput", (unsigned int*)&flags, ImGuiInputTextFlags_AllowTabInput);
-		ImGui::CheckboxFlags("ImGuiInputTextFlags_CtrlEnterForNewLine", (unsigned int*)&flags, ImGuiInputTextFlags_CtrlEnterForNewLine);
-
-		ImGui::TreePop();
-	}
-
-
-
-	ImVec2 imPos = ImGui::GetWindowPos();
-	imPos.x = imPos.x - (float)Width * 0.5f;
-	imPos.y = (imPos.y - (float)Height * 0.5f) * -1.0f;
-
-
-	imPos.x *= (float)(horizontal.y - horizontal.x) / Width;
-	imPos.y *= (float)(vertical.y - vertical.x) / Height;
-
-	D3DXVECTOR2 sizes;
-
-	sizes.x = ImGui::GetWindowWidth();
-	sizes.y = ImGui::GetWindowHeight();
-
-	ImGui::LabelText("imgui Pos", "%.0f, %.0f", imPos.x, imPos.y);
-	ImGui::LabelText("imgui sizes", "%.0f, %.0f", sizes.x, sizes.y);
-
-	/*enum Mode
-	{
-		Mode_Copy,
-		Mode_Move,
-		Mode_Swap
-	};
-	static int mode = 0;
-	if (ImGui::RadioButton("Copy", mode == Mode_Copy)) { mode = Mode_Copy; } ImGui::SameLine();
-	if (ImGui::RadioButton("Move", mode == Mode_Move)) { mode = Mode_Move; } ImGui::SameLine();
-	if (ImGui::RadioButton("Swap", mode == Mode_Swap)) { mode = Mode_Swap; }*/
+	
 	if (edit_category == Edit_Category::Camera)
 		Camera_Edit(V, P);
 	if (edit_category == Edit_Category::Line)
 		Line_Edit(V, P);
 	if (edit_category == Edit_Category::Layer)
 		Layer_Edit(V, P);
+
+	{
+		ImVec2 imPos = ImGui::GetWindowPos();
+		imPos.x = imPos.x - (float)Width * 0.5f;
+		imPos.y = (imPos.y - (float)Height * 0.5f) * -1.0f;
+
+		imPos.x *= (float)(horizontal.y - horizontal.x) / Width;
+		imPos.y *= (float)(vertical.y - vertical.x) / Height;
+
+		D3DXVECTOR2 sizes;
+
+		sizes.x = ImGui::GetWindowWidth();
+		sizes.y = ImGui::GetWindowHeight();
+
+		ImGui::LabelText("imgui Pos", "%.0f, %.0f", imPos.x, imPos.y);
+		ImGui::LabelText("imgui sizes", "%.0f, %.0f", sizes.x, sizes.y);
+	}
+
+	
 }
 
 void Editor::Render()
@@ -84,43 +67,110 @@ void Editor::Render()
 }
 
 void Editor::Camera_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
-{
-	if (ImGui::TreeNode("Camera"))
+{	
 	{
-		{
-			ImGui::BulletText("Drag Mouse and Move Camera position");
-			ImGui::Indent();			
-			ImGui::Unindent();
-		}
-		ImGui::TreePop();
+		ImGui::BulletText("Drag Mouse and Move Camera position");
+		ImGui::Indent();			
+		ImGui::Unindent();
 	}
+	
+	if (MouseInImgui())
+		return;
 
-	// 클릭하여 마커 선택하기
+	D3DXVECTOR2 movePos;
+	D3DXVECTOR2 position;
 	if (Key->Down(VK_LBUTTON))
 	{
-		D3DXVECTOR2 position = ClickPosition();
+		position = ClickPosition();
 
 		clickedStartClickedPosition = position;
-		markerStartPosition = values->MainCamera->Position();
+		StartPosition = values->MainCamera->Position();
 	}
 
-	// 클릭한 마커 드래그 하기
+	movePos = ClickPosition() - clickedStartClickedPosition;
+
 	if (Key->Press(VK_LBUTTON))
-	{
-		D3DXVECTOR2 movePos = ClickPosition() - clickedStartClickedPosition;
-		values->MainCamera->Position(movePos + markerStartPosition);
+	{		
+		values->MainCamera->Position(-movePos + StartPosition);
 	}
-
-	// 클릭한 마커 설정 끝
-	if (Key->Up(VK_LBUTTON))
+	else if (Key->Up(VK_LBUTTON))
 	{
-		D3DXVECTOR2 movePos = ClickPosition() - clickedStartClickedPosition;
-		values->MainCamera->Position(movePos + markerStartPosition);
+		values->MainCamera->Position(-movePos + StartPosition);
 	}
 }
 
 void Editor::Line_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 {
+	if (Key->Down(VK_LBUTTON))
+	{
+		D3DXVECTOR2 position = ClickPosition();
+
+		clickedObject = grid->Pop(position);
+		if (clickedObject != nullptr)
+		{
+			clickedStartClickedPosition = position;
+			StartPosition = clickedObject->Position();
+		}		
+	}
+
+	// 클릭한 마커 드래그 하기
+	if (Key->Press(VK_LBUTTON) && clickedObject != nullptr)
+	{
+		D3DXVECTOR2 movePos = ClickPosition() - clickedStartClickedPosition;		
+		clickedObject->position = movePos + StartPosition;
+	}
+
+	// 클릭한 마커 설정 끝
+	if (Key->Up(VK_LBUTTON) && clickedObject != nullptr)
+	{
+		D3DXVECTOR2 movePos = ClickPosition() - clickedStartClickedPosition;
+		clickedObject->position = movePos + StartPosition;
+		grid->Add(clickedObject);
+		clickedObject = nullptr;
+	}
+	// Add Marker
+	if (Key->Down(VK_SPACE) || Key->Down(VK_RBUTTON))
+	{
+		D3DXVECTOR2 clickPosition = ClickPosition();
+
+		// 수평 수직 선 만들기
+		if (Key->Press(VK_LSHIFT) && markerToDrawLiner.size() > 0)
+		{
+			D3DXVECTOR2 backPos = markerToDrawLiner.back()->Position();
+			float xDest = abs(clickPosition.x - backPos.x);
+			float yDest = abs(clickPosition.y - backPos.y);
+
+			if (yDest < xDest)
+			{
+				clickPosition.y = backPos.y;
+			}
+			else if (yDest > xDest)
+			{
+				clickPosition.x = backPos.x;
+			}
+		}
+
+		Marker* marker = new Marker(grid, Shaders + L"008_Sprite.fx", clickPosition);
+		objects.push_back(marker);
+		markerToDrawLiner.push_back(marker); // 라인에 사용할 마카
+	}
+
+	if (markerToDrawLiner.size() >= 2)
+	{
+		auto ends = markerToDrawLiner.end();
+		--ends;
+		for (auto begin = markerToDrawLiner.begin(); begin != ends;)
+		{
+			//Liner* liner = new Liner(imsiMarkers[0], imsiMarkers[1]);
+			Marker* first = *begin;
+			begin++;
+			Marker* second = *begin;
+			Liner* liner = new Liner(first, second);
+			liners.push_back(liner);
+
+		}
+		markerToDrawLiner.clear();
+	}
 }
 
 void Editor::Layer_Edit(D3DXMATRIX & V, D3DXMATRIX & P)

@@ -80,7 +80,15 @@ Player::~Player()
 
 void Player::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 {
-	state->Update(this, V, P);
+	if (objectMode == Object_Mode::Play)
+	{
+		state->handleInput(this);
+		state->Update(this, V, P);
+	}
+	else if (objectMode == Object_Mode::Editor)
+	{
+		state->animation->Update(V, P);
+	}		
 }
 
 void Player::Render()

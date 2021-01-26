@@ -75,6 +75,7 @@ void Marker::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 
 void Marker::Render()
 {
-	clip->Render();
+	if(objectMode == Object_Mode::Editor)
+		clip->Render();
 	//ImGui::LabelText("mark pos", "%f %f", position.x, position.y);
 }

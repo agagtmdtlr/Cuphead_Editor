@@ -46,10 +46,8 @@ void DestroyScene()
 
 void Update()
 {
-	values->MainCamera->Update();
-	// 직교체 투영
-	
 
+	// 직교체 투영
 	ImVec2 imsi = ImGui::GetWindowPos();
 	D3DXVECTOR2 imPos = { imsi.x, imsi.y };
 	imPos.x = imPos.x - (float)Width * 0.5f;
@@ -113,6 +111,7 @@ void Update()
 
 	for (Scene* scene : scenes)
 		scene->Update();
+	values->MainCamera->Update();
 
 }
 

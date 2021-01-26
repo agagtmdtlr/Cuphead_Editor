@@ -126,6 +126,9 @@
     <ClCompile Include="Editor\Editor.cpp">
       <Filter>Editor</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\StaticObject.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renders">
@@ -289,6 +292,9 @@
     </ClInclude>
     <ClInclude Include="Editor\Editor.h">
       <Filter>Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\StaticObject.h">
+      <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

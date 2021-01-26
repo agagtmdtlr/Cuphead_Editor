@@ -13,7 +13,7 @@ Sonic::Sonic(SceneValues * values)
 	backGround = new Sprite(Textures + L"cuphead/pipe/background/clown_bg_track.png", shaderFile);
 	backGround->Position(0, -300);
 
-	player = new Player(grid, D3DXVECTOR2(0, 500), D3DXVECTOR2(1.0f, 1.0f));
+	player = new Player(grid, D3DXVECTOR2(0, 0), D3DXVECTOR2(1.0f, 1.0f));
 
 	((Freedom*)(values->MainCamera))->Position(0, 0);
 
@@ -57,34 +57,34 @@ void Sonic::Update()
 	D3DXMATRIX V = values->MainCamera->View();
 	D3DXMATRIX P = values->Projection;	
 
-	// 클릭하여 마커 선택하기
-	if (Key->Down(VK_LBUTTON))
-	{
-		D3DXVECTOR2 position = ClickPosition();
+	//// 클릭하여 마커 선택하기
+	//if (Key->Down(VK_LBUTTON))
+	//{
+	//	D3DXVECTOR2 position = ClickPosition();
 
-		clickedObject = grid->Pop(position);
-		if (clickedObject != nullptr)
-		{
-			clickedStartClickedPosition = position;
-			markerStartPosition = clickedObject->Position();
-		}		
-	}
+	//	clickedObject = grid->Pop(position);
+	//	if (clickedObject != nullptr)
+	//	{
+	//		clickedStartClickedPosition = position;
+	//		markerStartPosition = clickedObject->Position();
+	//	}		
+	//}
 
-	// 클릭한 마커 드래그 하기
-	if (Key->Press(VK_LBUTTON) && clickedObject != nullptr)
-	{
-		D3DXVECTOR2 movePos = ClickPosition() - clickedStartClickedPosition;		
-		clickedObject->position = movePos + markerStartPosition;
-	}
+	//// 클릭한 마커 드래그 하기
+	//if (Key->Press(VK_LBUTTON) && clickedObject != nullptr)
+	//{
+	//	D3DXVECTOR2 movePos = ClickPosition() - clickedStartClickedPosition;		
+	//	clickedObject->position = movePos + markerStartPosition;
+	//}
 
-	// 클릭한 마커 설정 끝
-	if (Key->Up(VK_LBUTTON) && clickedObject != nullptr)
-	{
-		D3DXVECTOR2 movePos = ClickPosition() - clickedStartClickedPosition;
-		clickedObject->position = movePos + markerStartPosition;
-		grid->Add(clickedObject);
-		clickedObject = nullptr;
-	}
+	//// 클릭한 마커 설정 끝
+	//if (Key->Up(VK_LBUTTON) && clickedObject != nullptr)
+	//{
+	//	D3DXVECTOR2 movePos = ClickPosition() - clickedStartClickedPosition;
+	//	clickedObject->position = movePos + markerStartPosition;
+	//	grid->Add(clickedObject);
+	//	clickedObject = nullptr;
+	//}
 
 
 	if (Key->Down(VK_SPACE) || Key->Down(VK_RBUTTON))
@@ -261,8 +261,7 @@ void Sonic::Update()
 	}
 
 	backGround->Update(V, P);
-	player->state->handleInput(player);
-	player->state->Update(player,V, P);
+	player->Update(V, P);
 
 	editor->Update(V, P);
 }

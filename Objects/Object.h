@@ -1,10 +1,17 @@
 #pragma once
 #include "Systems/Grid.h"
 
+enum class Object_Mode
+{
+	Editor,
+	Play
+};
+
 class Object
 {
 	friend class Grid;
 	friend class Sonic;
+	friend class Editor;
 	friend class EditScene;
 public:
 
@@ -28,13 +35,19 @@ public:
 	virtual RECT GetHitBox();
 	virtual void SetHitBox(RECT hitbox);
 
+	void Set_Object_Mode(Object_Mode obj_mode) { objectMode = obj_mode; }
+
 protected:
 	D3DXVECTOR2 position;
 	D3DXVECTOR2 scale;
 	D3DXVECTOR3 rotation;
 
+	
+
 protected:
 	Grid* grid;
 	Object * prev;
 	Object * next;
+
+	Object_Mode objectMode = Object_Mode::Editor;
 };
