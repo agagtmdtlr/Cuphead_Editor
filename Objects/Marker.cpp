@@ -20,7 +20,6 @@ Marker::Marker(Grid* grid_, wstring shaderFile, D3DXVECTOR2 start)
 	{
 		grid->Add((Object*)this);
 	}
-
 	
 }
 

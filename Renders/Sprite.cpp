@@ -33,7 +33,7 @@ void Sprite::Initialize(wstring spriteFile, wstring shaderFile, float startX, fl
 
 	Position(0, 0);
 	Scale(1, 1);
-	Rotation(0, 0, 0);
+	Rotation(0, 0, 0);	
 	D3DXMatrixIdentity(&world);
 
 
@@ -71,6 +71,7 @@ void Sprite::Initialize(wstring spriteFile, wstring shaderFile, float startX, fl
 	sizeY -= startY * (float)info.Height;
 
 	textureSize = D3DXVECTOR2(sizeX, sizeY);
+	bound_textureSize = D3DXVECTOR2(sizeX, sizeY);
 
 	//Create Vertex Buffer
 	{
@@ -109,28 +110,36 @@ void Sprite::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 
 
 	D3DXMATRIX S, R, T;
-
+	D3DXMATRIX bound_S, bound_T;
+	// scaling and rotation for object
 	D3DXMatrixScaling(&S, scale.x * textureSize.x, scale.y * textureSize.y, 1.0f);
 	D3DXMatrixRotationYawPitchRoll(&R, rotation.y, rotation.x, rotation.z);
 
 	world = S * R;
+	// scailing for bound boux
+	D3DXMatrixScaling(&bound_S, scale.x * bound_textureSize.x, scale.y * bound_textureSize.y, 1.0f);
+	
+	bound_world = bound_S * R;
 
 	D3DXVECTOR2 xDir = D3DXVECTOR2(world._11, world._12) * 0.5;
 	D3DXVECTOR2 yDir = D3DXVECTOR2(world._21, world._22) * 0.5;
-
 	
+	// transportation matrix each for render type
 	switch (renderType)
 	{
 	case RenderType::center:
 		D3DXMatrixTranslation(&T, position.x, position.y, 0.0f);
+		D3DXMatrixTranslation(&bound_T, position.x, position.y, 0.0f);
 		break;
 	case RenderType::left_bottom:
 		//position.x = position.x + xDir.x + yDir.x;
 		//position.y = position.y + xDir.y + yDir.y;
 		D3DXMatrixTranslation(&T, position.x + xDir.x + yDir.x, position.y + xDir.y + yDir.y, 0.0f);
+		D3DXMatrixTranslation(&bound_T, position.x + xDir.x + yDir.x, position.y + xDir.y + yDir.y, 0.0f);
 		break;
 	case RenderType::center_bottom:
 		D3DXMatrixTranslation(&T, position.x + yDir.x, position.y + yDir.y, 0.0f);
+		D3DXMatrixTranslation(&bound_T, position.x + yDir.x, position.y + yDir.y, 0.0f);
 
 		//position.y = position.y + xDir.y + yDir.y;		
 		break;
@@ -138,9 +147,10 @@ void Sprite::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 		break;
 	}
 	world *= T;
+	bound_world *= bound_T;
 
 	shader->AsMatrix("World")->SetMatrix(world);
-	boundShader->AsMatrix("World")->SetMatrix(world);
+	boundShader->AsMatrix("World")->SetMatrix(bound_world);
 }
 
 void Sprite::Render()
@@ -170,9 +180,7 @@ void Sprite::Render()
 }
 
 RECT Sprite::BoundBox()
-{
-	
-	
+{	
 	return boundbox;
 }
 
@@ -347,22 +355,22 @@ void Sprite::CreateBound()
 	switch (renderType)
 	{
 	case RenderType::center:
-		boundbox.left = position.x - scale.x * textureSize.x * 0.5f;
-		boundbox.right = position.x + scale.x * textureSize.x * 0.5f;
-		boundbox.bottom = position.y - scale.y * textureSize.y * 0.5f;
-		boundbox.top = position.y + scale.y * textureSize.y * 0.5f;
+		boundbox.left = bound_position.x - scale.x * textureSize.x * 0.5f;
+		boundbox.right = bound_position.x + scale.x * bound_textureSize.x * 0.5f;
+		boundbox.bottom = bound_position.y - scale.y * bound_textureSize.y * 0.5f;
+		boundbox.top = bound_position.y + scale.y * bound_textureSize.y * 0.5f;
 		break;
 	case RenderType::left_bottom:
-		boundbox.left = position.x;
-		boundbox.right = position.x + scale.x * textureSize.x;
-		boundbox.bottom = position.y;
-		boundbox.top = position.y + scale.y * textureSize.y;
+		boundbox.left = bound_position.x;
+		boundbox.right = bound_position.x + scale.x * bound_textureSize.x;
+		boundbox.bottom = bound_position.y;
+		boundbox.top = bound_position.y + scale.y * bound_textureSize.y;
 		break;
 	case RenderType::center_bottom:
-		boundbox.left = position.x - scale.x * textureSize.x * 0.5f;
-		boundbox.right = position.x + scale.x * textureSize.x * 0.5f;
-		boundbox.bottom = position.y;
-		boundbox.top = position.y + scale.y * textureSize.y;
+		boundbox.left = bound_position.x - scale.x * bound_textureSize.x * 0.5f;
+		boundbox.right = bound_position.x + scale.x * bound_textureSize.x * 0.5f;
+		boundbox.bottom = bound_position.y;
+		boundbox.top = bound_position.y + scale.y * bound_textureSize.y;
 		break;
 	default:
 		break;
@@ -392,6 +400,7 @@ void Sprite::Position(D3DXVECTOR2 & vec)
 		break;
 	}*/
 	position = vec;
+	bound_position = vec;
 
 
 }
@@ -404,7 +413,7 @@ void Sprite::Scale(float x, float y)
 void Sprite::Scale(D3DXVECTOR2 & vec)
 {
 	scale = vec;
-
+	bound_scale = vec;
 
 }
 
@@ -416,7 +425,7 @@ void Sprite::Rotation(float x, float y, float z)
 void Sprite::Rotation(D3DXVECTOR3 & vec)
 {
 	rotation = vec;
-
+	bound_rotation = vec;
 
 }
 

@@ -189,7 +189,7 @@ void Sonic::Update()
 			if (abs(pZ - zDegree) >= 1)
 			{
 				player->zDegree = zDegree;
-			}			
+			}		
 			
 			// 현재 플레이어의 위치와 회전정보를 가지고 있는
 			// world matrix를 가지고 온다.			
@@ -202,7 +202,28 @@ void Sonic::Update()
 			D3DXVECTOR2 yDir = D3DXVECTOR2(world._21, world._22) * 0.5;
 
 			float x = playerPosition.x;	
-			
+
+			RenderType obj_renderType = sprite->GetRenderType();
+
+			float y;
+			D3DXVECTOR2 newPos;
+			switch (obj_renderType)
+			{
+			case RenderType::center:
+				y = (p2.y - p1.y) / (p2.x - p1.x) * ((playerPosition - yDir).x - p1.x) + p1.y;			
+				newPos = D3DXVECTOR2(x, y);
+				newPos.y += yDir.y;
+				break;
+			case RenderType::left_bottom:
+				break;
+			case RenderType::center_bottom:
+				y = (p2.y - p1.y) / (p2.x - p1.x) * (playerPosition.x - p1.x) + p1.y;
+				newPos = D3DXVECTOR2(x, y);
+				break;
+			default:
+				break;
+			}
+
 			//center
 			// 두점을 이용한 직선의 방정식을 이용해서
 			// 플레이어가 바닥에 놓일 y값의 위치를 계산한다.
@@ -212,10 +233,10 @@ void Sonic::Update()
 			// 놓여 있기 때문이다.
 			//float y = (p2.y - p1.y) / (p2.x - p1.x) * ((playerPosition - yDir).x - p1.x) + p1.y;			
 			//center_bottom
-			float y = (p2.y - p1.y) / (p2.x - p1.x) * (playerPosition.x - p1.x) + p1.y;			
+			//float y = (p2.y - p1.y) / (p2.x - p1.x) * (playerPosition.x - p1.x) + p1.y;			
 
 			// 직선의 방정식을 통해 계산한 새로운 위치 좌표를 갱신한다.
-			D3DXVECTOR2 newPos = D3DXVECTOR2(x, y);			
+			//D3DXVECTOR2 newPos = D3DXVECTOR2(x, y);			
 			//newPos.y += yDir.y + xDir.y -0.5;
 			// center
 			// 위의 설명과 같이 플레이어의 실제 위치는 스프라이트의 정중앙을

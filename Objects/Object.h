@@ -7,6 +7,19 @@ enum class Object_Mode
 	Play
 };
 
+enum class OBJECT_LABEL
+{
+	static_oject,
+	player,
+	pipe_phase1,
+	pipe_phase2,
+	pipe_phase3,
+	pipe_phase4,
+	marker
+};
+
+
+
 class Object
 {
 	friend class Grid;
@@ -50,4 +63,19 @@ protected:
 	Object * next;
 
 	Object_Mode objectMode = Object_Mode::Editor;
+	// 선충돌이 유효한지 검사한다( 바닥에 닿는지, 중력을 보유하고 있는지 )
+	// 어떤 보스는 중력과 상관없이 고정된위치에서 작동하지만, 총알, 특정 적들을
+	// 충돌과 중력에 영향을 받기 bCollideWithLine때문에 판정을 통해서 충돌을 검사한다.
+	bool bCollideWithLine = false;
+	
+	/* 객제를 save/load할때 어떤 객체로 생성할지에 따른 read data 방식이 달라진다.
+	 ex) if(label == player )
+	 {
+		position = readVector2();
+		scale = readVector2();
+		rotation = readVector3();
+		Object * object = new Player(position,scale,rotation);
+	 }
+	 */
+	OBJECT_LABEL label; 
 };

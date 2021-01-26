@@ -122,7 +122,7 @@ void Render()
 
 	DeviceContext->ClearRenderTargetView(RTV, (float*)bgColor);
 	{
-		ImGui::Text(mouseInImgui ? "True" : "False");
+		ImGui::LabelText("Mouse In Imgui window", mouseInImgui ? "True" : "False");
 		ImGui::SliderFloat2("Horizontal", (float*)&horizontal, -5000, 5000);
 		ImGui::SliderFloat2("Vertical", (float*)&vertical, -1000, 1000);
 		

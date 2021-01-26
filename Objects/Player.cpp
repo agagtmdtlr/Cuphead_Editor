@@ -62,7 +62,7 @@ Player::Player(Grid* grid_, D3DXVECTOR2 position_, D3DXVECTOR2 scale_, RenderTyp
 	animation->Scale(scale_);
 	animation->Play(0);
 
-	//animation->DrawBound(true);
+	animation->DrawBound(true);
 
 	position = position_;
 	rotation = { 0,0,0 };

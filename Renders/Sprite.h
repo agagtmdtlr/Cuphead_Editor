@@ -22,7 +22,7 @@ public:
 	void DrawBound(bool val) { bDrawBound = val; }
 	void DrawCollision(bool val) { bDrawCollision = val; }
 
-	
+	RenderType GetRenderType() { return renderType; }
 public:
 	RECT BoundBox();
 
@@ -94,10 +94,18 @@ private:
 	D3DXVECTOR2 scale;
 	D3DXVECTOR2 textureSize;
 	D3DXVECTOR3 rotation;
+	
+	D3DXMATRIX world;
+
+	D3DXVECTOR2 bound_position;
+	D3DXVECTOR2 bound_scale;
+	D3DXVECTOR2 bound_textureSize;
+	D3DXVECTOR3 bound_rotation;
+
+	D3DXMATRIX bound_world;
 
 	RECT boundbox;
 
-	D3DXMATRIX world;
 
 private:
 	struct Vertex
