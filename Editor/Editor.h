@@ -23,6 +23,7 @@ public:
 	void Render();
 
 public:
+	// mouse world position;
 	D3DXVECTOR2 ClickPosition()
 	{
 		D3DXVECTOR2 mouse = Mouse->Position();
@@ -78,6 +79,8 @@ public:
 
 		return mouseInImgui;
 	}
+
+	void SelectLayer(int layer_index);
 	
 private:
 	SceneValues * values;
@@ -89,7 +92,6 @@ private:
 	//const int line_layer = 1; // liner always render second top other rendering object;
 
 	Grid* grid;
-
 
 private:
 	class Object* clickedObject;
@@ -114,7 +116,10 @@ private:
 	vector<pair<int, Objects_Layer *>> layers;
 	vector<Liner*> line_layer;
 
-	
+	float checkTime = 0.5f;
+	float ctime = 0;
+	vector<D3DXVECTOR2> timesvec;
+
 
 
 private:

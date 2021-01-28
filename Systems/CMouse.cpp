@@ -32,11 +32,11 @@ void CMouse::WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam)
 		position.x = (float)LOWORD(lParam);
 		position.y = (float)HIWORD(lParam);
 	}
-	D3DXVECTOR2 pos;
+	//D3DXVECTOR2 pos;
 	if (iMessage == WM_LBUTTONDOWN) // 마우스 왼쪽 버튼 누를시 위치
 	{		
-		pos.x = (float)LOWORD(lParam);
-		pos.y = (float)HIWORD(lParam);
+		position.x = (float)LOWORD(lParam);
+		position.y = (float)HIWORD(lParam);
 	}
 
 	if (iMessage == WM_MOUSEWHEEL) // 마우스 휠 드래시

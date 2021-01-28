@@ -4,6 +4,20 @@
 Editor::Editor(SceneValues * values)
 	:edit_category(Edit_Category::Camera),values(values)
 {
+	wstring shaderFile = Shaders + L"008_Sprite.fx";
+	grid = new Grid();
+
+	{
+		Object_Desc desc;
+		desc.b_bound_coll = true;
+		desc.b_line_coll = true;
+		desc.b_render = true;
+		desc.label = OBJECT_LABEL::player;
+		desc.layer_index = 1; // add a marker layer
+		desc.texturePath = L"";
+		player = new Player(grid, D3DXVECTOR2(0, 0), D3DXVECTOR2(1.0f, 1.0f), desc);
+	}
+
 	for (layers_n = 0; layers_n < 9; layers_n++)
 	{
 		Objects_Layer* obj_layer = new Objects_Layer;
@@ -13,14 +27,23 @@ Editor::Editor(SceneValues * values)
 
 	grid = new Grid();
 
-	wstring shaderFile = Shaders + L"008_Sprite.fx";
-
-
+	
 
 	backGround = new Sprite(Textures + L"cuphead/pipe/background/clown_bg_track.png", shaderFile);
-	
-	
 	backGround->Position(0, -300);
+
+	{
+		Object_Desc desc;
+		Marker* marker1 = new Marker(grid, Shaders + L"008_Sprite.fx",
+			D3DXVECTOR2(-300, -225), desc);
+		Marker* marker2 = new Marker(grid, Shaders + L"008_Sprite.fx",
+			D3DXVECTOR2(300, -225), desc);
+		Liner* liner = new Liner(marker1, marker2);
+
+		objects.push_back(marker1);
+		objects.push_back(marker2);
+		liners.push_back(liner);
+	}
 }
 
 Editor::~Editor()
@@ -78,13 +101,19 @@ void Editor::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 	}
 
 	
-	
+	D3DXMATRIX V_m = values->MainCamera->View();
+	D3DXMATRIX P_m = values->Projection;
+
+	for (Object* object : objects)
+		object->Update(V_m, P_m);
+	for (Liner* liner : liners)
+		liner->Update(V_m, P_m);
+	player->Update(V_m, P_m);
+
 }
 
 void Editor::Render()
 {
-	
-	
 	ImGui::Text(to_string(layers.size()).c_str());
 	for (auto obj_layer : layers)
 	{
@@ -94,19 +123,47 @@ void Editor::Render()
 			{
 				obj->Render();
 			}
-		}
-		
+		}		
 	}
+
+	for (Object* object : objects)
+		object->Render();
+
+	for (Liner* liner : liners)
+		liner->Render();
+
+	ImGui::LabelText("objects size", "%d", objects.size());
+	ImGui::LabelText("liners size", "%d", liners .size());
+
+	player->Render();
+	D3DXVECTOR2 mouse = Mouse->Position();
+	mouse.x = mouse.x - (float)Width * 0.5f;
+	mouse.y = (mouse.y - (float)Height * 0.5f) * -1.0f;
+	D3DXVECTOR2 position = mouse;
+	position.x *= (float)(horizontal.y - horizontal.x) / Width;
+	position.y *= (float)(vertical.y - vertical.x) / Height;
+	ImGui::LabelText("Mouse Window Position", "%.0f, %.0f", position.x, position.y);
+	D3DXVECTOR2 wmp = ClickPosition();
+	ImGui::LabelText("Mouse World Position", "%.0f, %.0f", wmp.x, wmp.y);
+
+	
+	auto imsi = ClickPosition();
+	auto imsi2 = values->MainCamera->Position();
+	ImGui::LabelText("Click pos", "%f %f", imsi.x, imsi.y);
+	ImGui::LabelText("Cam pos", "%f %f", imsi2.x, imsi2.y);
+
 }
 
+
+
 void Editor::Camera_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
-{	
+{
 	{
 		ImGui::BulletText("Drag Mouse and Move Camera position");
-		ImGui::Indent();			
+		ImGui::Indent();
 		ImGui::Unindent();
 	}
-	
+
 	if (MouseInImgui())
 		return;
 
@@ -114,21 +171,28 @@ void Editor::Camera_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 	D3DXVECTOR2 position;
 	if (Key->Down(VK_LBUTTON))
 	{
-		position = ClickPosition();
-
+		position = Mouse->Position();
+		
+		position.x = position.x - (float)Width * 0.5f;
+		position.y = (position.y - (float)Height * 0.5f) * -1.0f;
 		clickedStartClickedPosition = position;
 		StartPosition = values->MainCamera->Position();
 	}
 
-	movePos = ClickPosition() - clickedStartClickedPosition;
-
+	D3DXVECTOR2 moveAfter = Mouse->Position();
+	moveAfter.x = moveAfter.x - (float)Width * 0.5f;
+	moveAfter.y = (moveAfter.y - (float)Height * 0.5f) * -1.0f;
+	movePos = moveAfter - clickedStartClickedPosition;
+	
 	if (Key->Press(VK_LBUTTON))
 	{		
 		values->MainCamera->Position(-movePos + StartPosition);
+		values->MainCamera->Update();
 	}
 	else if (Key->Up(VK_LBUTTON))
 	{
 		values->MainCamera->Position(-movePos + StartPosition);
+		values->MainCamera->Update();
 	}
 }
 
@@ -146,14 +210,14 @@ void Editor::Line_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 		}		
 	}
 
-	// 클릭한 마커 드래그 하기
+	// 클릭한 object 드래그 하기
 	if (Key->Press(VK_LBUTTON) && clickedObject != nullptr)
 	{
 		D3DXVECTOR2 movePos = ClickPosition() - clickedStartClickedPosition;		
 		clickedObject->position = movePos + StartPosition;
 	}
 
-	// 클릭한 마커 설정 끝
+	// 클릭한 object 설정 끝
 	if (Key->Up(VK_LBUTTON) && clickedObject != nullptr)
 	{
 		D3DXVECTOR2 movePos = ClickPosition() - clickedStartClickedPosition;
@@ -193,6 +257,7 @@ void Editor::Line_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 
 		Marker* marker = new Marker(grid, Shaders + L"008_Sprite.fx", clickPosition, desc);
 		objects.push_back(marker);
+		layers[marker_layer].second->layer->push_back(marker);
 		
 		// add a draw vector
 		markerToDrawLiner.push_back(marker); // 라인에 사용할 마카
@@ -256,15 +321,7 @@ void Editor::Layer_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 			}
 			ImGui::SameLine();
 			ImGui::Checkbox("", &layers[marker_layer].second->visualized);
-
-			ImGui::SameLine();
-			bt_str = "liner\nlayer";
-			if (ImGui::Button(bt_str.c_str(), ImVec2(60, 60)))
-			{
-				selected_layer = 0;
-			}
-			ImGui::SameLine();
-			ImGui::Checkbox("", &layers[liner].second->visualized);
+			
 		}		
 		//////////////////////////////////////
 		for (int n = 1; n < layers.size(); n++)
@@ -286,7 +343,10 @@ void Editor::Layer_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 					layers.erase(layers.begin() + n);
 
 					if (n == selected_layer)
+					{
 						selected_layer = -1;
+					}
+					
 				}
 				else
 				{
@@ -294,7 +354,8 @@ void Editor::Layer_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 				}
 			}
 			ImGui::SameLine();
-			ImGui::Checkbox("", &layers[n].second->visualized);
+			if(layers.size() > 1)
+				ImGui::Checkbox("", &layers[n].second->visualized);
 
 			// Our buttons are both drag sources and drag targets here!
 			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
@@ -411,4 +472,14 @@ void Editor::SaveComplete(wstring name)
 	wstring temp = name + L"\n저장이 완료되었음";
 
 	MessageBox(Hwnd, temp.c_str(), L"save complte", MB_OK);
+}
+
+
+void Editor::SelectLayer(int layer_index)
+{
+	grid->Reset();
+	for (Object* obj : *layers[layer_index].second->layer)
+	{
+		grid->Add(obj);
+	}
 }

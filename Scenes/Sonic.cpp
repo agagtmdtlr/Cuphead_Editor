@@ -13,18 +13,6 @@ Sonic::Sonic(SceneValues * values)
 	backGround = new Sprite(Textures + L"cuphead/pipe/background/clown_bg_track.png", shaderFile);
 	backGround->Position(0, -300);
 
-	{
-		Object_Desc desc;
-		desc.b_bound_coll = true;
-		desc.b_line_coll = true;
-		desc.b_render = true;
-		desc.label = OBJECT_LABEL::player;
-		desc.layer_index = 1; // add a marker layer
-		desc.texturePath = L"";
-		player = new Player(grid, D3DXVECTOR2(0, 0), D3DXVECTOR2(1.0f, 1.0f), desc);
-	}
-	
-
 	((Freedom*)(values->MainCamera))->Position(0, 0);
 
 	//sound = new Sound();
@@ -36,19 +24,6 @@ Sonic::Sonic(SceneValues * values)
 	//soundClass->Initialize(Hwnd);
 	//
 	editor = new Editor(values);	
-
-	{		
-		Object_Desc desc;
-		Marker* marker1 = new Marker(grid, Shaders + L"008_Sprite.fx",
-			D3DXVECTOR2(-300, -225), desc);
-		Marker* marker2 = new Marker(grid, Shaders + L"008_Sprite.fx",
-			D3DXVECTOR2(300, -225), desc);
-		Liner* liner = new Liner(marker1, marker2);
-
-		objects.push_back(marker1);
-		objects.push_back(marker2);
-		liners.push_back(liner);
-	}
 }
 
 Sonic::~Sonic()
@@ -97,57 +72,6 @@ void Sonic::Update()
 	//	clickedObject = nullptr;
 	//}
 
-
-	if (Key->Down(VK_SPACE) || Key->Down(VK_RBUTTON))
-	{
-		
-		// 해당 마우스의 월드 좌표에 마커 넣기
-		D3DXVECTOR2 position = ClickPosition();
-
-		if (Key->Press(VK_LSHIFT) && markerToDrawLiner.size() > 0)
-		{
-			D3DXVECTOR2 backPos = markerToDrawLiner.back()->Position();
-			float xDest = abs(position.x - backPos.x);
-			float yDest = abs(position.y - backPos.y);
-
-			if (yDest < xDest)
-			{
-				position.y = backPos.y;
-			}
-			else if (yDest > xDest)
-			{
-				position.x = backPos.x;
-			}
-
-		}
-
-		Object_Desc desc;
-		Marker* marker = new Marker(grid, Shaders + L"008_Sprite.fx", position,desc);
-		objects.push_back(marker);
-		markerToDrawLiner.push_back(marker); // 라인에 사용할 마카
-	}
-
-	
-
-	if (markerToDrawLiner.size() >= 2 && !Key->Press(VK_CONTROL))
-	{
-		auto ends = markerToDrawLiner.end();
-		--ends;
-		for (auto begin = markerToDrawLiner.begin(); begin != ends;)
-		{
-			//Liner* liner = new Liner(imsiMarkers[0], imsiMarkers[1]);
-			Marker* first = *begin;
-			begin++;
-			Marker* second = *begin;
-			Liner* liner = new Liner(first, second);
-			liners.push_back(liner);
-			
-		}
-		markerToDrawLiner.clear();
-	}
-
-	player->GetSprite()->DrawCollision(false);
-
 	// 라인들과 플레이어 선 출동 검사하기
 	// player 의 선은 플레이어 중심에서 바닥까지의 직선이다
 	/*
@@ -157,135 +81,123 @@ void Sonic::Update()
 	-------
 	(180 회전시 플레이서 선의 위치가 0~1... 정도의 오차범위가 발생하므로 보정을 해준다.
 	*/
-	for (Liner* liner : liners) // 모든 직선들과 검사 ( 전탐색 ) 
 	{
-		
-		if (CheckLineColl(player, liner)) // 플레이어와 출동했다면
+		for (Liner* liner : liners) // 모든 직선들과 검사 ( 전탐색 ) 
 		{
-			Sprite * sprite = player->GetSprite();
-			sprite->DrawCollision(true); // 바운딩 박스 충돌됬음으로 색상 변환
-			
-			// 선분의 두 점(선의 양 끝)의 위치를 가져온다.
-			D3DXVECTOR2 & p2 = liner->secondMarker->position;
-			D3DXVECTOR2 & p1 = liner->firstMarker->position;
 
-			if (abs(p2.x - p1.x) <= 0) // 수직으로 놓여있으므로 바닥이 아니라 벽이다.
-				break;
-
-			// PLANE 각도에 맞게 기울이기
-			// 바닥 벡터를 구한다.
-			D3DXVECTOR2 plane = p2 - p1;
-			D3DXVECTOR2 planeNormal;
-			// 바닥 노멀 벡터
-			D3DXVec2Normalize(&planeNormal, &plane);
-
-			// plane 에 수직노말벡터 ( 플레이어가 바닥에서 기울어질 벡터이다)
-			// 왜냐하면 플레이어는 바닥에 일반적으로 수직으로 세워져 있으니깐
-			// 바닥이 경사져도 그 바닥에 수직이니깐 경사에 맞춰 플레이어가 기울어질 것이다.
-			D3DXVECTOR2 normalVec = D3DXVECTOR2(-planeNormal.y, planeNormal.x);
-			// 수직 축 ( 기본 캐릭트 렌더링 축 )
-			// 플레이어는 기본족으로 y축에 평행하게 세워져 있으므로
-			// 기울어질 벡터와의 사잇각을 구하기 위한 기준 벡터가 된다.
-			D3DXVECTOR2 axis = { 0 , 1 };
-			
-			//현재 필요한 각 구하기/////////////
-			// 사잇각 구하기
-			// 바닥의 수직벡터와 플레이어 기준 벡터의 사잇각을 구한다(플레이어를 얼마나 회전시킬지 구한다)
-			float zDegree = Math::VectorDegree(normalVec, axis);
-			
-			// 이 부분 계산을 오차범위를 벗어났지는 판별하기 위한 부분이다.
-			float pZ = player->zDegree;
-			float pY = player->yDegree;
-			//player->animation->RotationDegree(0, player->yDegree, zDegree);
-			if (abs(pZ - zDegree) >= 1)
+			if (CheckLineColl(player, liner)) // 플레이어와 출동했다면
 			{
-				player->zDegree = zDegree;
-			}		
-			
-			// 현재 플레이어의 위치와 회전정보를 가지고 있는
-			// world matrix를 가지고 온다.			
-			D3DXMATRIX world = sprite->World();
+				Sprite * sprite = player->GetSprite();
+				sprite->DrawCollision(true); // 바운딩 박스 충돌됬음으로 색상 변환
 
-			//D3DXVECTOR2 playerPosition = D3DXVECTOR2(world._41, world._42);
-			D3DXVECTOR2 playerPosition = player->animation->Position();
+				// 선분의 두 점(선의 양 끝)의 위치를 가져온다.
+				D3DXVECTOR2 & p2 = liner->secondMarker->position;
+				D3DXVECTOR2 & p1 = liner->firstMarker->position;
 
-			D3DXVECTOR2 xDir = D3DXVECTOR2(world._11, world._12) * 0.5;
-			D3DXVECTOR2 yDir = D3DXVECTOR2(world._21, world._22) * 0.5;
+				if (abs(p2.x - p1.x) <= 0) // 수직으로 놓여있으므로 바닥이 아니라 벽이다.
+					break;
 
-			float x = playerPosition.x;	
+				// PLANE 각도에 맞게 기울이기
+				// 바닥 벡터를 구한다.
+				D3DXVECTOR2 plane = p2 - p1;
+				D3DXVECTOR2 planeNormal;
+				// 바닥 노멀 벡터
+				D3DXVec2Normalize(&planeNormal, &plane);
 
-			RenderType obj_renderType = sprite->GetRenderType();
+				// plane 에 수직노말벡터 ( 플레이어가 바닥에서 기울어질 벡터이다)
+				// 왜냐하면 플레이어는 바닥에 일반적으로 수직으로 세워져 있으니깐
+				// 바닥이 경사져도 그 바닥에 수직이니깐 경사에 맞춰 플레이어가 기울어질 것이다.
+				D3DXVECTOR2 normalVec = D3DXVECTOR2(-planeNormal.y, planeNormal.x);
+				// 수직 축 ( 기본 캐릭트 렌더링 축 )
+				// 플레이어는 기본족으로 y축에 평행하게 세워져 있으므로
+				// 기울어질 벡터와의 사잇각을 구하기 위한 기준 벡터가 된다.
+				D3DXVECTOR2 axis = { 0 , 1 };
 
-			float y;
-			D3DXVECTOR2 newPos;
-			switch (obj_renderType)
-			{
-			case RenderType::center:
-				y = (p2.y - p1.y) / (p2.x - p1.x) * ((playerPosition - yDir).x - p1.x) + p1.y;			
-				newPos = D3DXVECTOR2(x, y);
-				newPos.y += yDir.y;
-				break;
-			case RenderType::left_bottom:
-				break;
-			case RenderType::center_bottom:
-				y = (p2.y - p1.y) / (p2.x - p1.x) * (playerPosition.x - p1.x) + p1.y;
-				newPos = D3DXVECTOR2(x, y);
-				break;
-			default:
+				//현재 필요한 각 구하기/////////////
+				// 사잇각 구하기
+				// 바닥의 수직벡터와 플레이어 기준 벡터의 사잇각을 구한다(플레이어를 얼마나 회전시킬지 구한다)
+				float zDegree = Math::VectorDegree(normalVec, axis);
+
+				// 이 부분 계산을 오차범위를 벗어났지는 판별하기 위한 부분이다.
+				float pZ = player->zDegree;
+				float pY = player->yDegree;
+				//player->animation->RotationDegree(0, player->yDegree, zDegree);
+				if (abs(pZ - zDegree) >= 1)
+				{
+					player->zDegree = zDegree;
+				}
+
+				// 현재 플레이어의 위치와 회전정보를 가지고 있는
+				// world matrix를 가지고 온다.			
+				D3DXMATRIX world = sprite->World();
+
+				//D3DXVECTOR2 playerPosition = D3DXVECTOR2(world._41, world._42);
+				D3DXVECTOR2 playerPosition = player->animation->Position();
+
+				D3DXVECTOR2 xDir = D3DXVECTOR2(world._11, world._12) * 0.5;
+				D3DXVECTOR2 yDir = D3DXVECTOR2(world._21, world._22) * 0.5;
+
+				float x = playerPosition.x;
+
+				RenderType obj_renderType = sprite->GetRenderType();
+
+				float y;
+				D3DXVECTOR2 newPos;
+				switch (obj_renderType)
+				{
+					case RenderType::center:
+						y = (p2.y - p1.y) / (p2.x - p1.x) * ((playerPosition - yDir).x - p1.x) + p1.y;
+						newPos = D3DXVECTOR2(x, y);
+						newPos.y += yDir.y;
+						break;
+					case RenderType::left_bottom:
+						break;
+					case RenderType::center_bottom:
+						y = (p2.y - p1.y) / (p2.x - p1.x) * (playerPosition.x - p1.x) + p1.y;
+						newPos = D3DXVECTOR2(x, y);
+						break;
+					default:
+						break;
+				}
+
+				//center
+				// 두점을 이용한 직선의 방정식을 이용해서
+				// 플레이어가 바닥에 놓일 y값의 위치를 계산한다.
+				// 함수의 대입값으로 player의 x값을 그대로 사용하지 않는것은
+				// 실제 바닥과 닿는 위치는 바닥부분이기 때문이다.
+				// 현제 렌더링 방식은 사물의 위치좌표가 스프라이트의 정중앙에
+				// 놓여 있기 때문이다.
+				//float y = (p2.y - p1.y) / (p2.x - p1.x) * ((playerPosition - yDir).x - p1.x) + p1.y;			
+				//center_bottom
+				//float y = (p2.y - p1.y) / (p2.x - p1.x) * (playerPosition.x - p1.x) + p1.y;			
+
+				// 직선의 방정식을 통해 계산한 새로운 위치 좌표를 갱신한다.
+				//D3DXVECTOR2 newPos = D3DXVECTOR2(x, y);			
+				//newPos.y += yDir.y + xDir.y -0.5;
+				// center
+				// 위의 설명과 같이 플레이어의 실제 위치는 스프라이트의 정중앙을
+				// 기준으로 하고 있으므로 바닥에서 중심까지로 이동시켜준다.
+				//newPos.y += yDir.y;
+
+				player->animation->Position(newPos);
+
+				player->bOnGround = true;
+				player->moveDir = planeNormal;
+
 				break;
 			}
-
-			//center
-			// 두점을 이용한 직선의 방정식을 이용해서
-			// 플레이어가 바닥에 놓일 y값의 위치를 계산한다.
-			// 함수의 대입값으로 player의 x값을 그대로 사용하지 않는것은
-			// 실제 바닥과 닿는 위치는 바닥부분이기 때문이다.
-			// 현제 렌더링 방식은 사물의 위치좌표가 스프라이트의 정중앙에
-			// 놓여 있기 때문이다.
-			//float y = (p2.y - p1.y) / (p2.x - p1.x) * ((playerPosition - yDir).x - p1.x) + p1.y;			
-			//center_bottom
-			//float y = (p2.y - p1.y) / (p2.x - p1.x) * (playerPosition.x - p1.x) + p1.y;			
-
-			// 직선의 방정식을 통해 계산한 새로운 위치 좌표를 갱신한다.
-			//D3DXVECTOR2 newPos = D3DXVECTOR2(x, y);			
-			//newPos.y += yDir.y + xDir.y -0.5;
-			// center
-			// 위의 설명과 같이 플레이어의 실제 위치는 스프라이트의 정중앙을
-			// 기준으로 하고 있으므로 바닥에서 중심까지로 이동시켜준다.
-			//newPos.y += yDir.y;
-
-			player->animation->Position(newPos);			
-			
-			player->bOnGround = true;
-			player->moveDir = planeNormal;
-
-			break;
-		}
-		else // 바닥에 닿지 않은 경우
-		{
-			Sprite * sprite = player->GetSprite();
-			sprite->DrawCollision(false);
-			D3DXVECTOR2 temp = player->moveDir;
-			player->bOnGround = false;
-			player->zDegree = 0;
-			player->moveDir = { 1, 0 };
+			else // 바닥에 닿지 않은 경우
+			{
+				Sprite * sprite = player->GetSprite();
+				sprite->DrawCollision(false);
+				D3DXVECTOR2 temp = player->moveDir;
+				player->bOnGround = false;
+				player->zDegree = 0;
+				player->moveDir = { 1, 0 };
+			}
 		}
 	}
-
-	int i = 0;
-	for (Object* object : objects)
-	{
-		i += 1;
-		object->Update(V, P);
-	}
-
-	i = 0;
-	for (Liner* liner : liners)
-	{
-		i += 1;
-		liner->Update(V, P);
-	}
-		
+	
 
 	if (clickedObject != nullptr)
 	{
@@ -293,11 +205,8 @@ void Sonic::Update()
 	}
 
 	backGround->Update(V, P);
-	player->Update(V, P);
-
 	editor->Update(V, P);
 }
-int vol = 0;
 
 void Sonic::Render()
 {
@@ -315,16 +224,7 @@ void Sonic::Render()
 
 	}*/
 
-	D3DXVECTOR2 mouse = Mouse->Position();
-	mouse.x = mouse.x - (float)Width * 0.5f;
-	mouse.y = (mouse.y - (float)Height * 0.5f) * -1.0f;
-	D3DXVECTOR2 position = mouse;
-	position.x *= (float)(horizontal.y - horizontal.x) / Width;
-	position.y *= (float)(vertical.y - vertical.x) / Height;
-	ImGui::LabelText("Mouse Window Position", "%.0f, %.0f", position.x, position.y);
-	D3DXVECTOR2 wmp =  position + values->MainCamera->Position();
-	ImGui::LabelText("Mouse World Position", "%.0f, %.0f", wmp.x, wmp.y);
-
+	editor->Render();
 	
 	//ImGui::SliderInt("Volume", &vol, -10000, 0);
 	//sound2->SetVolume(vol);
@@ -337,20 +237,9 @@ void Sonic::Render()
 	//ImGui::LabelText("horizontal", "%f %f", horizontal.x , horizontal.y);
 	//ImGui::LabelText("vertical", "%f %f", vertical.x, vertical.y);
 
-	backGround->Render();
 
-	for (Object* object : objects)
-		object->Render();
-
-	for (Liner* liner : liners)
-		liner->Render();
-		
-
-	D3DXVECTOR2 pos = player->state->animation->Position();
-	ImGui::LabelText("player Position", "%.0f, %.0f", pos.x, pos.y);
-	player->state->Render();
-
-	editor->Render();
+	//D3DXVECTOR2 pos = player->state->animation->Position();
+	//ImGui::LabelText("player Position", "%.0f, %.0f", pos.x, pos.y);
 
 }
 

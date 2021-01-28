@@ -36,7 +36,7 @@ void Freedom::Position(D3DXVECTOR2 & vec)
 	position = vec;
 }
 
-void Freedom::Position(D3DXVECTOR2  vec)
+void Freedom::Position(D3DXVECTOR2 vec)
 {
 	position = vec;
 }
