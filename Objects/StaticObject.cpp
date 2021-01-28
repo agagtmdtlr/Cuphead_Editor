@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "StaticObject.h"
 
-StaticObject::StaticObject(Grid * grid_, wstring textureFile)
-	:Object(grid_)
+StaticObject::StaticObject(Grid * grid_, wstring textureFile, Object_Desc desc)
+	:Object(grid_, desc)
 {
 }
 

@@ -2,8 +2,8 @@
 #include "Marker.h"
 
 
-Marker::Marker(Grid* grid_, wstring shaderFile, D3DXVECTOR2 start)
-	:Object(grid_)
+Marker::Marker(Grid* grid_, wstring shaderFile, D3DXVECTOR2 start, Object_Desc desc)
+	:Object(grid_, desc)
 {
 	clip = new Clip(PlayMode::Loop);
 	for (UINT i = 0; i < 7; i++)
@@ -68,8 +68,14 @@ RECT Marker::GetHitBox()
 
 void Marker::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 {
-	clip->Position(position);
-	clip->Update(V, P);
+	if (object_desc.obj_mode == Object_Mode::Play)
+	{
+		
+	}
+	else if (object_desc.obj_mode == Object_Mode::Editor)
+	{
+		clip->Update(V, P);
+	}
 }
 
 void Marker::Render()

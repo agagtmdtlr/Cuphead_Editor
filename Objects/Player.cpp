@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "Player.h"
 
-Player::Player(Grid* grid_, D3DXVECTOR2 position_, D3DXVECTOR2 scale_, RenderType type)
-	:Object(grid_)
+Player::Player(Grid* grid_, D3DXVECTOR2 position_, D3DXVECTOR2 scale_, Object_Desc desc, RenderType type)
+	:Object(grid_,desc)
 	,moveSpeed(400.0f), focusOffset(-180, -120), bOnGround(false), cosVel(1),
 	zDegree(0), yDegree(0), moveDir(1, 0),
 	velocity(0), gravity(-1.95f), type(type)
@@ -80,15 +80,15 @@ Player::~Player()
 
 void Player::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 {
-	if (objectMode == Object_Mode::Play)
-	{
-		state->handleInput(this);
-		state->Update(this, V, P);
-	}
-	else if (objectMode == Object_Mode::Editor)
-	{
-		state->animation->Update(V, P);
-	}		
+		if (object_desc.obj_mode == Object_Mode::Play)
+		{
+			state->handleInput(this);
+			state->Update(this, V, P);
+		}
+		else if (object_desc.obj_mode == Object_Mode::Editor)
+		{
+			state->animation->Update(V, P);
+		}		
 }
 
 void Player::Render()

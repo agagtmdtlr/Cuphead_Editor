@@ -2,8 +2,8 @@
 #include "Object.h"
 
 
-Object::Object(Grid * grid_)
-	: grid(grid_),prev(nullptr),next(nullptr)
+Object::Object(Grid * grid_, Object_Desc desc)
+	: grid(grid_),prev(nullptr),next(nullptr),object_desc(desc)
 {
 }
 

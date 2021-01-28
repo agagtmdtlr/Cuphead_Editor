@@ -5,7 +5,7 @@ class StaticObject : public Object
 {
 public:
 
-	StaticObject(Grid * grid_, wstring textureFile);
+	StaticObject(Grid * grid_, wstring textureFile, Object_Desc desc);
 	virtual ~StaticObject();
 
 public:

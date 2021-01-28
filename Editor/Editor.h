@@ -7,6 +7,12 @@ enum class Edit_Category
 	Layer
 };
 
+struct Objects_Layer
+{
+	bool visualized = true;
+	vector<Object*>* layer;
+};
+
 class Editor
 {
 public:
@@ -76,10 +82,11 @@ public:
 private:
 	SceneValues * values;
 
-	vector<int> layers;
 	int layers_n = 0;
 
 	int selected_layer = -1;
+	const int marker_layer = 0;// marker always render topper other rendering object;
+	//const int line_layer = 1; // liner always render second top other rendering object;
 
 	Grid* grid;
 
@@ -103,7 +110,11 @@ private:
 
 	vector<Sprite*> static_Object;
 
-	vector<vector<Object*>*> static_layers;
+	// layer member
+	vector<pair<int, Objects_Layer *>> layers;
+	vector<Liner*> line_layer;
+
+	
 
 
 private:
@@ -111,4 +122,8 @@ private:
 	void Line_Edit(D3DXMATRIX &V, D3DXMATRIX &P);
 	void Layer_Edit(D3DXMATRIX &V, D3DXMATRIX &P);
 
+
+private:
+	void OpenComplete(wstring name);
+	void SaveComplete(wstring name);
 };

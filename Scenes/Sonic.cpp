@@ -13,7 +13,17 @@ Sonic::Sonic(SceneValues * values)
 	backGround = new Sprite(Textures + L"cuphead/pipe/background/clown_bg_track.png", shaderFile);
 	backGround->Position(0, -300);
 
-	player = new Player(grid, D3DXVECTOR2(0, 0), D3DXVECTOR2(1.0f, 1.0f));
+	{
+		Object_Desc desc;
+		desc.b_bound_coll = true;
+		desc.b_line_coll = true;
+		desc.b_render = true;
+		desc.label = OBJECT_LABEL::player;
+		desc.layer_index = 1; // add a marker layer
+		desc.texturePath = L"";
+		player = new Player(grid, D3DXVECTOR2(0, 0), D3DXVECTOR2(1.0f, 1.0f), desc);
+	}
+	
 
 	((Freedom*)(values->MainCamera))->Position(0, 0);
 
@@ -28,10 +38,11 @@ Sonic::Sonic(SceneValues * values)
 	editor = new Editor(values);	
 
 	{		
+		Object_Desc desc;
 		Marker* marker1 = new Marker(grid, Shaders + L"008_Sprite.fx",
-			D3DXVECTOR2(-300, -225));
+			D3DXVECTOR2(-300, -225), desc);
 		Marker* marker2 = new Marker(grid, Shaders + L"008_Sprite.fx",
-			D3DXVECTOR2(300, -225));
+			D3DXVECTOR2(300, -225), desc);
 		Liner* liner = new Liner(marker1, marker2);
 
 		objects.push_back(marker1);
@@ -110,8 +121,8 @@ void Sonic::Update()
 
 		}
 
-
-		Marker* marker = new Marker(grid, Shaders + L"008_Sprite.fx", position);
+		Object_Desc desc;
+		Marker* marker = new Marker(grid, Shaders + L"008_Sprite.fx", position,desc);
 		objects.push_back(marker);
 		markerToDrawLiner.push_back(marker); // 라인에 사용할 마카
 	}
@@ -290,9 +301,8 @@ int vol = 0;
 
 void Sonic::Render()
 {
-	editor->Render();
 
-	if (ImGui::Button("Save Binary") == true)
+	/*if (ImGui::Button("Save Binary") == true)
 	{
 		function<void(wstring)> f = bind(&Sonic::SaveComplete, this, placeholders::_1);
 		Path::SaveFileDialog(L"", L"Binary\0*.bin", L".", f, Hwnd);
@@ -303,7 +313,7 @@ void Sonic::Render()
 		function<void(wstring)> f = bind(&Sonic::OpenComplete, this, placeholders::_1);
 		Path::OpenFileDialog(L"", L"Binary\0*.bin", L".", f, Hwnd);
 
-	}
+	}*/
 
 	D3DXVECTOR2 mouse = Mouse->Position();
 	mouse.x = mouse.x - (float)Width * 0.5f;
@@ -311,7 +321,10 @@ void Sonic::Render()
 	D3DXVECTOR2 position = mouse;
 	position.x *= (float)(horizontal.y - horizontal.x) / Width;
 	position.y *= (float)(vertical.y - vertical.x) / Height;
-	ImGui::LabelText("Position", "%.0f, %.0f", position.x, position.y);
+	ImGui::LabelText("Mouse Window Position", "%.0f, %.0f", position.x, position.y);
+	D3DXVECTOR2 wmp =  position + values->MainCamera->Position();
+	ImGui::LabelText("Mouse World Position", "%.0f, %.0f", wmp.x, wmp.y);
+
 	
 	//ImGui::SliderInt("Volume", &vol, -10000, 0);
 	//sound2->SetVolume(vol);
@@ -334,8 +347,11 @@ void Sonic::Render()
 		
 
 	D3DXVECTOR2 pos = player->state->animation->Position();
-	ImGui::LabelText("Position", "%.0f, %.0f", pos.x, pos.y);
+	ImGui::LabelText("player Position", "%.0f, %.0f", pos.x, pos.y);
 	player->state->Render();
+
+	editor->Render();
+
 }
 
 bool Sonic::CheckLineColl(Player * player, Liner * liner)
@@ -405,9 +421,11 @@ void Sonic::OpenComplete(wstring name)
 		void* ptr = (void *)&(v[0]);
 		r->Byte(&ptr, sizeof(D3DXVECTOR2) * count);
 
+		
 		for (UINT i = 0; i < count; i++)
 		{
-			Marker* marker = new Marker(grid, Shaders + L"008_Sprite.fx", v[i]);
+			Object_Desc desc;
+			Marker* marker = new Marker(grid, Shaders + L"008_Sprite.fx", v[i], desc);
 			objects.push_back(marker);
 			markerToDrawLiner.push_back(marker); // 라인에 사용할 마카
 

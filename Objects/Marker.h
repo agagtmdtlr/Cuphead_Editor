@@ -8,7 +8,7 @@ class Marker : public Object
 	friend class Sonic;
 
 public:
-	Marker(Grid* grid_, wstring shaderFile, D3DXVECTOR2 start);
+	Marker(Grid* grid_, wstring shaderFile, D3DXVECTOR2 start, Object_Desc desc);
 	~Marker();
 
 	void Move(D3DXVECTOR2 position_);
@@ -33,6 +33,5 @@ public:
 private:
 	Clip* clip;
 
-	
-
 };
+

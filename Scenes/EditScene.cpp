@@ -13,15 +13,26 @@ EditScene::EditScene(SceneValues * values)
 	backGround = new Sprite(Textures + L"cuphead/pipe/background/clown_bg_track.png", shaderFile);
 	backGround->Position(0, -300);
 
-	player = new Player(grid, D3DXVECTOR2(0, 500), D3DXVECTOR2(1.0f, 1.0f));
+	{
+		Object_Desc desc;
+		desc.b_bound_coll = true;
+		desc.b_line_coll = true;
+		desc.b_render = true;
+		desc.label = OBJECT_LABEL::player;
+		desc.layer_index = 1; // add a marker layer
+		desc.texturePath = L"";
+		player = new Player(grid, D3DXVECTOR2(0, 500), D3DXVECTOR2(1.0f, 1.0f), desc);
+	}
+	
 
 	((Freedom*)(values->MainCamera))->Position(0, 0);
 
+	Object_Desc desc;
 	{
 		Marker* marker1 = new Marker(grid, Shaders + L"008_Sprite.fx",
-			D3DXVECTOR2(-300, -225));
+			D3DXVECTOR2(-300, -225), desc);
 		Marker* marker2 = new Marker(grid, Shaders + L"008_Sprite.fx",
-			D3DXVECTOR2(300, -225));
+			D3DXVECTOR2(300, -225), desc);
 		Liner* liner = new Liner(marker1, marker2);
 
 		objects.push_back(marker1);

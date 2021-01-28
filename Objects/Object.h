@@ -9,15 +9,29 @@ enum class Object_Mode
 
 enum class OBJECT_LABEL
 {
-	static_oject,
+	static_object,
 	player,
 	pipe_phase1,
 	pipe_phase2,
 	pipe_phase3,
 	pipe_phase4,
-	marker
+	marker,
+	liner
 };
 
+
+struct Object_Desc
+{
+	OBJECT_LABEL label; //reference call class constructor 
+	Object_Mode obj_mode = Object_Mode::Editor; //
+	int layer_index; // insert layer
+
+	bool b_render; // 렌더링할지
+	bool b_line_coll; // 선충돌을 적용할지
+	bool b_bound_coll; // 박스충돌을 적용할지
+
+	wstring texturePath; // if label is static_object load image this path and  others label's variable is ""
+};
 
 
 class Object
@@ -28,7 +42,7 @@ class Object
 	friend class EditScene;
 public:
 
-	Object(Grid * grid_);
+	Object(Grid * grid_ , Object_Desc desc );
 	virtual ~Object();
 
 public:
@@ -48,7 +62,7 @@ public:
 	virtual RECT GetHitBox();
 	virtual void SetHitBox(RECT hitbox);
 
-	void Set_Object_Mode(Object_Mode obj_mode) { objectMode = obj_mode; }
+	void Set_Object_Mode(Object_Mode obj_mode) { object_desc.obj_mode = obj_mode; }
 
 protected:
 	D3DXVECTOR2 position;
@@ -58,6 +72,10 @@ protected:
 	
 
 protected:
+
+	Object_Desc object_desc;
+
+
 	Grid* grid;
 	Object * prev;
 	Object * next;
@@ -78,4 +96,6 @@ protected:
 	 }
 	 */
 	OBJECT_LABEL label; 
+
+	int layer_index;
 };
