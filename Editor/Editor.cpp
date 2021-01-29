@@ -72,17 +72,6 @@ void Editor::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 	if (edit_category == Edit_Category::Layer)
 		Layer_Edit(V, P);
 
-	if (selected_layer > -1)
-	{
-		auto  obj_layer = layers[selected_layer].second;		
-		auto  layer = obj_layer->layer;
-		for (auto obj : *layer)
-		{
-			const Object_Desc & desc = obj->object_desc;
-		}
-	}
-
-
 	{
 		ImVec2 imPos = ImGui::GetWindowPos();
 		imPos.x = imPos.x - (float)Width * 0.5f;
@@ -198,33 +187,8 @@ void Editor::Camera_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 
 void Editor::Line_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 {
-	if (Key->Down(VK_LBUTTON))
-	{
-		D3DXVECTOR2 position = ClickPosition();
+	DragObject(); // move drawed marker
 
-		clickedObject = grid->Pop(position);
-		if (clickedObject != nullptr)
-		{
-			clickedStartClickedPosition = position;
-			StartPosition = clickedObject->Position();
-		}		
-	}
-
-	// 클릭한 object 드래그 하기
-	if (Key->Press(VK_LBUTTON) && clickedObject != nullptr)
-	{
-		D3DXVECTOR2 movePos = ClickPosition() - clickedStartClickedPosition;		
-		clickedObject->position = movePos + StartPosition;
-	}
-
-	// 클릭한 object 설정 끝
-	if (Key->Up(VK_LBUTTON) && clickedObject != nullptr)
-	{
-		D3DXVECTOR2 movePos = ClickPosition() - clickedStartClickedPosition;
-		clickedObject->position = movePos + StartPosition;
-		grid->Add(clickedObject);
-		clickedObject = nullptr;
-	}
 	// Add Marker
 	if (Key->Down(VK_SPACE) || Key->Down(VK_RBUTTON))
 	{
@@ -247,12 +211,13 @@ void Editor::Line_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 			}
 		}
 
+		// write marker describe
 		Object_Desc desc;
 		desc.b_bound_coll = false;
 		desc.b_line_coll = false;
 		desc.b_render = false;
 		desc.label = OBJECT_LABEL::marker;
-		desc.layer_index = marker_layer; // add a marker layer
+		desc.layer_index = marker_layer; // locate a marker layer
 		desc.texturePath = L"";
 
 		Marker* marker = new Marker(grid, Shaders + L"008_Sprite.fx", clickPosition, desc);
@@ -313,7 +278,7 @@ void Editor::Layer_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 			}
 		}
 		//////////////////////////////////////////////////
-		{
+		{// marker layer can't delete
 			string bt_str = "marker\nlayer";
 			if (ImGui::Button(bt_str.c_str(), ImVec2(60, 60)))
 			{
@@ -335,6 +300,7 @@ void Editor::Layer_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 			{
 				if (mode == Mode_Delete)
 				{
+					// 해당 레이어의 객체 지우기
 					vector<Object*>* del_layer = layers[n].second->layer;
 					for (Object* obj : *del_layer)
 					{
@@ -344,13 +310,14 @@ void Editor::Layer_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 
 					if (n == selected_layer)
 					{
-						selected_layer = -1;
+						SelectLayer(-1); // 보여준더 레이어가 없어졌음으로 선택된 레이어 비우기
 					}
 					
 				}
 				else
 				{
-					selected_layer = n;
+					if (n != selected_layer)
+						SelectLayer(n);
 				}
 			}
 			ImGui::SameLine();
@@ -386,6 +353,8 @@ void Editor::Layer_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 		ImGui::Unindent();
 	}
 
+	
+	SelectedLayerInfo();
 	
 }
 
@@ -474,10 +443,89 @@ void Editor::SaveComplete(wstring name)
 	MessageBox(Hwnd, temp.c_str(), L"save complte", MB_OK);
 }
 
+void Editor::DragObject()
+{
+	// 드래그할 object 찾아서 저장하기
+	if (Key->Down(VK_LBUTTON))
+	{
+		D3DXVECTOR2 position = ClickPosition();
+
+		clickedObject = grid->Pop(position);
+		if (clickedObject != nullptr)
+		{
+			clickedStartClickedPosition = position;
+			StartPosition = clickedObject->Position();
+		}
+	}
+
+	// 클릭한 object 드래그 하기
+	if (Key->Press(VK_LBUTTON) && clickedObject != nullptr)
+	{
+		D3DXVECTOR2 movePos = ClickPosition() - clickedStartClickedPosition;
+		clickedObject->position = movePos + StartPosition;
+	}
+
+	// 클릭한 object 설정 끝
+	if (Key->Up(VK_LBUTTON) && clickedObject != nullptr)
+	{
+		D3DXVECTOR2 movePos = ClickPosition() - clickedStartClickedPosition;
+		clickedObject->position = movePos + StartPosition;
+		grid->Add(clickedObject);
+		clickedObject = nullptr;
+	}
+}
+
+void Editor::AddObject(int layer_index, Object * object)
+{
+	object->object_desc.layer_index = layers[layer_index].first;
+	layers[layer_index].second->layer->push_back(object);
+	if (selected_layer == layer_index)
+		grid->Add(object);
+}
+
+void Editor::SelectedLayerInfo()
+{
+	// show selected layer info
+	if (selected_layer > -1)
+	{
+		if (ImGui::CollapsingHeader(("Layer" + to_string(layers[selected_layer].first)).c_str()))
+		{
+			auto layer = *layers[selected_layer].second->layer;
+			ImGui::Text("IsItemHovered: %d", ImGui::IsItemHovered());
+			enum Mode
+			{
+				Mode_Add,
+				Mode_Delete
+			};
+			static int mode = 0;
+			if (ImGui::RadioButton("Add", mode == Mode_Add)) { mode = Mode_Add; } ImGui::SameLine();
+			if (ImGui::RadioButton("Delete", mode == Mode_Delete)) { mode = Mode_Delete; } ImGui::SameLine();
+			if (mode == Mode_Add) // click button and add a layer vector end line
+			{
+				if (ImGui::Button("Add layer"))
+				{
+					Objects_Layer * obj_layer = new Objects_Layer;
+					obj_layer->layer = new vector<Object*>;
+					layers.push_back(make_pair(layers_n++, obj_layer));
+				}
+			}
+			for (int i = 0; i < layer.size(); i++)
+			{
+
+			}
+			for (int i = 0; i < 5; i++)
+				ImGui::Text("Some content %d", i);
+		}
+	}
+}
+
 
 void Editor::SelectLayer(int layer_index)
 {
+	selected_layer = layer_index;
 	grid->Reset();
+	if (selected_layer < 0)
+		return;
 	for (Object* obj : *layers[layer_index].second->layer)
 	{
 		grid->Add(obj);
