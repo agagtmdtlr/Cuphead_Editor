@@ -6,6 +6,9 @@ StaticObject::StaticObject(Grid * grid_, wstring textureFile, Object_Desc desc)
 {
 	wstring shaderFile = Shaders + L"008_Sprite.fx";
 	sprite = new Sprite(textureFile, shaderFile);
+	Position(D3DXVECTOR2(0, 0));
+	Scale(D3DXVECTOR2(1, 1));
+	Rotation(D3DXVECTOR3(0, 0, 0));
 }
 
 StaticObject::~StaticObject()

@@ -99,6 +99,17 @@ void Editor::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 		liner->Update(V_m, P_m);
 	player->Update(V_m, P_m);
 
+	for (auto obj_layer : layers)
+	{
+		if (obj_layer.second->visualized == true)
+		{
+			for (auto obj : *obj_layer.second->layer)
+			{
+				obj->Update(V_m,P_m);
+			}
+		}
+	}
+
 }
 
 void Editor::Render()
@@ -254,6 +265,8 @@ void Editor::Line_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 
 void Editor::Layer_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 {	
+
+	DragObject(); // move drawed marker
 	{
 		ImGui::BulletText("Drag and drop to swap layers");
 		ImGui::Indent();
@@ -421,6 +434,19 @@ void Editor::OpenComplete(wstring name)
 	MessageBox(Hwnd, name.c_str(), L"Open", MB_OK);
 }
 
+void Editor::OpenStaticObjectComplete(wstring texturePath)
+{
+	if (Path::ExistFile(texturePath) == true)
+	{
+		Object_Desc desc;
+		StaticObject* object = new StaticObject(grid, texturePath, desc);
+		layers[selected_layer].second->layer->push_back(object);
+		grid->Add(object);
+	}
+
+	MessageBox(Hwnd, texturePath.c_str(), L"Open", MB_OK);
+}
+
 void Editor::SaveComplete(wstring name)
 {
 	BinaryWriter* w = new BinaryWriter();
@@ -492,6 +518,11 @@ void Editor::SelectedLayerInfo()
 		{
 			auto layer = *layers[selected_layer].second->layer;
 			ImGui::Text("IsItemHovered: %d", ImGui::IsItemHovered());
+			if (ImGui::Button("Add Static Object"))
+			{
+				function<void(wstring)> f = bind(&Editor::OpenStaticObjectComplete, this, placeholders::_1);
+				Path::OpenFileDialog(L"", Path::ImageFilter, L".", f, Hwnd);
+			}
 			enum Mode
 			{
 				Mode_Add,
