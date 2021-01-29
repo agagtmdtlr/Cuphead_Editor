@@ -20,6 +20,9 @@ SoundClass::SoundClass(const SoundClass& other)
 
 SoundClass::~SoundClass()
 {
+	SAFE_RELEASE(m_secondaryBuffer1);
+	SAFE_RELEASE(m_secondaryBuffer1);
+	SAFE_RELEASE(m_DirectSound);
 }
 
 
@@ -36,7 +39,11 @@ bool SoundClass::Initialize(HWND hwnd)
 	}
 
 	// Load a wave audio file onto a secondary buffer.
-	result = LoadWaveFile("D:/dev/dev_project/Direct2D/_Audios/cuphead/clown_bgm/MUS_CarnivalKerfuffle_MixB.wav", &m_secondaryBuffer1);
+	//string sound_path = "C:/Users/SN_B003/Desktop/suengsik/D2D/_Audios/cuphead/clown_bgm";
+	string sound_path = "../_Audios/cuphead/clown_bgm";
+	//result = LoadWaveFile("D:/dev/dev_project/Direct2D/_Audios/cuphead/clown_bgm/MUS_CarnivalKerfuffle_MixB.wav", &m_secondaryBuffer1);
+	result = LoadWaveFile((sound_path + "/MUS_CarnivalKerfuffle_MixB.wav").c_str(), &m_secondaryBuffer1);
+
 	if(!result)
 	{
 		return false;
@@ -142,7 +149,7 @@ void SoundClass::ShutdownDirectSound()
 }
 
 
-bool SoundClass::LoadWaveFile(char* filename, IDirectSoundBuffer8** secondaryBuffer)
+bool SoundClass::LoadWaveFile(const char* filename, IDirectSoundBuffer8** secondaryBuffer)
 {
 	int error;
 	FILE* filePtr;

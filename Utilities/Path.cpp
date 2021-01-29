@@ -65,7 +65,7 @@ wstring Path::Combine(vector<wstring> paths)
 // 폴더 경로를 찾는다.
 string Path::GetDirectoryName(string path)
 {
-	String::Replace(&path, "\\", "/");
+	String::Replace(&path, "\\", "/");	
 	size_t index = path.find_last_of('/');
 
 	return path.substr(0, index + 1);

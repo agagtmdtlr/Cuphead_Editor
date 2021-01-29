@@ -76,6 +76,13 @@ void Editor::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 	{
 		auto  obj_layer = layers[selected_layer].second;		
 		auto  layer = obj_layer->layer;
+		if (ImGui::Button("Add Static Object"))
+		{
+			function<void(wstring)> f = bind(&Editor::OpenStaticObjectComplete, this, placeholders::_1);
+			Path::OpenFileDialog(L"", Path::ImageFilter, L".", f, Hwnd);
+		}
+
+
 		for (auto obj : *layer)
 		{
 			const Object_Desc & desc = obj->object_desc;
@@ -450,6 +457,19 @@ void Editor::OpenComplete(wstring name)
 	}
 
 	MessageBox(Hwnd, name.c_str(), L"Open", MB_OK);
+}
+
+void Editor::OpenStaticObjectComplete(wstring texturePath)
+{
+	if (Path::ExistFile(texturePath) == true)
+	{
+		Object_Desc desc;
+		StaticObject* object = new StaticObject(grid,texturePath,desc);
+		layers[selected_layer].second->layer->push_back(object);
+		grid->Add(object);
+	}
+
+	MessageBox(Hwnd, texturePath.c_str(), L"Open", MB_OK);
 }
 
 void Editor::SaveComplete(wstring name)

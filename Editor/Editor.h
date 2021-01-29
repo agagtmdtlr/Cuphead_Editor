@@ -130,5 +130,7 @@ private:
 
 private:
 	void OpenComplete(wstring name);
+	void OpenStaticObjectComplete(wstring texturePath);
+
 	void SaveComplete(wstring name);
 };

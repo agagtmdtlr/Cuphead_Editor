@@ -36,6 +36,8 @@ Sonic::~Sonic()
 
 	sound->Shutdown();
 	SAFE_DELETE(sound);
+
+	SAFE_DELETE(soundClass);
 }
 
 void Sonic::Update()

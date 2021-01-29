@@ -4,6 +4,8 @@
 StaticObject::StaticObject(Grid * grid_, wstring textureFile, Object_Desc desc)
 	:Object(grid_, desc)
 {
+	wstring shaderFile = Shaders + L"008_Sprite.fx";
+	sprite = new Sprite(textureFile, shaderFile);
 }
 
 StaticObject::~StaticObject()

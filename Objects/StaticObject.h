@@ -4,7 +4,6 @@
 class StaticObject : public Object
 {
 public:
-
 	StaticObject(Grid * grid_, wstring textureFile, Object_Desc desc);
 	virtual ~StaticObject();
 
@@ -19,8 +18,8 @@ public:
 
 public:
 
-	virtual void Update(D3DXMATRIX & V, D3DXMATRIX & P) = 0;
-	virtual void Render() = 0;
+	virtual void Update(D3DXMATRIX & V, D3DXMATRIX & P);
+	virtual void Render();
 
 	virtual RECT GetHitBox();
 	virtual void SetHitBox(RECT hitbox);
