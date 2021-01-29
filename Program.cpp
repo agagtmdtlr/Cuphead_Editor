@@ -62,28 +62,31 @@ void Update()
 	sizes.y *= (float)(vertical.y - vertical.x) / Height;
 
 
+	/*{
+		imPos += values->MainCamera->Position();
 
-	imPos += values->MainCamera->Position();
+		D3DXVECTOR2 mousePos = Mouse->Position();
+		mousePos.x = mousePos.x - (float)Width * 0.5f;
+		mousePos.y = (mousePos.y - (float)Height * 0.5f) * -1.0f;
 
-	D3DXVECTOR2 mousePos = Mouse->Position();
-	mousePos.x = mousePos.x - (float)Width * 0.5f;
-	mousePos.y = (mousePos.y - (float)Height * 0.5f) * -1.0f;
+		mousePos.x *= (float)(horizontal.y - horizontal.x) / Width;
+		mousePos.y *= (float)(vertical.y - vertical.x) / Height;
 
-	mousePos.x *= (float)(horizontal.y - horizontal.x) / Width;
-	mousePos.y *= (float)(vertical.y - vertical.x) / Height;
+		mousePos += values->MainCamera->Position();
 
-	mousePos += values->MainCamera->Position();
-
-	mouseInImgui = false;
-	if(mousePos.x >= imPos.x &&
-		mousePos.x <= imPos.x + sizes.x &&
-		mousePos.y <= imPos.y &&
-		mousePos.y >= imPos.y - sizes.y)
-	{
-		mouseInImgui = true;
-	}
+		mouseInImgui = false;
+		if (mousePos.x >= imPos.x &&
+			mousePos.x <= imPos.x + sizes.x &&
+			mousePos.y <= imPos.y &&
+			mousePos.y >= imPos.y - sizes.y)
+		{
+			mouseInImgui = true;
+		}
+	}*/
+	
 
 	float wheel = Mouse->Wheel();
+	mouseInImgui = ImGui::GetIO().WantCaptureMouse;
 	if (wheel != 0  && !mouseInImgui)
 	{
 		float speed = 0.25f;

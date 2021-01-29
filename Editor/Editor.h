@@ -133,4 +133,9 @@ private:
 	void OpenStaticObjectComplete(wstring texturePath);
 
 	void SaveComplete(wstring name);
+private:
+	void DragObject();
+	void AddObject(int layer_index, Object * object);
+
+	void SelectedLayerInfo();
 };
