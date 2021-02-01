@@ -29,6 +29,7 @@ struct Object_Desc
 	bool b_line_coll; // 선충돌을 적용할지
 	bool b_bound_coll; // 박스충돌을 적용할지
 
+	UINT depth;
 };
 
 
@@ -97,4 +98,12 @@ protected:
 	OBJECT_LABEL label; 
 
 	int layer_index;
+};
+
+
+class Object_Depth
+{
+	friend class Object;
+private:
+	static UINT depth;
 };

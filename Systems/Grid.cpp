@@ -90,6 +90,7 @@ Object * Grid::Pop(D3DXVECTOR2 & clickPosition)
 	// 집어오기 때문에 겹쳐있는 경우 내가 원하지 않는 이미지를 드래그하게 된다
 	// 오프젝트에 z값을 부여하여 가져오게 해야 겠다.
 	// 만약에 마우스 범위안에 존재하고 이전 이미지보다 z값이 크다면 가져온다.
+	int pop_x, pop_y;
 	for (int i = -1; i <= 1; i++)
 	{
 		for (int j = -1; j <= 1; j++)
@@ -99,10 +100,10 @@ Object * Grid::Pop(D3DXVECTOR2 & clickPosition)
 			while (cmpobject != nullptr)
 			{
 				RECT box = cmpobject->GetHitBox();
-				float left = box.left;
-				float right = box.right;
-				float bottom = box.bottom;
-				float top = box.top;
+				float left = (float)box.left;
+				float right = (float)box.right;
+				float bottom = (float)box.bottom;
+				float top = (float)box.top;
 
 				if (
 					left <= clickPosition.x
@@ -110,36 +111,42 @@ Object * Grid::Pop(D3DXVECTOR2 & clickPosition)
 					&& bottom <= clickPosition.y
 					&& top >= clickPosition.y)
 				{
-					clickedobject = cmpobject;
-
-					// update cell head
-					if (cells[cellX + i][cellY + j] == clickedobject)
+					if (clickedobject == nullptr)
 					{
-						cells[cellX + i][cellY + j] = clickedobject->next;
+						clickedobject = cmpobject;
+						pop_x = cellX + i;
+						pop_y = cellY + j;
 					}
-					// unlinking prev node
-					else if (clickedobject->prev != nullptr)
+					else if (clickedobject != nullptr &&
+						clickedobject->object_desc.depth < cmpobject->object_desc.depth)
 					{
-						clickedobject->prev->next = clickedobject->next;
+						clickedobject = cmpobject;
+						pop_x = cellX + i;
+						pop_y = cellY + j;
 					}
-					// unlinking next node
-					if (clickedobject->next != nullptr)
-					{
-						clickedobject->next->prev = clickedobject->prev;
-					}
-					out = true;
-					break;
 				}
 				cmpobject = cmpobject->next;
 			}			
-			if (out)break;
 		}
-		if (out)break;
 	}
 
 	if (clickedobject != nullptr)
 	{
-		
+		// update cell head
+		if (cells[pop_x][pop_y] == clickedobject)
+		{
+			cells[pop_x][pop_y] = clickedobject->next;
+		}
+		// unlinking prev node
+		else if (clickedobject->prev != nullptr)
+		{
+			clickedobject->prev->next = clickedobject->next;
+		}
+		// unlinking next node
+		if (clickedobject->next != nullptr)
+		{
+			clickedobject->next->prev = clickedobject->prev;
+		}
 	}
 
 	return clickedobject;

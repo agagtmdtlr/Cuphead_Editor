@@ -74,14 +74,11 @@ Player::Player(Grid* grid_, D3DXVECTOR2 position_, D3DXVECTOR2 scale_, Object_De
 	rotation = { 0,0,0 };
 	scale = scale_;
 	state = idleState;
-
-	grid->Add(this);
 }
 
 Player::~Player()
 {
 	SAFE_DELETE(animation);
-	
 }
 
 void Player::Update(D3DXMATRIX & V, D3DXMATRIX & P)

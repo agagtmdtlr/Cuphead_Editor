@@ -8,15 +8,7 @@ Editor::Editor(SceneValues * values)
 	wstring shaderFile = Shaders + L"008_Sprite.fx";
 	grid = new Grid();
 
-	{
-		Object_Desc desc;
-		desc.b_bound_coll = true;
-		desc.b_line_coll = true;
-		desc.b_render = true;
-		desc.label = OBJECT_LABEL::player;
-		desc.layer_index = 1; // add a marker layer
-		player = new Player(grid, D3DXVECTOR2(0, 0), D3DXVECTOR2(1.0f, 1.0f), desc);
-	}
+	
 
 	for (layers_n = 0; layers_n < 9; layers_n++)
 	{
@@ -110,7 +102,6 @@ void Editor::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 
 	for (Liner* liner : liners)
 		liner->Update(V_m, P_m);
-	player->Update(V_m, P_m);
 
 	for (auto obj_layer : layers)
 	{
@@ -122,7 +113,8 @@ void Editor::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 			}
 		}
 	}
-
+	
+	
 }
 
 void Editor::Render()
@@ -139,6 +131,8 @@ void Editor::Render()
 		}		
 	}
 
+	
+
 
 	for (Liner* liner : liners)
 		liner->Render();
@@ -146,7 +140,6 @@ void Editor::Render()
 	ImGui::LabelText("objects size", "%d", objects.size());
 	ImGui::LabelText("liners size", "%d", liners .size());
 
-	player->Render();
 	D3DXVECTOR2 mouse = Mouse->Position();
 	mouse.x = mouse.x - (float)Width * 0.5f;
 	mouse.y = (mouse.y - (float)Height * 0.5f) * -1.0f;
@@ -343,9 +336,7 @@ void Editor::Layer_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 						SelectLayer(n);
 				}
 			}
-			ImGui::SameLine();
-			if(layers.size() > 1)
-				ImGui::Checkbox("", &layers[n].second->visualized);
+			
 
 			// Our buttons are both drag sources and drag targets here!
 			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
@@ -371,6 +362,12 @@ void Editor::Layer_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 				}
 				ImGui::EndDragDropTarget();
 			}
+			ImGui::PopID();
+
+			ImGui::PushID(n * 2);
+			ImGui::SameLine();
+			if(layers.size() > 1)
+				ImGui::Checkbox("", &layers[n].second->visualized);
 			ImGui::PopID();
 		}
 		ImGui::Unindent();
@@ -448,6 +445,9 @@ void Editor::OpenComplete(wstring name)
 					layers[i].second->layer->push_back(obj);
 					break;
 				case OBJECT_LABEL::player:
+					obj = (Object *)new Player(grid, f_desc.position,
+						f_desc.scale, desc);					
+					layers[i].second->layer->push_back(obj);
 					break;
 				case OBJECT_LABEL::pipe_phase1:
 					break;
@@ -526,10 +526,8 @@ void Editor::SaveComplete(wstring name)
 	BinaryWriter* w = new BinaryWriter();
 	w->Open(name);	
 
-
 	// 총 레이어 개수
 	w->Int(layers.size());
-
 	
 	for (auto layer : layers)
 	{
@@ -551,13 +549,7 @@ void Editor::SaveComplete(wstring name)
 			w->Byte(&f_desc, sizeof(File_Desc));
 			w->String(path);
 		}
-
-		//w->UInt(layer.second->layer->size()); // 레이어의 오브젝트 갯수
-		// 레이어 내의 오브젝트의 정보쓰기
-		//if(save_v.size() > 0)
-		//	w->Byte(&save_v[0], sizeof(File_Desc) * layer.second->layer->size());
 	}	
-
 
 	w->Close();
 	SAFE_DELETE(w);
@@ -625,7 +617,7 @@ void Editor::SelectedLayerInfo()
 
 		ImGui::PushID(layerinfo_mode);
 		{
-			ImGui::RadioButton("Add", &layerinfo_mode, 0);
+			ImGui::RadioButton("Add", &layerinfo_mode, 0); ImGui::SameLine();
 			ImGui::RadioButton("Delete", &layerinfo_mode, 1);
 		}
 		ImGui::PopID();
@@ -659,10 +651,14 @@ void Editor::CreateSelectedObject()
 	}
 
 	if (ImGui::Button("Add Player Object"))
-	{		
-		Player * player = new Player(grid, D3DXVECTOR2(0, 0), D3DXVECTOR2(0, 0), desc);
+	{	
+		desc.b_bound_coll = true;
+		desc.b_line_coll = true;
+		desc.b_render = true;
+		desc.label = OBJECT_LABEL::player;
+		Player * player = new Player(grid, D3DXVECTOR2(0, 0), D3DXVECTOR2(1, 1), desc);
 		layers[selected_layer].second->layer->push_back(player);
-		grid->Add(player);
+		grid->Add((Object*)player);
 	}
 }
 
