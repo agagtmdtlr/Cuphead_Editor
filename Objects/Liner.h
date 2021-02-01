@@ -5,7 +5,7 @@ class Liner
 	friend class Sonic;
 public:
 	Liner();
-	Liner(class Marker* firstPoint, class Marker* secondPoint);
+	Liner(class Marker* firstPoint, class Marker* secondPoint, Object_Mode mode = Object_Mode::Editor);
 
 	virtual ~Liner();
 
@@ -49,6 +49,8 @@ private:
 
 
 private:
+	Object_Mode obj_mode;
+
 	bool bDrawBound;
 	bool bDrawCollision;
 

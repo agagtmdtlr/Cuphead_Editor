@@ -4,6 +4,12 @@
 StaticObject::StaticObject(Grid * grid_, wstring textureFile, Object_Desc desc)
 	:Object(grid_, desc)
 {
+	object_desc.b_bound_coll = false;
+	object_desc.b_line_coll = false;
+	object_desc.b_render = true;
+
+	texturePath = textureFile;
+
 	wstring shaderFile = Shaders + L"008_Sprite.fx";
 	sprite = new Sprite(textureFile, shaderFile);
 	Position(D3DXVECTOR2(0, 0));
@@ -18,7 +24,7 @@ StaticObject::~StaticObject()
 
 D3DXVECTOR2 StaticObject::Position()
 {
-	return D3DXVECTOR2();
+	return position;
 }
 
 void StaticObject::Position(D3DXVECTOR2 position_)
@@ -62,7 +68,7 @@ void StaticObject::Render()
 
 RECT StaticObject::GetHitBox()
 {
-	return RECT();
+	return sprite->BoundBox();
 }
 
 void StaticObject::SetHitBox(RECT hitbox)

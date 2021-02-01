@@ -2,8 +2,9 @@
 #include "Editor.h"
 
 Editor::Editor(SceneValues * values)
-	:edit_category(Edit_Category::Camera),values(values)
+	:edit_category(Edit_Category::Camera),values(values),clickedObject(nullptr)
 {
+	layerinfo_mode = 0;
 	wstring shaderFile = Shaders + L"008_Sprite.fx";
 	grid = new Grid();
 
@@ -14,7 +15,6 @@ Editor::Editor(SceneValues * values)
 		desc.b_render = true;
 		desc.label = OBJECT_LABEL::player;
 		desc.layer_index = 1; // add a marker layer
-		desc.texturePath = L"";
 		player = new Player(grid, D3DXVECTOR2(0, 0), D3DXVECTOR2(1.0f, 1.0f), desc);
 	}
 
@@ -61,15 +61,29 @@ Editor::~Editor()
 
 void Editor::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 {
+	if (ImGui::Button("Save Binary File"))
+	{
+		function<void(wstring)> f = bind(&Editor::SaveComplete, this, placeholders::_1);
+		Path::SaveFileDialog(L"", L"Binary\0*.bin", L"../_Binary", f, Hwnd);
+
+	}
+	if (ImGui::Button("Load Binary File"))
+	{
+		function<void(wstring)> f = bind(&Editor::OpenComplete, this, placeholders::_1);
+		Path::OpenFileDialog(L"", L"Binary\0*.bin", L"../_Binary", f, Hwnd);
+	}
+
+
 	if (ImGui::RadioButton("Camera", edit_category == Edit_Category::Camera)) { edit_category = Edit_Category::Camera; } ImGui::SameLine();
 	if (ImGui::RadioButton("Line", edit_category == Edit_Category::Line)) { edit_category = Edit_Category::Line; } ImGui::SameLine();
 	if (ImGui::RadioButton("Layer", edit_category == Edit_Category::Layer)) { edit_category = Edit_Category::Layer; }
 	
-	if (edit_category == Edit_Category::Camera)
+
+	if (edit_category == Edit_Category::Camera || Key->Press(VK_SPACE))
 		Camera_Edit(V, P);
-	if (edit_category == Edit_Category::Line)
+	else if (edit_category == Edit_Category::Line)
 		Line_Edit(V, P);
-	if (edit_category == Edit_Category::Layer)
+	else if (edit_category == Edit_Category::Layer)
 		Layer_Edit(V, P);
 
 	{
@@ -93,8 +107,7 @@ void Editor::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 	D3DXMATRIX V_m = values->MainCamera->View();
 	D3DXMATRIX P_m = values->Projection;
 
-	for (Object* object : objects)
-		object->Update(V_m, P_m);
+
 	for (Liner* liner : liners)
 		liner->Update(V_m, P_m);
 	player->Update(V_m, P_m);
@@ -126,8 +139,6 @@ void Editor::Render()
 		}		
 	}
 
-	for (Object* object : objects)
-		object->Render();
 
 	for (Liner* liner : liners)
 		liner->Render();
@@ -201,7 +212,7 @@ void Editor::Line_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 	DragObject(); // move drawed marker
 
 	// Add Marker
-	if (Key->Down(VK_SPACE) || Key->Down(VK_RBUTTON))
+	if ( Key->Down(VK_RBUTTON))
 	{
 		D3DXVECTOR2 clickPosition = ClickPosition();
 
@@ -229,7 +240,6 @@ void Editor::Line_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 		desc.b_render = false;
 		desc.label = OBJECT_LABEL::marker;
 		desc.layer_index = marker_layer; // locate a marker layer
-		desc.texturePath = L"";
 
 		Marker* marker = new Marker(grid, Shaders + L"008_Sprite.fx", clickPosition, desc);
 		objects.push_back(marker);
@@ -375,57 +385,116 @@ void Editor::OpenComplete(wstring name)
 {
 	if (Path::ExistFile(name) == true)
 	{
-		for (Object* object : objects)
+		for (auto layer : layers)
 		{
-			SAFE_DELETE(object);
+			for (auto object : *layer.second->layer)
+			{
+				SAFE_DELETE(object);
+			}
+			SAFE_DELETE(layer.second->layer);
 		}
-
 		for (Liner* liner : liners)
 		{
 			SAFE_DELETE(liner)
 		}
 
-		objects.clear();
+		layers.clear();
 		liners.clear();
 		grid->Reset();
 
+		selected_layer = -1;
+		layers_n = 0;
 		BinaryReader* r = new BinaryReader();
 		r->Open(name);
 
-		UINT count;
-		count = r->UInt();
+		int layers_size;
+		layers_size = r->Int();
 
-		vector<D3DXVECTOR2> v;
-		v.assign(count, D3DXVECTOR2());
-
-		void* ptr = (void *)&(v[0]);
-		r->Byte(&ptr, sizeof(D3DXVECTOR2) * count);
-
-
-		for (UINT i = 0; i < count; i++)
+		for (int i = 0; i < layers_size; i++)
 		{
-			Object_Desc desc;
-			Marker* marker = new Marker(grid, Shaders + L"008_Sprite.fx", v[i], desc);
-			objects.push_back(marker);
-			markerToDrawLiner.push_back(marker); // 라인에 사용할 마카
+			Objects_Layer * layer = new Objects_Layer;
+			layer->layer = new vector<Object *>;
+			layers.push_back(make_pair(i, layer));
 
-			if (markerToDrawLiner.size() >= 2)
+			UINT obj_cnt = r->UInt();
+
+			vector<File_Desc> load_vec;
+			load_vec.assign(obj_cnt, File_Desc());
+
+				
+
+
+			for (UINT j = 0; j < obj_cnt; j++)
 			{
-				auto ends = markerToDrawLiner.end();
-				--ends;
-				for (auto begin = markerToDrawLiner.begin(); begin != ends;)
-				{
-					//Liner* liner = new Liner(imsiMarkers[0], imsiMarkers[1]);
-					Marker* first = *begin;
-					begin++;
-					Marker* second = *begin;
-					Liner* liner = new Liner(first, second);
-					liners.push_back(liner);
+				File_Desc f_desc;
 
+				if (obj_cnt > 0)
+				{
+					void* ptr = (void *)&(f_desc);
+					r->Byte(&ptr, sizeof(File_Desc));
 				}
-				markerToDrawLiner.clear();
+
+				wstring texturePath;
+				texturePath = String::ToWString(r->String());
+
+				Object_Desc & desc = f_desc.desc;
+				OBJECT_LABEL & label = f_desc.desc.label;
+				Object * obj;
+				switch (label)
+				{
+				case OBJECT_LABEL::static_object:
+					obj = (Object *)new StaticObject(grid, texturePath, desc);
+					obj->Position(f_desc.position);
+					layers[i].second->layer->push_back(obj);
+					break;
+				case OBJECT_LABEL::player:
+					break;
+				case OBJECT_LABEL::pipe_phase1:
+					break;
+				case OBJECT_LABEL::pipe_phase2:
+					break;
+				case OBJECT_LABEL::pipe_phase3:
+					break;
+				case OBJECT_LABEL::pipe_phase4:
+					break;
+				case OBJECT_LABEL::marker:
+					break;
+				default:
+					break;
+				}
 			}
 		}
+
+
+
+
+
+
+
+		//for (UINT i = 0; i < count; i++)
+		//{
+		//	Object_Desc desc;
+		//	Marker* marker = new Marker(grid, Shaders + L"008_Sprite.fx", v[i], desc);
+		//	objects.push_back(marker);
+		//	markerToDrawLiner.push_back(marker); // 라인에 사용할 마카
+
+		//	if (markerToDrawLiner.size() >= 2)
+		//	{
+		//		auto ends = markerToDrawLiner.end();
+		//		--ends;
+		//		for (auto begin = markerToDrawLiner.begin(); begin != ends;)
+		//		{
+		//			//Liner* liner = new Liner(imsiMarkers[0], imsiMarkers[1]);
+		//			Marker* first = *begin;
+		//			begin++;
+		//			Marker* second = *begin;
+		//			Liner* liner = new Liner(first, second);
+		//			liners.push_back(liner);
+
+		//		}
+		//		markerToDrawLiner.clear();
+		//	}
+		//}
 
 		r->Close();
 		SAFE_DELETE(r);
@@ -439,27 +508,56 @@ void Editor::OpenStaticObjectComplete(wstring texturePath)
 	if (Path::ExistFile(texturePath) == true)
 	{
 		Object_Desc desc;
+		desc.label = OBJECT_LABEL::static_object;
+		desc.b_bound_coll = false;
+		desc.b_line_coll = false;
+		desc.b_render = true;
+		desc.layer_index = selected_layer;
 		StaticObject* object = new StaticObject(grid, texturePath, desc);
 		layers[selected_layer].second->layer->push_back(object);
 		grid->Add(object);
 	}
 
-	MessageBox(Hwnd, texturePath.c_str(), L"Open", MB_OK);
+	//MessageBox(Hwnd, texturePath.c_str(), L"Open", MB_OK);
 }
 
 void Editor::SaveComplete(wstring name)
 {
 	BinaryWriter* w = new BinaryWriter();
-	w->Open(name);
+	w->Open(name);	
 
-	vector<D3DXVECTOR2> v;
-	for (Object* object : objects)
+
+	// 총 레이어 개수
+	w->Int(layers.size());
+
+	
+	for (auto layer : layers)
 	{
-		v.push_back(object->Position());
-	}
+		vector<File_Desc> save_v;
+		w->UInt(layer.second->layer->size());
+		for (auto obj : *layer.second->layer)
+		{
+			File_Desc f_desc;
+			f_desc.desc = obj->object_desc;
 
-	w->UInt(v.size());
-	w->Byte(&v[0], sizeof(D3DXVECTOR2) * v.size());
+			f_desc.position = obj->position;
+			f_desc.scale = obj->scale;
+			f_desc.rotation = obj->rotation;
+			
+
+			save_v.push_back(f_desc);
+
+			string path = String::ToString(obj->texturePath);
+			w->Byte(&f_desc, sizeof(File_Desc));
+			w->String(path);
+		}
+
+		//w->UInt(layer.second->layer->size()); // 레이어의 오브젝트 갯수
+		// 레이어 내의 오브젝트의 정보쓰기
+		//if(save_v.size() > 0)
+		//	w->Byte(&save_v[0], sizeof(File_Desc) * layer.second->layer->size());
+	}	
+
 
 	w->Close();
 	SAFE_DELETE(w);
@@ -471,6 +569,9 @@ void Editor::SaveComplete(wstring name)
 
 void Editor::DragObject()
 {
+	if (ImGui::GetIO().WantCaptureMouse)
+		return;
+
 	// 드래그할 object 찾아서 저장하기
 	if (Key->Down(VK_LBUTTON))
 	{
@@ -488,14 +589,14 @@ void Editor::DragObject()
 	if (Key->Press(VK_LBUTTON) && clickedObject != nullptr)
 	{
 		D3DXVECTOR2 movePos = ClickPosition() - clickedStartClickedPosition;
-		clickedObject->position = movePos + StartPosition;
+		clickedObject->Position(movePos + StartPosition);
 	}
 
 	// 클릭한 object 설정 끝
 	if (Key->Up(VK_LBUTTON) && clickedObject != nullptr)
 	{
 		D3DXVECTOR2 movePos = ClickPosition() - clickedStartClickedPosition;
-		clickedObject->position = movePos + StartPosition;
+		clickedObject->Position(movePos + StartPosition);
 		grid->Add(clickedObject);
 		clickedObject = nullptr;
 	}
@@ -514,39 +615,54 @@ void Editor::SelectedLayerInfo()
 	// show selected layer info
 	if (selected_layer > -1)
 	{
-		if (ImGui::CollapsingHeader(("Layer" + to_string(layers[selected_layer].first)).c_str()))
+		ImGui::Indent();
+		if (ImGui::CollapsingHeader(("Layer" + to_string(layers[selected_layer].first)).c_str())
+			, ImGuiTreeNodeFlags_Selected
+			)
 		{
-			auto layer = *layers[selected_layer].second->layer;
-			ImGui::Text("IsItemHovered: %d", ImGui::IsItemHovered());
-			if (ImGui::Button("Add Static Object"))
-			{
-				function<void(wstring)> f = bind(&Editor::OpenStaticObjectComplete, this, placeholders::_1);
-				Path::OpenFileDialog(L"", Path::ImageFilter, L".", f, Hwnd);
-			}
-			enum Mode
-			{
-				Mode_Add,
-				Mode_Delete
-			};
-			static int mode = 0;
-			if (ImGui::RadioButton("Add", mode == Mode_Add)) { mode = Mode_Add; } ImGui::SameLine();
-			if (ImGui::RadioButton("Delete", mode == Mode_Delete)) { mode = Mode_Delete; } ImGui::SameLine();
-			if (mode == Mode_Add) // click button and add a layer vector end line
-			{
-				if (ImGui::Button("Add layer"))
-				{
-					Objects_Layer * obj_layer = new Objects_Layer;
-					obj_layer->layer = new vector<Object*>;
-					layers.push_back(make_pair(layers_n++, obj_layer));
-				}
-			}
-			for (int i = 0; i < layer.size(); i++)
-			{
-
-			}
-			for (int i = 0; i < 5; i++)
-				ImGui::Text("Some content %d", i);
 		}
+		auto layer = *layers[selected_layer].second->layer;			
+
+		ImGui::PushID(layerinfo_mode);
+		{
+			ImGui::RadioButton("Add", &layerinfo_mode, 0);
+			ImGui::RadioButton("Delete", &layerinfo_mode, 1);
+		}
+		ImGui::PopID();
+		if (layerinfo_mode == 0)
+		{
+			CreateSelectedObject();
+		}
+
+		//for (int i = 0; i < layer.size(); i++)
+		//{
+		//}
+		if (layer.size() == 0)
+		{
+			ImGui::Text("layer is empty");
+		}
+		
+		ImGui::Unindent();
+	}
+}
+
+void Editor::CreateSelectedObject()
+{
+	Object_Desc desc;
+	desc.obj_mode = Object_Mode::Editor;
+	desc.layer_index = selected_layer;
+
+	if (ImGui::Button("Add Static Object"))
+	{
+		function<void(wstring)> f = bind(&Editor::OpenStaticObjectComplete, this, placeholders::_1);
+		Path::OpenFileDialog(L"", Path::ImageFilter, L"../_Textures/cuphead/pipe/background", f, Hwnd);
+	}
+
+	if (ImGui::Button("Add Player Object"))
+	{		
+		Player * player = new Player(grid, D3DXVECTOR2(0, 0), D3DXVECTOR2(0, 0), desc);
+		layers[selected_layer].second->layer->push_back(player);
+		grid->Add(player);
 	}
 }
 

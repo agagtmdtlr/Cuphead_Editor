@@ -15,8 +15,7 @@ enum class OBJECT_LABEL
 	pipe_phase2,
 	pipe_phase3,
 	pipe_phase4,
-	marker,
-	liner
+	marker
 };
 
 
@@ -30,7 +29,6 @@ struct Object_Desc
 	bool b_line_coll; // 선충돌을 적용할지
 	bool b_bound_coll; // 박스충돌을 적용할지
 
-	wstring texturePath; // if label is static_object load image this path and  others label's variable is ""
 };
 
 
@@ -69,7 +67,8 @@ protected:
 	D3DXVECTOR2 scale;
 	D3DXVECTOR3 rotation;
 
-	
+	wstring texturePath = L""; // if label is static_object load image this path and  others label's variable is ""
+
 
 protected:
 

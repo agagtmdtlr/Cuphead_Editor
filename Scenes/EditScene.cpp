@@ -20,7 +20,6 @@ EditScene::EditScene(SceneValues * values)
 		desc.b_render = true;
 		desc.label = OBJECT_LABEL::player;
 		desc.layer_index = 1; // add a marker layer
-		desc.texturePath = L"";
 		player = new Player(grid, D3DXVECTOR2(0, 500), D3DXVECTOR2(1.0f, 1.0f), desc);
 	}
 	

@@ -5,8 +5,8 @@ class Grid
 {
 public:
 
-	static const int NUM_CELLS = 200; // 공간의 개수
-	static const int CELL_SIZE = 100; // 공간의 크기
+	static const int NUM_CELLS = 10; // 공간의 개수
+	static const int CELL_SIZE = 400; // 공간의 크기
 
 	Grid();
 

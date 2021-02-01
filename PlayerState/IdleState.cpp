@@ -72,7 +72,7 @@ void IdleState::Update(Player * player, D3DXMATRIX & V, D3DXMATRIX & P)
 	if (Key->Down('Z'))
 	{
 		player->StartJump();
-		position.y += 3;
+		position.y += 3;// 착지 판정 범위에 대한 보정
 
 	}
 

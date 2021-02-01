@@ -13,6 +13,14 @@ struct Objects_Layer
 	vector<Object*>* layer;
 };
 
+struct File_Desc
+{
+	Object_Desc desc;
+	D3DXVECTOR2 position;
+	D3DXVECTOR2 scale;
+	D3DXVECTOR3 rotation;
+};
+
 class Editor
 {
 public:
@@ -120,8 +128,8 @@ private:
 	float ctime = 0;
 	vector<D3DXVECTOR2> timesvec;
 
-
-
+private:
+	int layerinfo_mode;
 private:
 	void Camera_Edit(D3DXMATRIX &V, D3DXMATRIX &P);
 	void Line_Edit(D3DXMATRIX &V, D3DXMATRIX &P);
@@ -138,4 +146,43 @@ private:
 	void AddObject(int layer_index, Object * object);
 
 	void SelectedLayerInfo();
+
+	void CreateSelectedObject();
+	
+};
+
+class EditorMoust
+{
+	static // mouse world position;
+		D3DXVECTOR2 ClickPosition(SceneValues * values)
+	{
+		D3DXVECTOR2 mouse = Mouse->Position();
+
+		mouse.x = mouse.x - (float)Width * 0.5f;
+		mouse.y = (mouse.y - (float)Height * 0.5f) * -1.0f;
+
+		D3DXVECTOR2 camera = values->MainCamera->Position();
+		D3DXVECTOR2 position = mouse;
+
+		position.x *= (float)(horizontal.y - horizontal.x) / Width;
+		position.y *= (float)(vertical.y - vertical.x) / Height;
+
+		position += camera;
+
+		return position;
+	}
+
+	static bool MouseInWindow (SceneValues * values)
+	{
+		D3DXVECTOR2 camera = values->MainCamera->Position();
+
+		D3DXVECTOR2 mousePos = Mouse->Position();
+		mousePos.x = mousePos.x - (float)Width * 0.5f;
+		mousePos.y = (mousePos.y - (float)Height * 0.5f) * -1.0f;
+
+		mousePos.x *= (float)(horizontal.y - horizontal.x) / Width;
+		mousePos.y *= (float)(vertical.y - vertical.x) / Height;
+
+
+	}
 };

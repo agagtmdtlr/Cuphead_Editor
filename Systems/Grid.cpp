@@ -37,7 +37,7 @@ void Grid::Add(Object * object)
 		cells[cellX][cellY] = object;
 	}
 
-
+	cells[cellX][cellY] = object;
 }
 
 void Grid::Move(Object * object, D3DXVECTOR2 position)
@@ -85,48 +85,61 @@ Object * Grid::Pop(D3DXVECTOR2 & clickPosition)
 	Object* clickedobject = NULL;
 
 	bool out = false;
-
+	// 현재 문제점
+	// 렌더링 순서에 상관없이 해당 마우스 좌표에 존재하는 이미지를
+	// 집어오기 때문에 겹쳐있는 경우 내가 원하지 않는 이미지를 드래그하게 된다
+	// 오프젝트에 z값을 부여하여 가져오게 해야 겠다.
+	// 만약에 마우스 범위안에 존재하고 이전 이미지보다 z값이 크다면 가져온다.
 	for (int i = -1; i <= 1; i++)
 	{
 		for (int j = -1; j <= 1; j++)
 		{
 			Object* cmpobject = cells[cellX+i][cellY+j];
-			if (cmpobject == nullptr) continue;
-			RECT box = cmpobject->GetHitBox();
-			float left = box.left;
-			float right = box.right;
-			float bottom = box.bottom;
-			float top = box.top;
 
-			if (
-				left <= clickPosition.x
-				&& right >= clickPosition.x
-				&& bottom <= clickPosition.y
-				&& top >= clickPosition.y)
+			while (cmpobject != nullptr)
 			{
-				clickedobject = cmpobject;
+				RECT box = cmpobject->GetHitBox();
+				float left = box.left;
+				float right = box.right;
+				float bottom = box.bottom;
+				float top = box.top;
 
-				// unlinking prev node
-				if (cmpobject->prev != nullptr)
+				if (
+					left <= clickPosition.x
+					&& right >= clickPosition.x
+					&& bottom <= clickPosition.y
+					&& top >= clickPosition.y)
 				{
-					cmpobject->prev->next = cmpobject->next;
+					clickedobject = cmpobject;
+
+					// update cell head
+					if (cells[cellX + i][cellY + j] == clickedobject)
+					{
+						cells[cellX + i][cellY + j] = clickedobject->next;
+					}
+					// unlinking prev node
+					else if (clickedobject->prev != nullptr)
+					{
+						clickedobject->prev->next = clickedobject->next;
+					}
+					// unlinking next node
+					if (clickedobject->next != nullptr)
+					{
+						clickedobject->next->prev = clickedobject->prev;
+					}
+					out = true;
+					break;
 				}
-				// unlinking next node
-				if (cmpobject->next != nullptr)
-				{
-					cmpobject->next->prev = cmpobject->prev;
-				}
-				// update cell head
-				if (cells[cellX][cellY] == cmpobject)
-				{
-					cells[cellX][cellY] = cmpobject->next;
-				}
-				out = true;
-				break;
-			}
+				cmpobject = cmpobject->next;
+			}			
 			if (out)break;
 		}
 		if (out)break;
+	}
+
+	if (clickedobject != nullptr)
+	{
+		
 	}
 
 	return clickedobject;

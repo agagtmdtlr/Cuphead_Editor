@@ -7,7 +7,8 @@ Liner::Liner()
 	Initialize();
 }
 
-Liner::Liner(Marker * firstPoint, Marker * secondPoint)
+Liner::Liner(Marker * firstPoint, Marker * secondPoint, Object_Mode mode)
+	:obj_mode(mode)
 {
 	Initialize(); // 라인 쉐이더 초기화
 
@@ -20,6 +21,7 @@ Liner::Liner(Marker * firstPoint, Marker * secondPoint)
 }
 
 
+
 Liner::~Liner()
 {
 	SAFE_DELETE(shader);
@@ -28,10 +30,14 @@ Liner::~Liner()
 
 void Liner::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 {
-	if (prevFirstPos != firstMarker->position || prevSecondPos != secondMarker->position)
+	if (obj_mode == Object_Mode::Editor)
 	{
-		Draw(firstMarker, secondMarker);
+		if (prevFirstPos != firstMarker->position || prevSecondPos != secondMarker->position)
+		{
+			Draw(firstMarker, secondMarker);
+		}
 	}
+	
 
 	shader->AsMatrix("View")->SetMatrix(V);
 	shader->AsMatrix("Projection")->SetMatrix(P);

@@ -151,6 +151,30 @@ void Sprite::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 
 	shader->AsMatrix("World")->SetMatrix(world);
 	boundShader->AsMatrix("World")->SetMatrix(bound_world);
+
+	switch (renderType)
+	{
+	case RenderType::center:
+		boundbox.left = bound_position.x - scale.x * textureSize.x * 0.5f;
+		boundbox.right = bound_position.x + scale.x * bound_textureSize.x * 0.5f;
+		boundbox.bottom = bound_position.y - scale.y * bound_textureSize.y * 0.5f;
+		boundbox.top = bound_position.y + scale.y * bound_textureSize.y * 0.5f;
+		break;
+	case RenderType::left_bottom:
+		boundbox.left = bound_position.x;
+		boundbox.right = bound_position.x + scale.x * bound_textureSize.x;
+		boundbox.bottom = bound_position.y;
+		boundbox.top = bound_position.y + scale.y * bound_textureSize.y;
+		break;
+	case RenderType::center_bottom:
+		boundbox.left = bound_position.x - scale.x * bound_textureSize.x * 0.5f;
+		boundbox.right = bound_position.x + scale.x * bound_textureSize.x * 0.5f;
+		boundbox.bottom = bound_position.y;
+		boundbox.top = bound_position.y + scale.y * bound_textureSize.y;
+		break;
+	default:
+		break;
+	}
 }
 
 void Sprite::Render()

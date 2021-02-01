@@ -9,6 +9,12 @@ Player::Player(Grid* grid_, D3DXVECTOR2 position_, D3DXVECTOR2 scale_, Object_De
 	, startJumpVelocity(0.75)
 	, endJumpVelocity(0.5)
 {
+	object_desc.label = OBJECT_LABEL::player;
+	object_desc.b_bound_coll = true;
+	object_desc.b_line_coll = true;
+	object_desc.b_render = true;
+
+
 	aimState = new AimState();
 	dashState = new DashState();
 	duckState = new DuckState();
