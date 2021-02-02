@@ -12,7 +12,7 @@ class EnemyBullet : public Object
 {
 public:
 
-	EnemyBullet(Grid * grid_, Object_Desc desc);
+	EnemyBullet(Grid * grid_, Object_Desc desc, SceneValues * values);
 	virtual ~EnemyBullet();
 
 public:

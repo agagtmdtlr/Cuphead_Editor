@@ -2,8 +2,8 @@
 #include "Marker.h"
 
 
-Marker::Marker(Grid* grid_, wstring shaderFile, D3DXVECTOR2 start, Object_Desc desc)
-	:Object(grid_, desc)
+Marker::Marker(Grid* grid_, wstring shaderFile, D3DXVECTOR2 start, Object_Desc desc, SceneValues * values)
+	:Object(grid_, desc, values)
 {
 	clip = new Clip(PlayMode::Loop);
 	for (UINT i = 0; i < 7; i++)

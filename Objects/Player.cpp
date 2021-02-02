@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "Player.h"
 
-Player::Player(Grid* grid_, D3DXVECTOR2 position_, D3DXVECTOR2 scale_, Object_Desc desc, RenderType type)
-	:Object(grid_,desc)
+Player::Player(Grid* grid_, D3DXVECTOR2 position_, D3DXVECTOR2 scale_, Object_Desc desc, SceneValues * values, RenderType type)
+	:Object(grid_,desc, values)
 	,moveSpeed(400.0f), focusOffset(-180, -120), bOnGround(false), cosVel(1),
 	zDegree(0), yDegree(0), moveDir(1, 0),
 	velocity(0), gravity(-1.95f), type(type)

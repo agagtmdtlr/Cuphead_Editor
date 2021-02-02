@@ -138,6 +138,15 @@
     <ClCompile Include="Objects\Enemy.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
+    <ClCompile Include="BossState\BossState.cpp">
+      <Filter>BossState</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Boss.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Pipe_Phase1.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renders">
@@ -169,6 +178,9 @@
     </Filter>
     <Filter Include="ObjectPool">
       <UniqueIdentifier>{72fa0d70-5c9f-42a7-ac33-663ffa9f85ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BossState">
+      <UniqueIdentifier>{8dc9a30b-5f02-4a6d-a46b-c8e7cdd716c0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -315,6 +327,15 @@
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Enemy.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="BossState\BossState.h">
+      <Filter>BossState</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Boss.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Pipe_Phase1.h">
       <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>

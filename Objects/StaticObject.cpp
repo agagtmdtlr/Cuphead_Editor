@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "StaticObject.h"
 
-StaticObject::StaticObject(Grid * grid_, wstring textureFile, Object_Desc desc)
-	:Object(grid_, desc)
+StaticObject::StaticObject(Grid * grid_, wstring textureFile, Object_Desc desc, SceneValues * values)
+	:Object(grid_, desc, values)
 {
 	object_desc.b_bound_coll = false;
 	object_desc.b_line_coll = false;

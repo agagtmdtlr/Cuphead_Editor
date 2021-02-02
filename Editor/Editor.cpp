@@ -9,7 +9,7 @@ Editor::Editor(SceneValues * values)
 	grid = new Grid();
 
 
-	testObject = new Duck(grid, Object_Desc());
+	testObject = new Duck(grid, Object_Desc(), values);
 	
 
 	for (layers_n = 0; layers_n < 9; layers_n++)
@@ -29,9 +29,9 @@ Editor::Editor(SceneValues * values)
 	{
 		Object_Desc desc;
 		Marker* marker1 = new Marker(grid, Shaders + L"008_Sprite.fx",
-			D3DXVECTOR2(-300, -225), desc);
+			D3DXVECTOR2(-300, -225), desc, values);
 		Marker* marker2 = new Marker(grid, Shaders + L"008_Sprite.fx",
-			D3DXVECTOR2(300, -225), desc);
+			D3DXVECTOR2(300, -225), desc, values);
 		Liner* liner = new Liner(marker1, marker2);
 
 		objects.push_back(marker1);
@@ -236,7 +236,7 @@ void Editor::Line_Edit(D3DXMATRIX & V, D3DXMATRIX & P)
 		desc.label = OBJECT_LABEL::marker;
 		desc.layer_index = marker_layer; // locate a marker layer
 
-		Marker* marker = new Marker(grid, Shaders + L"008_Sprite.fx", clickPosition, desc);
+		Marker* marker = new Marker(grid, Shaders + L"008_Sprite.fx", clickPosition, desc, values);
 		objects.push_back(marker);
 		layers[marker_layer].second->layer->push_back(marker);
 		
@@ -445,7 +445,7 @@ void Editor::OpenComplete(wstring name)
 					break;
 				case OBJECT_LABEL::player:
 					obj = (Object *)new Player(grid, f_desc.position,
-						f_desc.scale, desc);					
+						f_desc.scale, desc,values);					
 					layers[i].second->layer->push_back(obj);
 					break;
 				case OBJECT_LABEL::pipe_phase1:
@@ -655,7 +655,7 @@ void Editor::CreateSelectedObject()
 		desc.b_line_coll = true;
 		desc.b_render = true;
 		desc.label = OBJECT_LABEL::player;
-		Player * player = new Player(grid, D3DXVECTOR2(0, 0), D3DXVECTOR2(1, 1), desc);
+		Player * player = new Player(grid, D3DXVECTOR2(0, 0), D3DXVECTOR2(1, 1), desc, values);
 		layers[selected_layer].second->layer->push_back(player);
 		grid->Add((Object*)player);
 	}

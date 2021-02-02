@@ -3,6 +3,7 @@
 class State
 {
 public:
+	State() {}
 	virtual ~State() {}
 	virtual void handleInput(class Player* player);
 	virtual void Enter(class Player* player);

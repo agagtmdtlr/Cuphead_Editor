@@ -2,10 +2,11 @@
 #include "Object.h"
 
 
-Object::Object(Grid * grid_, Object_Desc desc)
-	: grid(grid_),prev(nullptr),next(nullptr),object_desc(desc)
+Object::Object(Grid * grid_, Object_Desc desc, SceneValues * values)
+	: grid(grid_), prev(nullptr), next(nullptr), object_desc(desc)
+	,values(values)
 {
-	object_desc.depth = Object_Depth::depth++;
+	object_desc.depth = Object_Depth::depth++;	
 }
 
 Object::~Object()
@@ -39,6 +40,12 @@ RECT Object::GetHitBox()
 
 void Object::SetHitBox(RECT hitbox)
 {
+}
+
+bool Object::InScreen()
+{
+	RECT box = GetHitBox();
+	D3DXVECTOR2 camera = values->MainCamera->Position();
 }
 
 

@@ -29,7 +29,6 @@ using namespace std;
 #pragma comment(lib, "winmm.lib")
 
 //DirectWrite
-
 /*
 d2d1_2.h direct2d에 사용되는 헤더
 interface:

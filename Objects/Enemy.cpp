@@ -3,8 +3,8 @@
 
 
 
-EnemyBullet::EnemyBullet(Grid * grid_, Object_Desc desc)
-	:Object(grid_,desc)
+EnemyBullet::EnemyBullet(Grid * grid_, Object_Desc desc, SceneValues * values)
+	:Object(grid_,desc, values)
 {
 }
 

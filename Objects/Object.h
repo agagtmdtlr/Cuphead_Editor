@@ -1,5 +1,6 @@
 #pragma once
 #include "Systems/Grid.h"
+#include "Scenes/Scene.h"
 
 enum class Object_Mode
 {
@@ -41,7 +42,7 @@ class Object
 	friend class EditScene;
 public:
 
-	Object(Grid * grid_, Object_Desc desc);
+	Object(Grid * grid_, Object_Desc desc, SceneValues * values);
 	virtual ~Object();
 
 public:
@@ -63,6 +64,7 @@ public:
 
 	virtual void Set_Object_Mode(Object_Mode obj_mode) { object_desc.obj_mode = obj_mode; }
 
+	bool InScreen();
 protected:
 	D3DXVECTOR2 position;
 	D3DXVECTOR2 scale;
@@ -80,6 +82,7 @@ protected:
 	Object * prev;
 	Object * next;
 
+	SceneValues * values;
 	Object_Mode objectMode = Object_Mode::Editor;
 	// 선충돌이 유효한지 검사한다( 바닥에 닿는지, 중력을 보유하고 있는지 )
 	// 어떤 보스는 중력과 상관없이 고정된위치에서 작동하지만, 총알, 특정 적들을

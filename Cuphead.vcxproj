@@ -19,14 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BossState\BossState.cpp" />
     <ClCompile Include="Editor\Editor.cpp" />
     <ClCompile Include="ObjectPool\DuckPool.cpp" />
+    <ClCompile Include="Objects\Boss.cpp" />
     <ClCompile Include="Objects\Bullet.cpp" />
     <ClCompile Include="Objects\Duck.cpp" />
     <ClCompile Include="Objects\Enemy.cpp" />
     <ClCompile Include="Objects\Liner.cpp" />
     <ClCompile Include="Objects\Marker.cpp" />
     <ClCompile Include="Objects\Object.cpp" />
+    <ClCompile Include="Objects\Pipe_Phase1.cpp" />
     <ClCompile Include="Objects\Player.cpp" />
     <ClCompile Include="Objects\StaticObject.cpp" />
     <ClCompile Include="PlayerState\AimState.cpp" />
@@ -76,14 +79,17 @@
     <ClCompile Include="Viewer\Freedom.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BossState\BossState.h" />
     <ClInclude Include="Editor\Editor.h" />
     <ClInclude Include="ObjectPool\DuckPool.h" />
+    <ClInclude Include="Objects\Boss.h" />
     <ClInclude Include="Objects\Bullet.h" />
     <ClInclude Include="Objects\Duck.h" />
     <ClInclude Include="Objects\Enemy.h" />
     <ClInclude Include="Objects\Liner.h" />
     <ClInclude Include="Objects\Marker.h" />
     <ClInclude Include="Objects\Object.h" />
+    <ClInclude Include="Objects\Pipe_Phase1.h" />
     <ClInclude Include="Objects\Player.h" />
     <ClInclude Include="Objects\StaticObject.h" />
     <ClInclude Include="PlayerState\AimState.h" />
