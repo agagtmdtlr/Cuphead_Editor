@@ -114,6 +114,8 @@ private:
 	class Player* player;
 	vector<class Object*> objects;
 
+	Object * testObject;
+
 	// Mode to Draw Liner
 	vector<class Marker*> markerToDrawLiner;
 	vector<class Liner*> liners;

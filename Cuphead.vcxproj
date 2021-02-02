@@ -20,7 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor\Editor.cpp" />
+    <ClCompile Include="ObjectPool\DuckPool.cpp" />
     <ClCompile Include="Objects\Bullet.cpp" />
+    <ClCompile Include="Objects\Duck.cpp" />
+    <ClCompile Include="Objects\Enemy.cpp" />
     <ClCompile Include="Objects\Liner.cpp" />
     <ClCompile Include="Objects\Marker.cpp" />
     <ClCompile Include="Objects\Object.cpp" />
@@ -74,7 +77,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor\Editor.h" />
+    <ClInclude Include="ObjectPool\DuckPool.h" />
     <ClInclude Include="Objects\Bullet.h" />
+    <ClInclude Include="Objects\Duck.h" />
+    <ClInclude Include="Objects\Enemy.h" />
     <ClInclude Include="Objects\Liner.h" />
     <ClInclude Include="Objects\Marker.h" />
     <ClInclude Include="Objects\Object.h" />

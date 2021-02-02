@@ -88,9 +88,12 @@ interface:
 
 #include "Objects/Object.h" // 모든 객체는 object의 자손이다. (editor 와 모드에서 이 모든걸 관리한다)
 #include "Objects/Player.h"
+#include "Objects/Enemy.h"
 #include "Objects/Marker.h"
 #include "Objects/Liner.h"
 #include "Objects/StaticObject.h"
+
+#include "Objects/Duck.h"
 
 #include "PlayerState/PlayerState.h"
 #include "PlayerState/AimState.h"

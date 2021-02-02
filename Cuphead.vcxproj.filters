@@ -129,6 +129,15 @@
     <ClCompile Include="Objects\StaticObject.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
+    <ClCompile Include="ObjectPool\DuckPool.cpp">
+      <Filter>ObjectPool</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Duck.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Enemy.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renders">
@@ -157,6 +166,9 @@
     </Filter>
     <Filter Include="Editor">
       <UniqueIdentifier>{8baa7d55-6e37-4da9-acb9-98064f8bfd0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ObjectPool">
+      <UniqueIdentifier>{72fa0d70-5c9f-42a7-ac33-663ffa9f85ed}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -294,6 +306,15 @@
       <Filter>Editor</Filter>
     </ClInclude>
     <ClInclude Include="Objects\StaticObject.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectPool\DuckPool.h">
+      <Filter>ObjectPool</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Duck.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Enemy.h">
       <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>

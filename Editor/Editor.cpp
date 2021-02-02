@@ -8,6 +8,8 @@ Editor::Editor(SceneValues * values)
 	wstring shaderFile = Shaders + L"008_Sprite.fx";
 	grid = new Grid();
 
+
+	testObject = new Duck(grid, Object_Desc());
 	
 
 	for (layers_n = 0; layers_n < 9; layers_n++)
@@ -47,7 +49,7 @@ Editor::~Editor()
 		SAFE_DELETE(layer.second->layer); // delete dynamic object vector
 		SAFE_DELETE(layer.second); // delete dynamic object_layer struct
 	}
-
+	
 	SAFE_DELETE(grid);
 }
 
@@ -114,7 +116,7 @@ void Editor::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 		}
 	}
 	
-	
+	testObject->Update(V_m,P_m);
 }
 
 void Editor::Render()
@@ -131,7 +133,7 @@ void Editor::Render()
 		}		
 	}
 
-	
+	testObject->Render();
 
 
 	for (Liner* liner : liners)
@@ -416,10 +418,7 @@ void Editor::OpenComplete(wstring name)
 			UINT obj_cnt = r->UInt();
 
 			vector<File_Desc> load_vec;
-			load_vec.assign(obj_cnt, File_Desc());
-
-				
-
+			load_vec.assign(obj_cnt, File_Desc());	
 
 			for (UINT j = 0; j < obj_cnt; j++)
 			{

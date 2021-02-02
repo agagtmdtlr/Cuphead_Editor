@@ -34,8 +34,9 @@ void Sprite::Initialize(wstring spriteFile, wstring shaderFile, float startX, fl
 	Position(0, 0);
 	Scale(1, 1);
 	Rotation(0, 0, 0);	
-	D3DXMatrixIdentity(&world);
+	BoundPosition(0, 0);
 
+	D3DXMatrixIdentity(&world);
 
 	HRESULT hr;
 	D3DX11_IMAGE_INFO info;
@@ -129,19 +130,18 @@ void Sprite::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 	{
 	case RenderType::center:
 		D3DXMatrixTranslation(&T, position.x, position.y, 0.0f);
-		D3DXMatrixTranslation(&bound_T, position.x, position.y, 0.0f);
+		D3DXMatrixTranslation(&bound_T, bound_position.x + position.x,
+			bound_position.y + position.y, 0.0f);
 		break;
 	case RenderType::left_bottom:
-		//position.x = position.x + xDir.x + yDir.x;
-		//position.y = position.y + xDir.y + yDir.y;
 		D3DXMatrixTranslation(&T, position.x + xDir.x + yDir.x, position.y + xDir.y + yDir.y, 0.0f);
-		D3DXMatrixTranslation(&bound_T, position.x + xDir.x + yDir.x, position.y + xDir.y + yDir.y, 0.0f);
+		D3DXMatrixTranslation(&bound_T, bound_position.x + position.x + xDir.x + yDir.x, 
+			bound_position.y + position.y + xDir.y + yDir.y, 0.0f);
 		break;
 	case RenderType::center_bottom:
 		D3DXMatrixTranslation(&T, position.x + yDir.x, position.y + yDir.y, 0.0f);
-		D3DXMatrixTranslation(&bound_T, position.x + yDir.x, position.y + yDir.y, 0.0f);
-
-		//position.y = position.y + xDir.y + yDir.y;		
+		D3DXMatrixTranslation(&bound_T, bound_position.x + position.x + yDir.x, 
+			bound_position.y + position.y + yDir.y, 0.0f);
 		break;
 	default:
 		break;
@@ -152,29 +152,7 @@ void Sprite::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 	shader->AsMatrix("World")->SetMatrix(world);
 	boundShader->AsMatrix("World")->SetMatrix(bound_world);
 
-	switch (renderType)
-	{
-	case RenderType::center:
-		boundbox.left = bound_position.x - scale.x * textureSize.x * 0.5f;
-		boundbox.right = bound_position.x + scale.x * bound_textureSize.x * 0.5f;
-		boundbox.bottom = bound_position.y - scale.y * bound_textureSize.y * 0.5f;
-		boundbox.top = bound_position.y + scale.y * bound_textureSize.y * 0.5f;
-		break;
-	case RenderType::left_bottom:
-		boundbox.left = bound_position.x;
-		boundbox.right = bound_position.x + scale.x * bound_textureSize.x;
-		boundbox.bottom = bound_position.y;
-		boundbox.top = bound_position.y + scale.y * bound_textureSize.y;
-		break;
-	case RenderType::center_bottom:
-		boundbox.left = bound_position.x - scale.x * bound_textureSize.x * 0.5f;
-		boundbox.right = bound_position.x + scale.x * bound_textureSize.x * 0.5f;
-		boundbox.bottom = bound_position.y;
-		boundbox.top = bound_position.y + scale.y * bound_textureSize.y;
-		break;
-	default:
-		break;
-	}
+	UpdateBoundBox();
 }
 
 void Sprite::Render()
@@ -376,7 +354,9 @@ void Sprite::CreateBound()
 		assert(SUCCEEDED(hr));
 	}
 
-	switch (renderType)
+	UpdateBoundBox();
+
+	/*switch (renderType)
 	{
 	case RenderType::center:
 		boundbox.left = bound_position.x - scale.x * textureSize.x * 0.5f;
@@ -398,8 +378,35 @@ void Sprite::CreateBound()
 		break;
 	default:
 		break;
-	}
+	}*/
 
+}
+
+void Sprite::UpdateBoundBox()
+{
+	switch (renderType)
+	{
+	case RenderType::center:
+		boundbox.left = position.x - scale.x * textureSize.x * 0.5f + bound_position.x;
+		boundbox.right = position.x + scale.x * bound_textureSize.x * 0.5f + bound_position.x;
+		boundbox.bottom = position.y - scale.y * bound_textureSize.y * 0.5f + bound_position.y;
+		boundbox.top = position.y + scale.y * bound_textureSize.y * 0.5f + bound_position.y;
+		break;
+	case RenderType::left_bottom:
+		boundbox.left = position.x + bound_position.x;
+		boundbox.right = position.x + scale.x * bound_textureSize.x + bound_position.x;
+		boundbox.bottom = position.y + bound_position.y;
+		boundbox.top = position.y + scale.y * bound_textureSize.y + bound_position.y;
+		break;
+	case RenderType::center_bottom:
+		boundbox.left = position.x - scale.x * bound_textureSize.x * 0.5f + bound_position.x;
+		boundbox.right = position.x + scale.x * bound_textureSize.x * 0.5f + bound_position.x;
+		boundbox.bottom = position.y + bound_position.y;
+		boundbox.top = position.y + scale.y * bound_textureSize.y + bound_position.y;
+		break;
+	default:
+		break;
+	}
 }
 
 void Sprite::Position(float x, float y)
@@ -424,9 +431,26 @@ void Sprite::Position(D3DXVECTOR2 & vec)
 		break;
 	}*/
 	position = vec;
+}
+
+void Sprite::BoundPosition(float x, float y)
+{
+	BoundPosition(D3DXVECTOR2(x, y));
+}
+
+void Sprite::BoundPosition(D3DXVECTOR2 & vec)
+{
 	bound_position = vec;
+}
 
+void Sprite::BoundTextureSize(float x, float y)
+{
+	BoundTextureSize(D3DXVECTOR2(x, y));
+}
 
+void Sprite::BoundTextureSize(D3DXVECTOR2 & vec)
+{
+	bound_textureSize = vec;
 }
 
 void Sprite::Scale(float x, float y)
@@ -438,7 +462,6 @@ void Sprite::Scale(D3DXVECTOR2 & vec)
 {
 	scale = vec;
 	bound_scale = vec;
-
 }
 
 void Sprite::Rotation(float x, float y, float z)
@@ -450,7 +473,6 @@ void Sprite::Rotation(D3DXVECTOR3 & vec)
 {
 	rotation = vec;
 	bound_rotation = vec;
-
 }
 
 void Sprite::RotationDegree(float x, float y, float z)

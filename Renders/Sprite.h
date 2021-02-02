@@ -49,10 +49,19 @@ private:
 private:
 	void CreateBound();
 
+	void UpdateBoundBox();
+
 public:
 	void Position(float x, float y);
 	void Position(D3DXVECTOR2& vec);
 	D3DXVECTOR2 Position() { return position; }
+
+	void BoundPosition(float x, float y);
+	void BoundPosition(D3DXVECTOR2& vec);
+	D3DXVECTOR2 BoundPosition() { return bound_position; }
+
+	void BoundTextureSize(float x, float y);
+	void BoundTextureSize(D3DXVECTOR2 & vec);
 
 	void Scale(float x, float y);
 	void Scale(D3DXVECTOR2& vec);
@@ -69,6 +78,8 @@ public:
 	D3DXVECTOR2 TextureSize() { return textureSize; }
 
 	D3DXMATRIX World() { return world; }
+
+
 
 private:
 	void Initialize(wstring spriteFile, wstring shaderFile, float startX, float startY, float endX, float endY);

@@ -41,17 +41,17 @@ class Object
 	friend class EditScene;
 public:
 
-	Object(Grid * grid_ , Object_Desc desc );
+	Object(Grid * grid_, Object_Desc desc);
 	virtual ~Object();
 
 public:
 
-	virtual D3DXVECTOR2 Position() = 0;
-	virtual void Position(D3DXVECTOR2) = 0;
-	virtual D3DXVECTOR2 Scale() = 0;
-	virtual void Scale(D3DXVECTOR2) = 0;
-	virtual D3DXVECTOR3 Rotation() = 0;
-	virtual void Rotation(D3DXVECTOR3) = 0;
+	virtual D3DXVECTOR2 Position() { return position; }
+	virtual void Position(D3DXVECTOR2);
+	virtual D3DXVECTOR2 Scale() { return scale; }
+	virtual void Scale(D3DXVECTOR2);
+	virtual D3DXVECTOR3 Rotation() { return rotation; }
+	virtual void Rotation(D3DXVECTOR3);
 
 public:
 
@@ -61,7 +61,7 @@ public:
 	virtual RECT GetHitBox();
 	virtual void SetHitBox(RECT hitbox);
 
-	void Set_Object_Mode(Object_Mode obj_mode) { object_desc.obj_mode = obj_mode; }
+	virtual void Set_Object_Mode(Object_Mode obj_mode) { object_desc.obj_mode = obj_mode; }
 
 protected:
 	D3DXVECTOR2 position;
