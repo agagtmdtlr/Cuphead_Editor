@@ -20,6 +20,22 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BossState\BossState.cpp" />
+    <ClCompile Include="BossState\Phase1_AttackState.cpp" />
+    <ClCompile Include="BossState\Phase1_DeathState.cpp" />
+    <ClCompile Include="BossState\Phase1_IdleState.cpp" />
+    <ClCompile Include="BossState\Phase1_IntroState.cpp" />
+    <ClCompile Include="BossState\Phase2_AttackState.cpp" />
+    <ClCompile Include="BossState\Phase2_DeathState.cpp" />
+    <ClCompile Include="BossState\Phase2_IdleState.cpp" />
+    <ClCompile Include="BossState\Phase2_IntroState.cpp" />
+    <ClCompile Include="BossState\Phase3_AttackState.cpp" />
+    <ClCompile Include="BossState\Phase3_DeathState.cpp" />
+    <ClCompile Include="BossState\Phase3_IdleState.cpp" />
+    <ClCompile Include="BossState\Phase3_IntroState.cpp" />
+    <ClCompile Include="BossState\Phase4_AttackState.cpp" />
+    <ClCompile Include="BossState\Phase4_DeathState.cpp" />
+    <ClCompile Include="BossState\Phase4_IdleState.cpp" />
+    <ClCompile Include="BossState\Phase4_IntroState.cpp" />
     <ClCompile Include="Editor\Editor.cpp" />
     <ClCompile Include="ObjectPool\DuckPool.cpp" />
     <ClCompile Include="Objects\Boss.cpp" />
@@ -80,6 +96,22 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BossState\BossState.h" />
+    <ClInclude Include="BossState\Phase1_AttackState.h" />
+    <ClInclude Include="BossState\Phase1_DeathState.h" />
+    <ClInclude Include="BossState\Phase1_IdleState.h" />
+    <ClInclude Include="BossState\Phase1_IntroState.h" />
+    <ClInclude Include="BossState\Phase2_AttackState.h" />
+    <ClInclude Include="BossState\Phase2_DeathState.h" />
+    <ClInclude Include="BossState\Phase2_IdleState.h" />
+    <ClInclude Include="BossState\Phase2_IntroState.h" />
+    <ClInclude Include="BossState\Phase3_AttackState.h" />
+    <ClInclude Include="BossState\Phase3_DeathState.h" />
+    <ClInclude Include="BossState\Phase3_IdleState.h" />
+    <ClInclude Include="BossState\Phase3_IntroState.h" />
+    <ClInclude Include="BossState\Phase4_AttackState.h" />
+    <ClInclude Include="BossState\Phase4_DeathState.h" />
+    <ClInclude Include="BossState\Phase4_IdleState.h" />
+    <ClInclude Include="BossState\Phase4_IntroState.h" />
     <ClInclude Include="Editor\Editor.h" />
     <ClInclude Include="ObjectPool\DuckPool.h" />
     <ClInclude Include="Objects\Boss.h" />

@@ -8,4 +8,10 @@ public:
 
 	virtual void Update(D3DXMATRIX & V, D3DXMATRIX & P) = 0;
 	virtual void Render() = 0;
+
+protected:
+	// intro, idle , attack , death
+	BossState * state[4];
+
+	int Hp;
 };

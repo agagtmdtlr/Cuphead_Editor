@@ -147,6 +147,54 @@
     <ClCompile Include="Objects\Pipe_Phase1.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
+    <ClCompile Include="BossState\Phase1_IntroState.cpp">
+      <Filter>BossState</Filter>
+    </ClCompile>
+    <ClCompile Include="BossState\Phase1_AttackState.cpp">
+      <Filter>BossState</Filter>
+    </ClCompile>
+    <ClCompile Include="BossState\Phase1_IdleState.cpp">
+      <Filter>BossState</Filter>
+    </ClCompile>
+    <ClCompile Include="BossState\Phase1_DeathState.cpp">
+      <Filter>BossState</Filter>
+    </ClCompile>
+    <ClCompile Include="BossState\Phase2_AttackState.cpp">
+      <Filter>BossState</Filter>
+    </ClCompile>
+    <ClCompile Include="BossState\Phase2_DeathState.cpp">
+      <Filter>BossState</Filter>
+    </ClCompile>
+    <ClCompile Include="BossState\Phase2_IdleState.cpp">
+      <Filter>BossState</Filter>
+    </ClCompile>
+    <ClCompile Include="BossState\Phase2_IntroState.cpp">
+      <Filter>BossState</Filter>
+    </ClCompile>
+    <ClCompile Include="BossState\Phase3_AttackState.cpp">
+      <Filter>BossState</Filter>
+    </ClCompile>
+    <ClCompile Include="BossState\Phase3_DeathState.cpp">
+      <Filter>BossState</Filter>
+    </ClCompile>
+    <ClCompile Include="BossState\Phase3_IdleState.cpp">
+      <Filter>BossState</Filter>
+    </ClCompile>
+    <ClCompile Include="BossState\Phase3_IntroState.cpp">
+      <Filter>BossState</Filter>
+    </ClCompile>
+    <ClCompile Include="BossState\Phase4_AttackState.cpp">
+      <Filter>BossState</Filter>
+    </ClCompile>
+    <ClCompile Include="BossState\Phase4_DeathState.cpp">
+      <Filter>BossState</Filter>
+    </ClCompile>
+    <ClCompile Include="BossState\Phase4_IdleState.cpp">
+      <Filter>BossState</Filter>
+    </ClCompile>
+    <ClCompile Include="BossState\Phase4_IntroState.cpp">
+      <Filter>BossState</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renders">
@@ -337,6 +385,54 @@
     </ClInclude>
     <ClInclude Include="Objects\Pipe_Phase1.h">
       <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="BossState\Phase1_IdleState.h">
+      <Filter>BossState</Filter>
+    </ClInclude>
+    <ClInclude Include="BossState\Phase1_AttackState.h">
+      <Filter>BossState</Filter>
+    </ClInclude>
+    <ClInclude Include="BossState\Phase1_DeathState.h">
+      <Filter>BossState</Filter>
+    </ClInclude>
+    <ClInclude Include="BossState\Phase1_IntroState.h">
+      <Filter>BossState</Filter>
+    </ClInclude>
+    <ClInclude Include="BossState\Phase2_AttackState.h">
+      <Filter>BossState</Filter>
+    </ClInclude>
+    <ClInclude Include="BossState\Phase2_DeathState.h">
+      <Filter>BossState</Filter>
+    </ClInclude>
+    <ClInclude Include="BossState\Phase2_IdleState.h">
+      <Filter>BossState</Filter>
+    </ClInclude>
+    <ClInclude Include="BossState\Phase2_IntroState.h">
+      <Filter>BossState</Filter>
+    </ClInclude>
+    <ClInclude Include="BossState\Phase3_AttackState.h">
+      <Filter>BossState</Filter>
+    </ClInclude>
+    <ClInclude Include="BossState\Phase3_DeathState.h">
+      <Filter>BossState</Filter>
+    </ClInclude>
+    <ClInclude Include="BossState\Phase3_IdleState.h">
+      <Filter>BossState</Filter>
+    </ClInclude>
+    <ClInclude Include="BossState\Phase3_IntroState.h">
+      <Filter>BossState</Filter>
+    </ClInclude>
+    <ClInclude Include="BossState\Phase4_AttackState.h">
+      <Filter>BossState</Filter>
+    </ClInclude>
+    <ClInclude Include="BossState\Phase4_DeathState.h">
+      <Filter>BossState</Filter>
+    </ClInclude>
+    <ClInclude Include="BossState\Phase4_IdleState.h">
+      <Filter>BossState</Filter>
+    </ClInclude>
+    <ClInclude Include="BossState\Phase4_IntroState.h">
+      <Filter>BossState</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

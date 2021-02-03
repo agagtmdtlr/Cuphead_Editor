@@ -105,6 +105,23 @@ interface:
 #include "PlayerState/ParryState.h"
 #include "PlayerState/RunState.h"
 
+#include "BossState/BossState.h"
+#include "BossState/Phase1_IdleState.h"
+#include "BossState/Phase1_IntroState.h"
+#include "BossState/Phase1_AttackState.h"
+#include "BossState/Phase1_DeathState.h"
+#include "BossState/Phase2_IdleState.h"
+#include "BossState/Phase2_IntroState.h"
+#include "BossState/Phase2_AttackState.h"
+#include "BossState/Phase2_DeathState.h"
+#include "BossState/Phase3_IdleState.h"
+#include "BossState/Phase3_IntroState.h"
+#include "BossState/Phase3_AttackState.h"
+#include "BossState/Phase3_DeathState.h"
+#include "BossState/Phase4_IdleState.h"
+#include "BossState/Phase4_IntroState.h"
+#include "BossState/Phase4_AttackState.h"
+#include "BossState/Phase4_DeathState.h"
 
 enum Edit_Mode
 {
