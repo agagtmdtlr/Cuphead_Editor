@@ -46,6 +46,8 @@ bool Object::InScreen()
 {
 	RECT box = GetHitBox();
 	D3DXVECTOR2 camera = values->MainCamera->Position();
+
+	return false;
 }
 
 

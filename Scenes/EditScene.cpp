@@ -20,7 +20,7 @@ EditScene::EditScene(SceneValues * values)
 		desc.b_render = true;
 		desc.label = OBJECT_LABEL::player;
 		desc.layer_index = 1; // add a marker layer
-		player = new Player(grid, D3DXVECTOR2(0, 500), D3DXVECTOR2(1.0f, 1.0f), desc);
+		player = new Player(grid, D3DXVECTOR2(0, 500), D3DXVECTOR2(1.0f, 1.0f), desc, values);
 	}
 	
 
@@ -29,9 +29,9 @@ EditScene::EditScene(SceneValues * values)
 	Object_Desc desc;
 	{
 		Marker* marker1 = new Marker(grid, Shaders + L"008_Sprite.fx",
-			D3DXVECTOR2(-300, -225), desc);
+			D3DXVECTOR2(-300, -225), desc, values);
 		Marker* marker2 = new Marker(grid, Shaders + L"008_Sprite.fx",
-			D3DXVECTOR2(300, -225), desc);
+			D3DXVECTOR2(300, -225), desc, values);
 		Liner* liner = new Liner(marker1, marker2);
 
 		objects.push_back(marker1);

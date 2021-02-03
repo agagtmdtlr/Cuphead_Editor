@@ -9,6 +9,7 @@ public:
 	Duck(Grid * grid_, Object_Desc desc, SceneValues * values);
 	~Duck();
 	void Update(D3DXMATRIX & V, D3DXMATRIX & P) override;
+	bool bUpdate(D3DXMATRIX & V, D3DXMATRIX & P);
 	void Render() override;
 
 	bool InUse() { return inUse; }
@@ -34,6 +35,7 @@ private:
 	Duck * ducks[6];
 	Duck * nextSpawnDuck;
 	float createTime;
+	float waitTime;
 
 public:
 	DuckPool(Grid * grid_, Object_Desc desc, SceneValues * values);
@@ -41,4 +43,6 @@ public:
 
 	void Update(D3DXMATRIX & V, D3DXMATRIX & P) override;
 	void Render() override;
+
+	void Create();
 };

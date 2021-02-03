@@ -113,15 +113,9 @@ void Duck::Render()
 	}
 }
 
-bool Duck::InUse()
-{
-	return false;
-}
 
-bool Duck::InScreen()
-{
-	return false;
-}
+
+
 
 void Duck::SetHitBox(RECT hitbox)
 {
@@ -130,19 +124,19 @@ void Duck::SetHitBox(RECT hitbox)
 // DuckPool
 ///////////////////////////////////////////////////////////////
 DuckPool::DuckPool(Grid * grid_, Object_Desc desc, SceneValues * values)
-	:Object(grid_, desc)
+	:Object(grid_, desc, values), waitTime(0), createTime(5.0f)
 {
 	Object_Desc duck_desc;
 
-	ducks[0] = new Duck(grid, duck_desc);
+	ducks[0] = new Duck(grid, duck_desc, values);
 
 	for (int i = 1; i < 6-1; i++)
 	{
-		ducks[i] = new Duck(grid, duck_desc);
+		ducks[i] = new Duck(grid, duck_desc, values);
 		ducks[i]->next = ducks[i + 1];
 	}
 
-	ducks[5] = new Duck(grid, duck_desc);
+	ducks[5] = new Duck(grid, duck_desc, values);
 	ducks[5]->next = nullptr;
 }
 
@@ -154,10 +148,17 @@ DuckPool::~DuckPool()
 
 void DuckPool::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 {
+	waitTime += Timer->Elapsed();
+	if (waitTime >= createTime)
+	{
+		waitTime = 0;
+		Create();
+	}
+
 	for (int i = 0; i < 6; i++)
 	{
-		if (ducks[i]->InUse())
-			ducks[i]->Update(V, P);
+		if(bUpdate(x &))
+
 	}
 }
 
@@ -168,4 +169,9 @@ void DuckPool::Render()
 		if (ducks[i]->InUse())
 			ducks[i]->Render();
 	}
+}
+
+void DuckPool::Create()
+{
+	Duck * next = nextSpawnDuck->next;
 }

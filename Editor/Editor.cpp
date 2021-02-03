@@ -439,7 +439,7 @@ void Editor::OpenComplete(wstring name)
 				switch (label)
 				{
 				case OBJECT_LABEL::static_object:
-					obj = (Object *)new StaticObject(grid, texturePath, desc);
+					obj = (Object *)new StaticObject(grid, texturePath, desc, values);
 					obj->Position(f_desc.position);
 					layers[i].second->layer->push_back(obj);
 					break;
@@ -512,7 +512,7 @@ void Editor::OpenStaticObjectComplete(wstring texturePath)
 		desc.b_line_coll = false;
 		desc.b_render = true;
 		desc.layer_index = selected_layer;
-		StaticObject* object = new StaticObject(grid, texturePath, desc);
+		StaticObject* object = new StaticObject(grid, texturePath, desc, values);
 		layers[selected_layer].second->layer->push_back(object);
 		grid->Add(object);
 	}
@@ -560,26 +560,29 @@ void Editor::SaveComplete(wstring name)
 
 void Editor::DragObject()
 {
-	if (ImGui::GetIO().WantCaptureMouse)
+	if (ImGui::GetIO().WantCaptureMouse) // 마우스 드래그는 imgui창 내에서는 작동하지 않는다.
 		return;
 
 	// 드래그할 object 찾아서 저장하기
 	if (Key->Down(VK_LBUTTON))
 	{
-		D3DXVECTOR2 position = ClickPosition();
-
+		D3DXVECTOR2 position = ClickPosition(); // 현재 클릭한 마우스 위치
+		// winapi 좌표계 좌상단(0,0)에서 screen 가운데를 (0,0)으로 변환한 마우스 좌표이다.
+		// 객체가 존재하는 공간에서 마우스 위치에 객체가 존재하면 해당 객체를 반환한다.
 		clickedObject = grid->Pop(position);
-		if (clickedObject != nullptr)
+		if (clickedObject != nullptr) // 가져온 객체가 존재한다면
 		{
-			clickedStartClickedPosition = position;
-			StartPosition = clickedObject->Position();
+			clickedStartClickedPosition = position; // 클릭 위치를 드래그의 시작위치로 지정
+			StartPosition = clickedObject->Position(); //  처음 객체의 위치 저장
 		}
 	}
 
 	// 클릭한 object 드래그 하기
 	if (Key->Press(VK_LBUTTON) && clickedObject != nullptr)
 	{
+		// 마우스의 이동 벡터 ( 현재 마우스 위치 - 처음 마우스 위치 )
 		D3DXVECTOR2 movePos = ClickPosition() - clickedStartClickedPosition;
+		// 이동 벡터 + 처음 객체 위치로 객체 이동
 		clickedObject->Position(movePos + StartPosition);
 	}
 
@@ -588,7 +591,9 @@ void Editor::DragObject()
 	{
 		D3DXVECTOR2 movePos = ClickPosition() - clickedStartClickedPosition;
 		clickedObject->Position(movePos + StartPosition);
+		// 이동한 객체를 다시 공간에 담는다
 		grid->Add(clickedObject);
+		// 클린되어있는 객체를 비운다.
 		clickedObject = nullptr;
 	}
 }

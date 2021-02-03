@@ -316,7 +316,7 @@ void Sonic::OpenComplete(wstring name)
 		for (UINT i = 0; i < count; i++)
 		{
 			Object_Desc desc;
-			Marker* marker = new Marker(grid, Shaders + L"008_Sprite.fx", v[i], desc);
+			Marker* marker = new Marker(grid, Shaders + L"008_Sprite.fx", v[i], desc, values);
 			objects.push_back(marker);
 			markerToDrawLiner.push_back(marker); // 라인에 사용할 마카
 
