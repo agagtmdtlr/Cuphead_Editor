@@ -105,6 +105,9 @@ interface:
 #include "PlayerState/ParryState.h"
 #include "PlayerState/RunState.h"
 
+#include "Objects/Boss.h"
+#include "Objects/Pipe_Phase1.h"
+
 #include "BossState/BossState.h"
 #include "BossState/Phase1_IdleState.h"
 #include "BossState/Phase1_IntroState.h"

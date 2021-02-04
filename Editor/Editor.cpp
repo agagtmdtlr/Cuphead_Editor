@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Editor.h"
 
+BossState * state;
+
 Editor::Editor(SceneValues * values)
 	:edit_category(Edit_Category::Camera),values(values),clickedObject(nullptr)
 {
@@ -9,6 +11,7 @@ Editor::Editor(SceneValues * values)
 	grid = new Grid();
 
 
+	state = new Phase2_IntroState();
 	testObject = new Duck(grid, Object_Desc(), values);
 	
 
@@ -117,6 +120,7 @@ void Editor::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 	}
 	
 	testObject->Update(V_m,P_m);
+	state->Update(nullptr, V_m, P_m);
 }
 
 void Editor::Render()
@@ -134,6 +138,7 @@ void Editor::Render()
 	}
 
 	testObject->Render();
+	state->Render();
 
 
 	for (Liner* liner : liners)

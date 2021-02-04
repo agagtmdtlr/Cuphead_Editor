@@ -155,11 +155,11 @@ void DuckPool::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 		Create();
 	}
 
-	for (int i = 0; i < 6; i++)
-	{
-		if(bUpdate(x &))
+	//for (int i = 0; i < 6; i++)
+	//{
+	//	if(bUpdate(x &))
 
-	}
+	//}
 }
 
 void DuckPool::Render()

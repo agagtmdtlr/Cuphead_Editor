@@ -11,7 +11,7 @@ public:
 
 protected:
 	// intro, idle , attack , death
-	BossState * state[4];
+	class BossState * state[4];
 
 	int Hp;
 };

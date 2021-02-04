@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "BossState/BossState.h"
 
+BossState::~BossState()
+{
+	SAFE_DELETE(animation);
+}
+
 void BossState::handleInput(Boss * boss)
 {
 }

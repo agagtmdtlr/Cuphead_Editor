@@ -153,7 +153,7 @@ void Clip::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 				currentFrame++;
 
 				if (currentFrame >= frames.size())
-					Stop();
+					currentFrame = frames.size() - 1;
 			}
 			break;
 
