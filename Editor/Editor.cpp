@@ -126,6 +126,7 @@ void Editor::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 void Editor::Render()
 {
 	ImGui::Text(to_string(layers.size()).c_str());
+	
 	for (auto obj_layer : layers)
 	{
 		if (obj_layer.second->visualized == true)
@@ -137,8 +138,8 @@ void Editor::Render()
 		}		
 	}
 
-	testObject->Render();
-	state->Render();
+	//testObject->Render();
+	//state->Render();
 
 
 	for (Liner* liner : liners)
@@ -644,7 +645,22 @@ void Editor::SelectedLayerInfo()
 		}
 		
 		ImGui::Unindent();
+
+		auto & layer = *layers[selected_layer].second->layer;
+		for (int i = 0; i< layer.size(); i++)
+		{
+			D3DXVECTOR2 pos = layer[i]->Position();
+			ImGui::Text("object : x : %3f : y : %3f", pos.x, pos.y);
+
+			bool b_reverse = false;
+			ImGui::Checkbox("reverse Image", &b_reverse);
+
+			if (b_reverse == true)
+				layer[i]->Rotation({ 0,0,180 });
+		}
 	}
+
+	
 }
 
 void Editor::CreateSelectedObject()
@@ -656,7 +672,7 @@ void Editor::CreateSelectedObject()
 	if (ImGui::Button("Add Static Object"))
 	{
 		function<void(wstring)> f = bind(&Editor::OpenStaticObjectComplete, this, placeholders::_1);
-		Path::OpenFileDialog(L"", Path::ImageFilter, L"../_Textures/cuphead/pipe/background", f, Hwnd);
+		Path::OpenFileDialog(L"", Path::ImageFilter, L"../_Textures/cuphead/pipe/", f, Hwnd);
 	}
 
 	if (ImGui::Button("Add Player Object"))

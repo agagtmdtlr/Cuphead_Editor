@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Phase2_IntroState.h"
 
-float position;
 
 Phase2_IntroState::Phase2_IntroState()
 {
@@ -12,8 +11,8 @@ Phase2_IntroState::Phase2_IntroState()
 	head_rise_animation = new Animation();
 	wstring shaderPath = Shaders + L"008_Sprite.fx";
 	{
-		Clip* clip = new Clip(PlayMode::End);
-		for (int i = 1; i < 25; i++)
+		Clip* clip = new Clip(PlayMode::Loop);
+		/*for (int i = 1; i < 25; i++)
 		{
 			wstring image_path = Textures + L"cuphead/pipe/phase2/Intro/clown_helium_intro_";
 			image_path += (i < 10 ? L"000" + to_wstring(i) : L"00" + to_wstring(i)) + L".png";
@@ -24,7 +23,14 @@ Phase2_IntroState::Phase2_IntroState()
 			wstring image_path = Textures + L"cuphead/pipe/phase2/Idle/body/clown_helium_idle_";
 			image_path += (i < 10 ? L"000" + to_wstring(i) : L"00" + to_wstring(i)) + L".png";
 			clip->AddFrame(new Sprite(image_path, shaderPath, RenderType::center_bottom), 0.05f);
+		}*/
+		for (int i = 1; i < 25; i++)
+		{
+			wstring image_path = Textures + L"cuphead/pipe/phase2/Pipe/clown_helium_pipes_";
+			image_path += (i < 10 ? L"000" + to_wstring(i) : L"00" + to_wstring(i)) + L".png";
+			clip->AddFrame(new Sprite(image_path, shaderPath, RenderType::center_bottom), 0.05f);
 		}
+
 
 		animation->AddClip(clip);
 	}	
@@ -55,14 +61,14 @@ Phase2_IntroState::Phase2_IntroState()
 		}
 		platform->AddClip(clip);
 	}
-	platform->Position(0, -300);
+	platform->Position(0, -200);
 	platform->Scale(1, 1);
 	platform->Rotation(0, 0, 0);
 
 	platform->Play(0);
 
 
-	animation->Position(0, -200);
+	animation->Position(350, -200);
 	animation->Scale(1, 1);
 	animation->Rotation(0, 0, 0);
 
@@ -86,7 +92,7 @@ void Phase2_IntroState::Enter(Boss * boss)
 
 void Phase2_IntroState::Update(Boss * boss, D3DXMATRIX & V, D3DXMATRIX & P)
 {
-	platform->Position(0,position);
+	platform->Position(0,-200-135);
 	platform->Update(V, P);
 	animation->Update(V, P);
 
@@ -107,5 +113,4 @@ void Phase2_IntroState::Render()
 	}
 	animation->Render();
 
-	ImGui::SliderFloat("pos", &position, -500.0f, 0.0f);
 }
