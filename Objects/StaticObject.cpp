@@ -57,6 +57,8 @@ void StaticObject::Rotation(D3DXVECTOR3 rotation_)
 
 void StaticObject::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 {
+	sprite->Position(position);
+	sprite->Rotation(rotation);
 	sprite->Update(V, P);
 }
 

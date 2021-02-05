@@ -26,11 +26,33 @@ void Object::Scale(D3DXVECTOR2 scale_)
 	scale = scale_;
 }
 
-
-
 void Object::Rotation(D3DXVECTOR3 rotation_)
 {
 	rotation = rotation_;
+}
+
+void Object::RotationDegree(float x, float y, float z)
+{
+	RotationDegree(D3DXVECTOR3(x, y, z));
+}
+
+void Object::RotationDegree(D3DXVECTOR3 & vec)
+{
+	vec.x = Math::ToRadian(vec.x);
+	vec.y = Math::ToRadian(vec.y);
+	vec.z = Math::ToRadian(vec.z);
+
+	Rotation(vec);
+}
+
+D3DXVECTOR3 Object::RotationDegree()
+{
+	D3DXVECTOR3 vec;
+	vec.x = Math::ToDegree(rotation.x);
+	vec.y = Math::ToDegree(rotation.y);
+	vec.z = Math::ToDegree(rotation.z);
+
+	return vec;
 }
 
 RECT Object::GetHitBox()
