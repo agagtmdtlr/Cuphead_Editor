@@ -53,6 +53,9 @@ public:
 	virtual void Scale(D3DXVECTOR2);
 	virtual D3DXVECTOR3 Rotation() { return rotation; }
 	virtual void Rotation(D3DXVECTOR3);
+	virtual void RotationDegree(float x, float y, float z);
+	virtual void RotationDegree(D3DXVECTOR3 & vec);
+	virtual D3DXVECTOR3 RotationDegree();
 
 public:
 

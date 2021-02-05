@@ -646,17 +646,26 @@ void Editor::SelectedLayerInfo()
 		
 		ImGui::Unindent();
 
-		auto & layer = *layers[selected_layer].second->layer;
+		//auto layer = layers[selected_layer].second->layer;
 		for (int i = 0; i< layer.size(); i++)
 		{
+			ImGui::PushID(i + (i + 1) * 3);
 			D3DXVECTOR2 pos = layer[i]->Position();
+			D3DXVECTOR3 ro = layer[i]->Rotation();
+
 			ImGui::Text("object : x : %3f : y : %3f", pos.x, pos.y);
+			ImGui::Text("ro : x : %3f : y : %3f", ro.x, ro.y);
 
 			bool b_reverse = false;
 			ImGui::Checkbox("reverse Image", &b_reverse);
 
 			if (b_reverse == true)
-				layer[i]->Rotation({ 0,0,180 });
+				
+				layer[i]->RotationDegree(D3DXVECTOR3( 0,180.0f,0) );
+			//else
+				//layer[i]->Rotation({ 0,0,0 });
+			ImGui::PopID();
+
 		}
 	}
 
