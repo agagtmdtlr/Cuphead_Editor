@@ -12,6 +12,6 @@ public:
 protected:
 	// intro, idle , attack , death
 	class BossState * state[4];
-
+	int currentState; // 현재 상태
 	int Hp;
 };

@@ -163,6 +163,8 @@ extern Time* Timer;
 extern D3DXVECTOR2 horizontal;
 extern D3DXVECTOR2 vertical;
 
+extern D3DXVECTOR2 Wall;
+
 
 
 

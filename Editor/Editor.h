@@ -99,6 +99,7 @@ private:
 	const int marker_layer = 0;// marker always render topper other rendering object;
 	//const int line_layer = 1; // liner always render second top other rendering object;
 
+	// check collide space
 	Grid* grid;
 
 private:

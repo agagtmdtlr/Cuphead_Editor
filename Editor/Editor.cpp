@@ -3,6 +3,8 @@
 
 BossState * state;
 
+D3DXVECTOR2 Wall;
+
 Editor::Editor(SceneValues * values)
 	:edit_category(Edit_Category::Camera),values(values),clickedObject(nullptr)
 {
@@ -11,7 +13,7 @@ Editor::Editor(SceneValues * values)
 	grid = new Grid();
 
 
-	state = new Phase2_IntroState();
+	state = new Phase1_IntroState();
 	testObject = new Duck(grid, Object_Desc(), values);
 	
 
@@ -58,6 +60,8 @@ Editor::~Editor()
 
 void Editor::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 {
+
+	Wall = { horizontal.x, horizontal.y};
 	if (ImGui::Button("Save Binary File"))
 	{
 		function<void(wstring)> f = bind(&Editor::SaveComplete, this, placeholders::_1);

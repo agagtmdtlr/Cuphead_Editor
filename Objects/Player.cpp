@@ -33,34 +33,6 @@ Player::Player(Grid* grid_, D3DXVECTOR2 position_, D3DXVECTOR2 scale_, Object_De
 	//rendertype
 	this->type = RenderType::center;
 
-	Clip* clip;
-	//Idle
-	{
-		clip = new Clip(PlayMode::Loop);
-		clip->AddFrame(new Sprite(spriteFile, shaderFile, 4, 2, 34, 40 , type), 0.3f);
-		clip->AddFrame(new Sprite(spriteFile, shaderFile, 35, 2, 64, 40,type), 0.3f);
-		clip->AddFrame(new Sprite(spriteFile, shaderFile, 64, 2, 94, 40,type), 0.3f);
-		animation->AddClip(clip);
-	}
-
-	//Run
-	{
-		clip = new Clip(PlayMode::Loop);
-		clip->AddFrame(new Sprite(spriteFile, shaderFile, 0, 600, 32, 640, type), 0.1f);
-		clip->AddFrame(new Sprite(spriteFile, shaderFile, 33, 600, 64, 640, type), 0.1f);
-		clip->AddFrame(new Sprite(spriteFile, shaderFile, 65, 600, 96, 640, type), 0.1f);
-		clip->AddFrame(new Sprite(spriteFile, shaderFile, 97, 600, 124, 640, type), 0.1f);
-		clip->AddFrame(new Sprite(spriteFile, shaderFile, 125, 600, 154, 640, type), 0.1f);
-		clip->AddFrame(new Sprite(spriteFile, shaderFile, 158, 600, 188, 640, type), 0.1f);
-		clip->AddFrame(new Sprite(spriteFile, shaderFile, 191, 600, 222, 640, type), 0.1f);
-		clip->AddFrame(new Sprite(spriteFile, shaderFile, 224, 600, 258, 640, type), 0.1f);
-		clip->AddFrame(new Sprite(spriteFile, shaderFile, 259, 600, 294, 640, type), 0.1f);
-		clip->AddFrame(new Sprite(spriteFile, shaderFile, 295, 600, 326, 640, type), 0.1f);
-		clip->AddFrame(new Sprite(spriteFile, shaderFile, 329, 600, 360, 640, type), 0.1f);
-		clip->AddFrame(new Sprite(spriteFile, shaderFile, 362, 600, 393, 640, type), 0.1f);
-		animation->AddClip(clip);
-	}
-
 	animation = idleState->animation;
 
 	animation->Rotation(0, 0, 0);
