@@ -17,7 +17,7 @@ public:
 
 	Object* Pop(D3DXVECTOR2 & clickPosition);
 
-
+	bool Remove(Object* object);
 
 private:
 	Object* cells[NUM_CELLS][NUM_CELLS];

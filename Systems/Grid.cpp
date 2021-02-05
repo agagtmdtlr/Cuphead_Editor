@@ -42,11 +42,11 @@ void Grid::Add(Object * object)
 
 void Grid::Move(Object * object, D3DXVECTOR2 position)
 {
-	int oldCellX = (int)(int)((object->position.x + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
-	int oldCellY = (int)(int)((object->position.y + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
+	int oldCellX = (int)((object->position.x + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
+	int oldCellY = (int)((object->position.y + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
 
-	int cellX = (int)(int)((position.x + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
-	int cellY = (int)(int)((position.y + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
+	int cellX = (int)((position.x + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
+	int cellY = (int)((position.y + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
 
 	object->position = position;
 
@@ -150,4 +150,30 @@ Object * Grid::Pop(D3DXVECTOR2 & clickPosition)
 	}
 
 	return clickedobject;
+}
+
+bool Grid::Remove(Object * object)
+{
+	D3DXVECTOR2 position = object->Position();
+	int cellX = (int)((position.x + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
+	int cellY = (int)((position.y + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
+
+	// update cell head
+	if (cells[cellX][cellY] == object)
+	{
+		cells[cellX][cellY] = object->next;
+	}
+	// unlinking prev node
+	else if (object->prev != nullptr)
+	{
+		object->prev->next = object->next;
+	}
+	// unlinking next node
+	if (object->next != nullptr)
+	{
+		object->next->prev = object->prev;
+	}
+
+	return true;
+
 }

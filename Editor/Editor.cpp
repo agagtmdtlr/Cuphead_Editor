@@ -138,8 +138,8 @@ void Editor::Render()
 		}		
 	}
 
-	//testObject->Render();
-	//state->Render();
+	testObject->Render();
+	state->Render();
 
 
 	for (Liner* liner : liners)
