@@ -13,7 +13,7 @@ Editor::Editor(SceneValues * values)
 	grid = new Grid();
 
 
-	state = new Phase1_IntroState();
+	state = new Phase2_IntroState();
 	testObject = new Duck(grid, Object_Desc(), values);
 	
 
@@ -23,10 +23,8 @@ Editor::Editor(SceneValues * values)
 		obj_layer->layer = new vector<Object*>;
 		layers.push_back(make_pair(layers_n, obj_layer));
 	}
-
-	grid = new Grid();
-
-	
+	layers[1].second->layer->push_back(testObject);
+	grid->Add(testObject);
 
 	backGround = new Sprite(Textures + L"cuphead/pipe/background/clown_bg_track.png", shaderFile);
 	backGround->Position(0, -300);
@@ -123,7 +121,6 @@ void Editor::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 		}
 	}
 	
-	testObject->Update(V_m,P_m);
 	state->Update(nullptr, V_m, P_m);
 }
 
@@ -142,7 +139,6 @@ void Editor::Render()
 		}		
 	}
 
-	testObject->Render();
 	state->Render();
 
 
@@ -434,13 +430,14 @@ void Editor::OpenComplete(wstring name)
 			{
 				File_Desc f_desc;
 
-				if (obj_cnt > 0)
+				if (obj_cnt > 0) // object 의 file_desc를 읽어온다.
 				{
 					void* ptr = (void *)&(f_desc);
 					r->Byte(&ptr, sizeof(File_Desc));
 				}
 
 				wstring texturePath;
+				// object의 texturepath를 불러온다.
 				texturePath = String::ToWString(r->String());
 
 				Object_Desc & desc = f_desc.desc;
@@ -661,11 +658,17 @@ void Editor::SelectedLayerInfo()
 			ImGui::Text("ro : x : %3f : y : %3f", ro.x, ro.y);
 
 			bool b_reverse = false;
-			ImGui::Checkbox("reverse Image", &b_reverse);
+			b_reverse = ImGui::Button("reverse Image");
+
 
 			if (b_reverse == true)
+			{
+				D3DXVECTOR3 obj_rotation = layer[i]->RotationDegree();
+				obj_rotation.y = abs(obj_rotation.y - 180.0f);
+				layer[i]->RotationDegree(obj_rotation);
+			}
 				
-				layer[i]->RotationDegree(D3DXVECTOR3( 0,180.0f,0) );
+				
 			//else
 				//layer[i]->Rotation({ 0,0,0 });
 			ImGui::PopID();

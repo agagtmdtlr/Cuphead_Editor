@@ -34,6 +34,7 @@ void Object::Rotation(D3DXVECTOR3 rotation_)
 void Object::RotationDegree(float x, float y, float z)
 {
 	RotationDegree(D3DXVECTOR3(x, y, z));
+
 }
 
 void Object::RotationDegree(D3DXVECTOR3 & vec)
@@ -71,6 +72,8 @@ bool Object::InScreen()
 
 	return false;
 }
+
+
 
 
 //////////////////////////

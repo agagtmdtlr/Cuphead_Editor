@@ -28,6 +28,7 @@ void Sprite::Initialize(wstring spriteFile, wstring shaderFile, float startX, fl
 	shader = new Shader(shaderFile);
 	boundShader = new Shader(Shaders + L"15_Bounding.fx");
 
+
 	srv = Sprites::Load(spriteFile);
 	shader->AsShaderResource("Map")->SetResource(srv);
 
@@ -206,10 +207,16 @@ bool Sprite::AABB(Sprite * a, D3DXVECTOR2 & position)
 	float xScale = a->scale.y * a->TextureSize().x * 0.5f;
 	float yScale = a->scale.y * a->TextureSize().y * 0.5f;
 
-	float left = a->position.x - xScale;
+	RECT box = a->BoundBox();
+
+	/*float left = a->position.x - xScale;
 	float right = a->position.x + xScale;
 	float bottom = a->position.y - yScale;
-	float top = a->position.y + yScale;
+	float top = a->position.y + yScale;*/
+	float left = box.left;
+	float right = box.right;
+	float bottom = box.bottom;
+	float top = box.top;
 
 	bool b = true;
 	b &= position.x > left;
@@ -224,19 +231,32 @@ bool Sprite::AABB(Sprite * a, Sprite * b)
 {
 	float xScale = a->scale.y * a->TextureSize().x * 0.5f;
 	float yScale = a->scale.y * a->TextureSize().y * 0.5f;
+	
+	RECT boxA = a->BoundBox();
 
-	float leftA = a->position.x - xScale;
+	/*float leftA = a->position.x - xScale;
 	float rightA = a->position.x + xScale;
 	float bottomA = a->position.y - yScale;
-	float topA = a->position.y + yScale;
+	float topA = a->position.y + yScale;*/
+	float leftA = boxA.left;
+	float rightA = boxA.right;
+	float bottomA = boxA.bottom;
+	float topA = boxA.top;
+
 
 	xScale = b->scale.y * b->TextureSize().x * 0.5f;
 	yScale = b->scale.y * b->TextureSize().y * 0.5f;
 
-	float leftB = b->position.x - xScale;
+	RECT boxB = b->BoundBox();
+
+	/*float leftB = b->position.x - xScale;
 	float rightB = b->position.x + xScale;
 	float bottomB = b->position.y - yScale;
-	float topB = b->position.y + yScale;
+	float topB = b->position.y + yScale;*/
+	float leftB = boxB.left;
+	float rightB = boxB.right;
+	float bottomB = boxB.bottom;
+	float topB = boxB.top;
 
 	bool bCheck = true;
 	bCheck &= leftA < rightB;
@@ -384,6 +404,9 @@ void Sprite::CreateBound()
 
 void Sprite::UpdateBoundBox()
 {
+
+	D3DXVECTOR2 xDir = D3DXVECTOR2(world._11, world._12) * 0.5;
+	D3DXVECTOR2 yDir = D3DXVECTOR2(world._21, world._22) * 0.5;
 	switch (renderType)
 	{
 	case RenderType::center:
@@ -395,14 +418,15 @@ void Sprite::UpdateBoundBox()
 	case RenderType::left_bottom:
 		boundbox.left = position.x + bound_position.x;
 		boundbox.right = position.x + scale.x * bound_textureSize.x + bound_position.x;
-		boundbox.bottom = position.y + bound_position.y;
-		boundbox.top = position.y + scale.y * bound_textureSize.y + bound_position.y;
+		//
+		boundbox.bottom = position.y + bound_position.y + xDir.y + yDir.y - scale.y * bound_textureSize.y * 0.5;
+		boundbox.top = position.y + bound_position.y + xDir.y + yDir.y + scale.y * bound_textureSize.y * 0.5;
 		break;
 	case RenderType::center_bottom:
 		boundbox.left = position.x - scale.x * bound_textureSize.x * 0.5f + bound_position.x;
 		boundbox.right = position.x + scale.x * bound_textureSize.x * 0.5f + bound_position.x;
-		boundbox.bottom = position.y + bound_position.y;
-		boundbox.top = position.y + scale.y * bound_textureSize.y + bound_position.y;
+		boundbox.bottom = position.y + bound_position.y + xDir.y + yDir.y - scale.y * bound_textureSize.y * 0.5;
+		boundbox.top = position.y + bound_position.y + xDir.y + yDir.y + scale.y * bound_textureSize.y * 0.5;
 		break;
 	default:
 		break;

@@ -15,7 +15,7 @@ public:
 	bool InUse() { return inUse; }
 
 	
-
+	virtual RECT GetHitBox();
 	virtual void SetHitBox(RECT hitbox) override;
 
 

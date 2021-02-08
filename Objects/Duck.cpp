@@ -16,7 +16,7 @@ Duck::Duck(Grid * grid_, Object_Desc desc, SceneValues * values)
 				i * 150, 0, i * 150 + 150, 400,
 				RenderType::left_bottom);
 			sprite->BoundTextureSize(150, 100);
-			sprite->BoundPosition(0, -150);
+			sprite->BoundPosition(-50, -150);
 			clip->AddFrame(sprite, 0.1f);
 		}
 		
@@ -105,6 +105,11 @@ void Duck::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 	
 }
 
+bool Duck::bUpdate(D3DXMATRIX & V, D3DXMATRIX & P)
+{
+	return false;
+}
+
 void Duck::Render()
 {
 	if (inUse)
@@ -116,6 +121,11 @@ void Duck::Render()
 
 
 
+
+RECT Duck::GetHitBox()
+{
+	return animation->GetSprite()->BoundBox();
+}
 
 void Duck::SetHitBox(RECT hitbox)
 {

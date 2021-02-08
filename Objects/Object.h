@@ -57,6 +57,8 @@ public:
 	virtual void RotationDegree(D3DXVECTOR3 & vec);
 	virtual D3DXVECTOR3 RotationDegree();
 
+	
+
 public:
 
 	virtual void Update(D3DXMATRIX & V, D3DXMATRIX & P) = 0;
@@ -68,6 +70,8 @@ public:
 	virtual void Set_Object_Mode(Object_Mode obj_mode) { object_desc.obj_mode = obj_mode; }
 
 	bool InScreen();
+
+	
 protected:
 	D3DXVECTOR2 position;
 	D3DXVECTOR2 scale;

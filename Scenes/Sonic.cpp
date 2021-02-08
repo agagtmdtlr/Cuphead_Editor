@@ -24,6 +24,19 @@ Sonic::Sonic(SceneValues * values)
 	//soundClass->Initialize(Hwnd);
 	//
 	editor = new Editor(values);	
+
+	shaderFile = Shaders + L"001_Screen.fx";
+	screenfx = new Clip(PlayMode::Loop);
+	for (int i = 1; i < 127; i++)
+	{
+		wstring texturepth = Textures + L"cuphead/common/screen_fx/cuphead_screen_fx_";
+		texturepth += (i < 100 ? (i < 10 ? L"000" + to_wstring(i) : L"00" + to_wstring(i)) : L"0" + to_wstring(i));
+		texturepth += L".png";
+		screenfx->AddFrame(new Sprite(texturepth, shaderFile), 0.07f);
+	}
+	screenfx->Scale(Width / 1024.0f, Height / 512.0f);
+
+	screenfx->Play();
 }
 
 Sonic::~Sonic()
@@ -198,6 +211,7 @@ void Sonic::Update()
 				player->moveDir = { 1, 0 };
 			}
 		}
+
 	}
 	
 
@@ -208,6 +222,8 @@ void Sonic::Update()
 
 	backGround->Update(V, P);
 	editor->Update(V, P);
+	screenfx->Update(V, P);
+
 }
 
 void Sonic::Render()
@@ -227,6 +243,7 @@ void Sonic::Render()
 	}*/
 
 	editor->Render();
+	screenfx->Render();
 	
 	//ImGui::SliderInt("Volume", &vol, -10000, 0);
 	//sound2->SetVolume(vol);

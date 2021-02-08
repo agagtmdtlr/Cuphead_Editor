@@ -72,6 +72,8 @@ private:
 
 	Sprite* backGround;
 
+	Clip * screenfx;
+
 	class Player* player;
 	vector<class Object*> objects;
 

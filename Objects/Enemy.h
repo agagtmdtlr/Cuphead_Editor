@@ -16,19 +16,14 @@ public:
 	virtual ~EnemyBullet();
 
 public:
-
-	virtual D3DXVECTOR2 Position() override;
-	virtual void Position(D3DXVECTOR2) override;
-	virtual D3DXVECTOR2 Scale() override;
-	virtual void Scale(D3DXVECTOR2) override;
-	virtual D3DXVECTOR3 Rotation() override;
-	virtual void Rotation(D3DXVECTOR3) override;
-
+	
 public:
 
 	virtual void Update(D3DXMATRIX & V, D3DXMATRIX & P) override;
 	virtual void Render() override;
 
+	virtual void Parry(EnemyParry val) { parry = val; }
+	virtual EnemyParry Parry() { return parry; }
 protected:
 	// distinguish this enemy bullet is can parry or not
 	EnemyParry parry = EnemyParry::normal;

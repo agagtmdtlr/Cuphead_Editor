@@ -19,6 +19,13 @@ public:
 
 	bool Remove(Object* object);
 
+	virtual void HandleMelee();
+	virtual void HandleCell(int x, int y);
+	virtual void HandleUnit(Object * unit, Object * other);
+
+	bool distance(Object * unit, Object * other);
+	bool HandleAttack(Object * unit, Object * other);
+
 private:
 	Object* cells[NUM_CELLS][NUM_CELLS];
 };

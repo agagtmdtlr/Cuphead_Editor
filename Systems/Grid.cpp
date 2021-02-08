@@ -177,3 +177,66 @@ bool Grid::Remove(Object * object)
 	return true;
 
 }
+
+void Grid::HandleMelee()
+{
+	for (int x = 0; x < NUM_CELLS; x++)
+	{
+		for (int y = 0; y < NUM_CELLS; y++)
+		{
+			HandleCell(x,y);
+		}
+	}
+}
+
+void Grid::HandleCell(int x, int y)
+{
+	Object * unit = cells[x][y];
+
+	while (unit != nullptr)
+	{
+		HandleUnit(unit, unit->next);
+		if (x > 0) HandleUnit(unit, cells[x - 1][y]); // À­Ä­
+		if (y > 0) HandleUnit(unit, cells[x][y - 1]); //  ¿ÞÄ±
+		if (x > 0 && y > 0) HandleUnit(unit, cells[x - 1][y - 1]); // ¿ÞÂÊ »ç¼±
+		if (x > 0 && y > NUM_CELLS - 1) HandleUnit(unit, cells[x - 1][y + 1]); // ¿À¸¥ÂÊ »ç¼±
+		unit = unit->next;
+	}
+}
+
+void Grid::HandleUnit(Object * unit, Object * other)
+{
+	while (other != nullptr)
+	{
+		if (distance(unit, other))
+		{
+			HandleAttack(unit, other);
+		}
+		other = other->next;
+	}
+}
+
+bool Grid::distance(Object * unit, Object * other)
+{
+	bool result = false;
+	if (unit->object_desc.b_bound_coll && other->object_desc.b_bound_coll)
+	{
+		RECT boxA = unit->GetHitBox();
+		RECT boxB = other->GetHitBox();
+
+		if (boxA.left <= boxB.right &&
+			boxA.right >= boxB.left &&
+			boxA.bottom <= boxB.top &&
+			boxA.top >= boxB.bottom)
+		{
+			result = true;
+		}
+	}
+
+	return result;
+}
+
+bool Grid::HandleAttack(Object * unit, Object * other)
+{
+	return false;
+}
