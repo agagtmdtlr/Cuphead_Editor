@@ -13,5 +13,5 @@ public:
 	virtual void Update(D3DXMATRIX & V, D3DXMATRIX & P) override;
 	virtual void Render() override;
 
-	
+	virtual RECT GetHitBox();
 };

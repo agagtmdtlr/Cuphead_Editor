@@ -16,7 +16,7 @@ Duck::Duck(Grid * grid_, Object_Desc desc, SceneValues * values)
 				i * 150, 0, i * 150 + 150, 400,
 				RenderType::left_bottom);
 			sprite->BoundTextureSize(150, 100);
-			sprite->BoundPosition(-50, -150);
+			sprite->BoundPosition(0, -150);
 			clip->AddFrame(sprite, 0.1f);
 		}
 		

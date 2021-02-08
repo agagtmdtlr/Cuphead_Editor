@@ -11,6 +11,7 @@ public:
 	virtual void Render();
 
 private:
+	bool introEnd = false;
 	float intro_time;
 	float animate_time;
 };

@@ -9,6 +9,8 @@ public:
 	virtual void Enter(class Boss* boss);
 	virtual void Update(class Boss* boss, D3DXMATRIX & V, D3DXMATRIX & P);
 	virtual void Render();
+
+	virtual Sprite * GetSprite() { return animation->GetSprite(); }
 protected:
 	Animation* animation;	
 };

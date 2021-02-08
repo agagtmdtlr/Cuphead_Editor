@@ -14,7 +14,7 @@ Editor::Editor(SceneValues * values)
 
 
 	state = new Phase2_IntroState();
-	testObject = new Duck(grid, Object_Desc(), values);
+	testObject = new Pipe_Phase1(grid,Object_Desc(),values);
 	
 
 	for (layers_n = 0; layers_n < 9; layers_n++)

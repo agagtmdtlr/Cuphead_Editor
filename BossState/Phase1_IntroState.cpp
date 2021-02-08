@@ -40,6 +40,8 @@ Phase1_IntroState::Phase1_IntroState()
 
 	animation->Play(0);
 
+	intro_time = 0.05f;
+	animate_time = 0;
 }
 
 Phase1_IntroState::~Phase1_IntroState()
@@ -49,17 +51,31 @@ Phase1_IntroState::~Phase1_IntroState()
 
 void Phase1_IntroState::handleInput(Boss * boss)
 {
-	if (animate_time >= intro_time)
+	if (introEnd == true) // 인트로가 끝났다.
 	{
+		boss->currentState = 1; // Idle state로 변경한다.
+		boss->state[boss->currentState]->Enter(boss);
 	}
 }
 
 void Phase1_IntroState::Enter(Boss * boss)
 {
+	BossState::Enter(boss);
+	animate_time = 0;
+	introEnd = false;
 }
 
 void Phase1_IntroState::Update(Boss * boss, D3DXMATRIX & V, D3DXMATRIX & P)
 {
+	if (animation->GetClip()->CurrentFrame() >= 31) // animation 현재프레임이 마지막인가?
+	{
+		if (intro_time <= animate_time) // 마지막 프레임 재생시간이 끝났는가.
+		{
+			introEnd = true;  // 재생이 끝났음
+		}
+		animate_time += Timer->Elapsed();
+	}
+
 	animation->Update(V, P);
 }
 
