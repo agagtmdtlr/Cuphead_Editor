@@ -10,15 +10,19 @@ void OnAirState::handleInput(Player * player)
 	State * newState = NULL;
 
 	// OnAirState
-	if (player->bOnGround == true) // landed on ground
+	if (player->isDamaged == true)
+	{
+		newState = (State*)player->damageState;
+	}
+	else if (player->bOnGround == true) // landed on ground
 	{
 		newState = (State*)player->idleState;
 	}	
-	else if (Key->Down('Z'))
+	else if (Key->Down('Z') && player->isCanParry)
 	{
 		newState = (State*)player->parryState;
 	}
-	else if (Key->Down(VK_LSHIFT)) // DashState
+	else if (Key->Down(VK_LSHIFT) && player->isCanDash) // DashState
 	{
 		newState = (State*)player->dashState;
 	}

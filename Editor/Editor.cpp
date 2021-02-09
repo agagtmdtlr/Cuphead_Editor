@@ -13,18 +13,31 @@ Editor::Editor(SceneValues * values)
 	grid = new Grid();
 
 
-	state = new Phase2_IntroState();
-	testObject = new Pipe_Phase1(grid,Object_Desc(),values);
+	//state = new Phase2_IntroState();
 	
-
 	for (layers_n = 0; layers_n < 9; layers_n++)
 	{
 		Objects_Layer* obj_layer = new Objects_Layer;
-		obj_layer->layer = new vector<Object*>;
+		obj_layer->layer = new vector<Object*>;	
 		layers.push_back(make_pair(layers_n, obj_layer));
 	}
+
+	{
+		Object_Desc desc;
+		desc.b_bound_coll = true;
+		testObject = new Pipe_Phase1(grid, Object_Desc(), values);
+	}
+
+	{
+		Object_Desc desc;
+		desc.obj_mode = Object_Mode::Play;
+		player = new Player(grid, D3DXVECTOR2(0, 0), D3DXVECTOR2(1, 1), desc, values);
+	}
+
 	layers[1].second->layer->push_back(testObject);
 	grid->Add(testObject);
+	layers[1].second->layer->push_back(player);
+	grid->Add(player);
 
 	backGround = new Sprite(Textures + L"cuphead/pipe/background/clown_bg_track.png", shaderFile);
 	backGround->Position(0, -300);
@@ -120,8 +133,10 @@ void Editor::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 			}
 		}
 	}
+
+	grid->HandleMelee();
 	
-	state->Update(nullptr, V_m, P_m);
+	//state->Update(nullptr, V_m, P_m);
 }
 
 void Editor::Render()
@@ -139,7 +154,8 @@ void Editor::Render()
 		}		
 	}
 
-	state->Render();
+	//state->Render();
+	
 
 
 	for (Liner* liner : liners)
@@ -540,7 +556,8 @@ void Editor::SaveComplete(wstring name)
 		vector<File_Desc> save_v;
 		w->UInt(layer.second->layer->size());
 		for (auto obj : *layer.second->layer)
-		{
+		{ // 각 object에 대한 정보 저장 File_Desc and TexturePath(존재할수도 있고 없을수도 있음 : 얿을경우 길이는 0 )
+			
 			File_Desc f_desc;
 			f_desc.desc = obj->object_desc;
 
@@ -550,9 +567,10 @@ void Editor::SaveComplete(wstring name)
 			
 
 			save_v.push_back(f_desc);
-
 			string path = String::ToString(obj->texturePath);
+			// 고정 크기 데이터 먼저 저장
 			w->Byte(&f_desc, sizeof(File_Desc));
+			// 가변길이 데이터 나중에 저장
 			w->String(path);
 		}
 	}	
@@ -654,6 +672,7 @@ void Editor::SelectedLayerInfo()
 			D3DXVECTOR2 pos = layer[i]->Position();
 			D3DXVECTOR3 ro = layer[i]->Rotation();
 
+			ImGui::Text("object size : %d", sizeof(*layer[i]));
 			ImGui::Text("object : x : %3f : y : %3f", pos.x, pos.y);
 			ImGui::Text("ro : x : %3f : y : %3f", ro.x, ro.y);
 

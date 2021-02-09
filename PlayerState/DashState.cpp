@@ -39,7 +39,11 @@ void DashState::handleInput(Player * player)
 	State * newState = NULL;
 
 	// OnAirState
-	if (dashCurrentTime < dashEndTime)
+	if (player->isDamaged == true)
+	{
+		newState = (State*)player->damageState;
+	}
+	else if (dashCurrentTime < dashEndTime)
 	{
 		newState = (State*)player->dashState;
 	}
@@ -77,6 +81,8 @@ void DashState::Enter(Player * player)
 	player->animation = animation;
 
 	dashCurrentTime = 0;
+
+	player->isCanDash = false;
 }
 
 void DashState::Update(Player * player, D3DXMATRIX & V, D3DXMATRIX & P)

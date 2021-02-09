@@ -73,6 +73,14 @@ bool Object::InScreen()
 	return false;
 }
 
+void Object::BoundCollision(Object_Desc & desc)
+{
+}
+
+void Object::LineCollision(D3DXVECTOR2 & vec)
+{
+}
+
 
 
 

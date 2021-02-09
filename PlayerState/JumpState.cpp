@@ -53,6 +53,7 @@ void JumpState::Update(Player * player, D3DXMATRIX & V, D3DXMATRIX & P)
 		player->EndJump();
 	}
 
+
 	if (Key->Press(VK_LEFT))
 	{
 		bMove = true;

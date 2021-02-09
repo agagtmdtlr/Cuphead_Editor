@@ -195,6 +195,12 @@
     <ClCompile Include="BossState\Phase4_IntroState.cpp">
       <Filter>BossState</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerState\DamageState.cpp">
+      <Filter>PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\PeaShot.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renders">
@@ -433,6 +439,12 @@
     </ClInclude>
     <ClInclude Include="BossState\Phase4_IntroState.h">
       <Filter>BossState</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerState\DamageState.h">
+      <Filter>PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\PeaShot.h">
+      <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

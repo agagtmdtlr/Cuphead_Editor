@@ -67,16 +67,28 @@ void Phase1_IntroState::Enter(Boss * boss)
 
 void Phase1_IntroState::Update(Boss * boss, D3DXMATRIX & V, D3DXMATRIX & P)
 {
-	if (animation->GetClip()->CurrentFrame() >= 31) // animation 현재프레임이 마지막인가?
+	if (boss->object_desc.obj_mode == Object_Mode::Play)
 	{
-		if (intro_time <= animate_time) // 마지막 프레임 재생시간이 끝났는가.
+		if (animation->GetClip()->CurrentFrame() >= 31) // animation 현재프레임이 마지막인가?
 		{
-			introEnd = true;  // 재생이 끝났음
+			if (intro_time <= animate_time) // 마지막 프레임 재생시간이 끝났는가.
+			{
+				introEnd = true;  // 재생이 끝났음
+			}
+			animate_time += Timer->Elapsed();
 		}
-		animate_time += Timer->Elapsed();
-	}
+		animation->Update(V, P);
 
-	animation->Update(V, P);
+	}
+	else
+	{
+		animation->DrawBound(true);
+		animation->Position(boss->Position());
+		animation->Update(V, P);
+		animation->Stop();
+	}
+	
+
 }
 
 void Phase1_IntroState::Render()

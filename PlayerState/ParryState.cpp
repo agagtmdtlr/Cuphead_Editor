@@ -20,8 +20,12 @@ void ParryState::handleInput(Player * player)
 {
 	State * newState = NULL;
 
-	// OnAirState
-	if (player->bOnGround == true) // landed on ground
+	
+	if (player->isDamaged == true)
+	{
+		newState = (State*)player->damageState;
+	}
+	else if (player->bOnGround == true) // landed on ground
 	{
 		newState = (State*)player->idleState;
 	}
@@ -49,6 +53,7 @@ void ParryState::Enter(Player * player)
 {
 	OnAirState::Enter(player);
 	parryCurrentTime = 0;
+	player->isCanParry = false;
 }
 
 void ParryState::Update(Player * player, D3DXMATRIX & V, D3DXMATRIX & P)

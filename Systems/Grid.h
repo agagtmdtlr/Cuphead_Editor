@@ -1,5 +1,6 @@
 #pragma once
 #include "Objects/Object.h"
+#include "Objects/Liner.h"
 
 class Grid
 {
@@ -19,12 +20,16 @@ public:
 
 	bool Remove(Object* object);
 
-	virtual void HandleMelee();
-	virtual void HandleCell(int x, int y);
+	virtual void HandleMelee(vector<Liner*> *lines);
+	virtual void HandleCell(int x, int y, vector<Liner*> *lines);
 	virtual void HandleUnit(Object * unit, Object * other);
+	virtual void HandleLine(Object * unit, vector<Liner*> *lines);
 
 	bool distance(Object * unit, Object * other);
 	bool HandleAttack(Object * unit, Object * other);
+
+	
+	bool CheckLineColl(class Object* object, class Liner* liner);
 
 private:
 	Object* cells[NUM_CELLS][NUM_CELLS];

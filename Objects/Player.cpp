@@ -8,6 +8,9 @@ Player::Player(Grid* grid_, D3DXVECTOR2 position_, D3DXVECTOR2 scale_, Object_De
 	velocity(0), gravity(-1.95f), type(type)
 	, startJumpVelocity(0.75)
 	, endJumpVelocity(0.5)
+	, hitDelay(2.0f)
+	, hitSparkTime(0)
+	, hittedTime(0)
 {
 	object_desc.label = OBJECT_LABEL::player;
 	object_desc.b_bound_coll = true;
@@ -24,6 +27,7 @@ Player::Player(Grid* grid_, D3DXVECTOR2 position_, D3DXVECTOR2 scale_, Object_De
 	onGroundState = new OnGroundState();
 	parryState = new ParryState();
 	runState = new RunState();
+	damageState = new DamageState();
 
 	animation = new Animation();
 
@@ -32,6 +36,8 @@ Player::Player(Grid* grid_, D3DXVECTOR2 position_, D3DXVECTOR2 scale_, Object_De
 
 	//rendertype
 	this->type = RenderType::center;
+
+	state = idleState;
 
 	animation = idleState->animation;
 
@@ -45,7 +51,6 @@ Player::Player(Grid* grid_, D3DXVECTOR2 position_, D3DXVECTOR2 scale_, Object_De
 	position = position_;
 	rotation = { 0,0,0 };
 	scale = scale_;
-	state = idleState;
 }
 
 Player::~Player()
@@ -57,13 +62,28 @@ void Player::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 {
 		if (object_desc.obj_mode == Object_Mode::Play)
 		{
+			
 			state->handleInput(this);
 			state->Update(this, V, P);
+			position = state->animation->Position();
+			rotation = state->animation->Rotation();
+			grid->Move(this, position);
 		}
 		else if (object_desc.obj_mode == Object_Mode::Editor)
 		{
 			state->animation->Update(V, P);
-		}		
+		}	
+
+		if (isHitted == true)
+		{
+			hittedTime += Timer->Elapsed();
+			hitSparkTime += Timer->Elapsed();
+			if (hittedTime >= 3.0f)
+			{
+				isHitted = false;
+				object_desc.b_bound_coll = true; // 이제 충돌 가능한 상태이다.
+			}
+		}
 }
 
 void Player::Render()
@@ -73,8 +93,23 @@ void Player::Render()
 	ImGui::SliderFloat("ydegree", &yDegree, 0, 180);
 	ImGui::LabelText("Position :", "%f %f", animation->Position().x, animation->Position().y);
 	ImGui::LabelText("velocity :", "%f", velocity);*/
-	
-	state->Render();
+	if (isHitted == true)
+	{
+		if (hitSparkTime >= 0.1f)
+		{
+			hitSparkTime = 0;
+			isSpark = !isSpark;
+		}
+
+		if(isSpark)
+		{
+			state->Render();
+		}
+	}
+	else
+	{
+		state->Render();
+	}
 }
 
 D3DXVECTOR2 Player::Position()
@@ -136,6 +171,25 @@ Sprite * Player::GetSprite()
 }
 
 void Player::SetGraphics(Graphics graphics)
+{
+}
+
+void Player::BoundCollision(Object_Desc & desc)
+{
+	if (desc.label == OBJECT_LABEL::homingshot ||
+		desc.label == OBJECT_LABEL::peashot ||
+		desc.label == OBJECT_LABEL::spreadshot)
+	{
+
+	}
+	else
+	{
+		isHitted = true;
+		hittedTime = 0;
+	}
+}
+
+void Player::LineCollision(D3DXVECTOR2 & vec)
 {
 }
 

@@ -37,7 +37,11 @@ void DuckState::handleInput(Player * player)
 	State * newState = NULL;
 
 	// OnAirState
-	if (Key->Press('Z') || player->bOnGround == false) // Jump
+	if (player->isDamaged == true)
+	{
+		newState = (State*)player->damageState;
+	}
+	else if (Key->Press('Z') || player->bOnGround == false) // Jump
 	{
 		newState = (State*)player->jumpState;
 	}

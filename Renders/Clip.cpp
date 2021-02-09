@@ -139,6 +139,8 @@ void Clip::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 {
 	Frame* frame = frames[currentFrame];
 
+	assert(!(currentFrame > 10000));
+
 	if (bPlay == true)
 	{
 		float time = frame->Time * speed;

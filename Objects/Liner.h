@@ -3,6 +3,7 @@
 class Liner
 {
 	friend class Sonic;
+	friend class Grid;
 public:
 	Liner();
 	Liner(class Marker* firstPoint, class Marker* secondPoint, Object_Mode mode = Object_Mode::Editor);

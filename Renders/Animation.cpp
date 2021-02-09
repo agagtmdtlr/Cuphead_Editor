@@ -23,7 +23,7 @@ void Animation::Play(UINT clipNumber)
 	if (clipNumber == currentClip)
 		return;
 
-	if (currentClip > -1)
+	if ((int)currentClip > -1)
 		clips[currentClip]->Stop();
 
 	currentClip = clipNumber;
@@ -32,7 +32,7 @@ void Animation::Play(UINT clipNumber)
 
 void Animation::Stop()
 {
-	if (currentClip > -1)
+	if ((int)currentClip > -1)
 	{
 		clips[currentClip]->Stop();
 	}

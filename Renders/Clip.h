@@ -54,7 +54,10 @@ public:
 
 	Sprite* GetSprite();
 
-	UINT CurrentFrame() { return currentFrame; }
+	UINT CurrentFrame() {
+		assert(!(currentFrame > 10000));
+		return currentFrame; 
+	}
 
 private:
 	D3DXVECTOR2 position;

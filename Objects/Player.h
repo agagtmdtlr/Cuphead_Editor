@@ -59,6 +59,7 @@ class Player : public IFollowing , public Object
 	friend class OnGroundState;
 	friend class ParryState;
 	friend class RunState;
+	friend class DamageState;
 
 	friend class Sonic;
 public:
@@ -84,6 +85,9 @@ public:
 
 	void SetGraphics(Graphics graphics);
 
+	virtual void BoundCollision(Object_Desc & desc) override;
+	virtual void LineCollision(D3DXVECTOR2 & vec) override;
+
 private:
 	void StartJump();
 	void EndJump();
@@ -98,6 +102,18 @@ private:
 	Animation* animation;
 
 	bool bOnGround;
+
+	bool isDamaged = false; // 데미지를 입었다.
+	bool isHitted = true; // 데미지를 입은 상태 ( 잠시 무적시간이다)
+	bool isCanDash = true;
+	bool isCanParry = true;
+	// use hit render
+	float hittedTime;
+	float hitDelay;
+	float hitSparkTime;
+
+	bool isSpark = true;
+
 
 	float zDegree;
 	float yDegree;
@@ -126,4 +142,5 @@ private:
 	OnGroundState* onGroundState;
 	ParryState* parryState;
 	RunState* runState;
+	DamageState* damageState;
 };

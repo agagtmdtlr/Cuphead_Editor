@@ -9,9 +9,13 @@ Pipe_Phase1::Pipe_Phase1(Grid * grid_, Object_Desc desc, SceneValues * values)
 	state[2] = new Phase1_AttackState();
 	state[3] = new Phase1_DeathState();
 
-	position = { 0,0 };
+	object_desc.obj_mode = Object_Mode::Play;
+
+	position = { 429, -310 };
 	scale = { 1,1 };
 	rotation = { 0,0,0 };
+
+	Hp = 0;
 
 	currentState = 0; // intro state;
 	state[currentState]->Enter(this);
@@ -32,6 +36,8 @@ void Pipe_Phase1::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 {
 	state[currentState]->handleInput(this);
 	state[currentState]->Update(this,V, P);
+	if(object_desc.obj_mode == Object_Mode::Play)
+		grid->Move(this, position);
 }
 
 void Pipe_Phase1::Render()

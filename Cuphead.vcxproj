@@ -45,10 +45,12 @@
     <ClCompile Include="Objects\Liner.cpp" />
     <ClCompile Include="Objects\Marker.cpp" />
     <ClCompile Include="Objects\Object.cpp" />
+    <ClCompile Include="Objects\PeaShot.cpp" />
     <ClCompile Include="Objects\Pipe_Phase1.cpp" />
     <ClCompile Include="Objects\Player.cpp" />
     <ClCompile Include="Objects\StaticObject.cpp" />
     <ClCompile Include="PlayerState\AimState.cpp" />
+    <ClCompile Include="PlayerState\DamageState.cpp" />
     <ClCompile Include="PlayerState\DashState.cpp" />
     <ClCompile Include="PlayerState\DuckState.cpp" />
     <ClCompile Include="PlayerState\JumpState.cpp" />
@@ -121,10 +123,12 @@
     <ClInclude Include="Objects\Liner.h" />
     <ClInclude Include="Objects\Marker.h" />
     <ClInclude Include="Objects\Object.h" />
+    <ClInclude Include="Objects\PeaShot.h" />
     <ClInclude Include="Objects\Pipe_Phase1.h" />
     <ClInclude Include="Objects\Player.h" />
     <ClInclude Include="Objects\StaticObject.h" />
     <ClInclude Include="PlayerState\AimState.h" />
+    <ClInclude Include="PlayerState\DamageState.h" />
     <ClInclude Include="PlayerState\DashState.h" />
     <ClInclude Include="PlayerState\DuckState.h" />
     <ClInclude Include="PlayerState\JumpState.h" />

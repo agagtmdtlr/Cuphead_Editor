@@ -104,6 +104,8 @@ interface:
 #include "PlayerState/OnGroundState.h"
 #include "PlayerState/ParryState.h"
 #include "PlayerState/RunState.h"
+#include "PlayerState/DamageState.h"
+
 
 #include "Objects/Boss.h"
 #include "Objects/Pipe_Phase1.h"

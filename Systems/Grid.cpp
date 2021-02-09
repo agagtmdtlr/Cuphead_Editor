@@ -178,18 +178,18 @@ bool Grid::Remove(Object * object)
 
 }
 
-void Grid::HandleMelee()
+void Grid::HandleMelee(vector<Liner*> * lines)
 {
 	for (int x = 0; x < NUM_CELLS; x++)
 	{
 		for (int y = 0; y < NUM_CELLS; y++)
 		{
-			HandleCell(x,y);
+			HandleCell(x,y,lines);
 		}
 	}
 }
 
-void Grid::HandleCell(int x, int y)
+void Grid::HandleCell(int x, int y, vector<Liner*> * lines)
 {
 	Object * unit = cells[x][y];
 
@@ -199,7 +199,8 @@ void Grid::HandleCell(int x, int y)
 		if (x > 0) HandleUnit(unit, cells[x - 1][y]); // À­Ä­
 		if (y > 0) HandleUnit(unit, cells[x][y - 1]); //  ¿ÞÄ±
 		if (x > 0 && y > 0) HandleUnit(unit, cells[x - 1][y - 1]); // ¿ÞÂÊ »ç¼±
-		if (x > 0 && y > NUM_CELLS - 1) HandleUnit(unit, cells[x - 1][y + 1]); // ¿À¸¥ÂÊ »ç¼±
+		if (x > 0 && y > NUM_CELLS - 1) HandleUnit(unit, cells[x - 1][y + 1]); // ¿À¸¥ÂÊ »ç¼±		
+
 		unit = unit->next;
 	}
 }
@@ -213,6 +214,14 @@ void Grid::HandleUnit(Object * unit, Object * other)
 			HandleAttack(unit, other);
 		}
 		other = other->next;
+	}
+}
+
+void Grid::HandleLine(Object * unit, vector<Liner*>* lines)
+{
+	for (Liner* line : *lines)
+	{
+
 	}
 }
 
@@ -237,6 +246,11 @@ bool Grid::distance(Object * unit, Object * other)
 }
 
 bool Grid::HandleAttack(Object * unit, Object * other)
+{
+	return false;
+}
+
+bool Grid::CheckLineColl(Object * object, Liner * liner)
 {
 	return false;
 }

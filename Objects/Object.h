@@ -12,6 +12,9 @@ enum class OBJECT_LABEL
 {
 	static_object,
 	player,
+	peashot,
+	homingshot,
+	spreadshot,
 	pipe_phase1,
 	pipe_phase2,
 	pipe_phase3,
@@ -22,8 +25,8 @@ enum class OBJECT_LABEL
 
 struct Object_Desc
 {
-	OBJECT_LABEL label; //reference call class constructor 
-	Object_Mode obj_mode = Object_Mode::Editor; //
+	OBJECT_LABEL label; //reference call class constructor ¤Óenum date type
+	Object_Mode obj_mode = Object_Mode::Editor; // enum date type
 	int layer_index; // insert layer
 
 	bool b_render; // ·»´õ¸µÇÒÁö
@@ -55,9 +58,7 @@ public:
 	virtual void Rotation(D3DXVECTOR3);
 	virtual void RotationDegree(float x, float y, float z);
 	virtual void RotationDegree(D3DXVECTOR3 & vec);
-	virtual D3DXVECTOR3 RotationDegree();
-
-	
+	virtual D3DXVECTOR3 RotationDegree();	
 
 public:
 
@@ -69,7 +70,10 @@ public:
 
 	virtual void Set_Object_Mode(Object_Mode obj_mode) { object_desc.obj_mode = obj_mode; }
 
-	bool InScreen();
+	virtual bool InScreen();
+
+	virtual void BoundCollision(Object_Desc & desc);
+	virtual void LineCollision(D3DXVECTOR2 & vec);
 
 	
 protected:
@@ -80,10 +84,9 @@ protected:
 	wstring texturePath = L""; // if label is static_object load image this path and  others label's variable is ""
 
 
-protected:
-
+public:
 	Object_Desc object_desc;
-
+protected:
 
 	Grid* grid;
 	Object * prev;

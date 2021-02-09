@@ -13,7 +13,11 @@ void OnGroundState::handleInput(Player * player)
 	State * newState = NULL;
 
 	// OnAirState
-	if (player->bOnGround == false) // Jump
+	if (player->isDamaged == true)
+	{
+		newState = (State*)player->damageState;
+	}
+	else if (player->bOnGround == false) // Jump
 	{		
 		newState = (State*)player->jumpState;
 	}
