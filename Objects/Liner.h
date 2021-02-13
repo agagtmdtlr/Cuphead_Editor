@@ -55,10 +55,10 @@ private:
 	bool bDrawBound;
 	bool bDrawCollision;
 
-	Shader* shader;
+	class Shader* shader;
 	ID3D11Buffer* vertexBuffer;
 
-	Shader* boundShader;
+	class Shader* boundShader;
 	ID3D11Buffer* boundVertexBuffer;
 	ID3D11ShaderResourceView* srv;
 

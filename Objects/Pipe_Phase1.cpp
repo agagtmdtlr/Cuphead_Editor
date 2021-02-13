@@ -10,15 +10,17 @@ Pipe_Phase1::Pipe_Phase1(Grid * grid_, Object_Desc desc, SceneValues * values)
 	state[3] = new Phase1_DeathState();
 
 	object_desc.obj_mode = Object_Mode::Play;
+	object_desc.b_line_coll = false;
 
 	position = { 429, -310 };
 	scale = { 1,1 };
 	rotation = { 0,0,0 };
 
-	Hp = 0;
+	Hp = 10;
 
 	currentState = 0; // intro state;
 	state[currentState]->Enter(this);
+
 
 	direction = { -1,  0 }; // 왼쪽으로 이동
 }

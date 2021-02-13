@@ -18,6 +18,14 @@ void Animation::AddClip(Clip * clip)
 	clips.push_back(clip);
 }
 
+void Animation::Play()
+{
+	if ((int)currentClip > -1)
+	{
+		clips[currentClip]->Play();
+	}
+}
+
 void Animation::Play(UINT clipNumber)
 {
 	if (clipNumber == currentClip)

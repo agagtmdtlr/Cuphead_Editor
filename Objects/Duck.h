@@ -18,31 +18,38 @@ public:
 	virtual RECT GetHitBox();
 	virtual void SetHitBox(RECT hitbox) override;
 
+	static int duckNumber;
+
 
 private:
-	bool inUse;
+	bool inUse =false;
+	int duckIndex;
 	Animation * animation;
 	int play_number = 0;
-	Duck * next;
+
+	D3DXVECTOR2 sinPosition;
 
 	float x = 0;
+
 };
 
 
 class DuckPool : public Object
 {
 private:
-	Duck * ducks[6];
+	vector<Duck *> ducksLive;
+	vector<Duck *> ducksDead;
+
 	Duck * nextSpawnDuck;
 	float createTime;
 	float waitTime;
 
 public:
-	DuckPool(Grid * grid_, Object_Desc desc, SceneValues * values);
+	DuckPool(Grid * grid_,D3DXVECTOR2 position_, D3DXVECTOR2 scale_, Object_Desc desc, SceneValues * values);
 	~DuckPool();
 
 	void Update(D3DXMATRIX & V, D3DXMATRIX & P) override;
 	void Render() override;
 
-	void Create();
+	void Create(D3DXMATRIX & V, D3DXMATRIX & P);
 };

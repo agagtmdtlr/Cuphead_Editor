@@ -7,6 +7,7 @@ public:
 	~Animation();
 
 	void AddClip(Clip* clip);
+	void Play();
 	void Play(UINT clipNumber);
 	void Stop();
 

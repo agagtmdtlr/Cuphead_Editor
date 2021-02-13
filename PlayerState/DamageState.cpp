@@ -6,7 +6,7 @@ DamageState::DamageState()
 	animation = new Animation();
 	wstring shaderFile = Shaders + L"008_Sprite.fx";
 	{
-		Clip* clip = new Clip(PlayMode::Loop, 1.0f);
+		Clip* clip = new Clip(PlayMode::End, 1.0f);
 		for (int i = 1; i < 7; i++)
 		{
 			clip->AddFrame(new Sprite(Textures + L"cuphead/player_origin/Hit/Ground/cuphead_hit_000" + to_wstring(i) + L".png",
@@ -14,6 +14,8 @@ DamageState::DamageState()
 		}
 		animation->AddClip(clip);
 	}
+	animation->Play(0);
+
 }
 
 void DamageState::handleInput(Player * player)
@@ -23,11 +25,11 @@ void DamageState::handleInput(Player * player)
 	{ 
 		newState = (State*)player->damageState;
 	}
-	else if (player->bOnGround == true)
+	else if (damageEnd == true && player->bOnGround == true)
 	{
 		newState = (State*)player->idleState;
 	}
-	else if (player->bOnGround == false)
+	else if (damageEnd == true && player->bOnGround == false)
 	{
 		newState = (State*)player->jumpState;
 	}
@@ -50,6 +52,8 @@ void DamageState::Enter(Player * player)
 	D3DXVECTOR3 rotation = player->animation->Rotation();
 	D3DXVECTOR2 position = player->animation->Position();
 
+
+
 	animation->Scale(scale);
 	animation->Rotation(rotation);
 	animation->Position(position);
@@ -60,7 +64,9 @@ void DamageState::Enter(Player * player)
 	damageEnd = false;
 
 	player->isDamaged = false;
+	player->object_desc.b_bound_coll = false;
 
+	animation->Play();
 }
 
 void DamageState::Update(Player * player, D3DXMATRIX & V, D3DXMATRIX & P)
@@ -68,9 +74,10 @@ void DamageState::Update(Player * player, D3DXMATRIX & V, D3DXMATRIX & P)
 	if (animation->GetClip()->CurrentFrame() >= 5)
 	{
 		damageCurrentTime += Timer->Elapsed();
-		if (damageCurrentTime >= 0.2f)
+		if (damageCurrentTime >= 0.1f)
 		{
 			damageEnd = true;
+			animation->Stop();
 		}
 	}
 

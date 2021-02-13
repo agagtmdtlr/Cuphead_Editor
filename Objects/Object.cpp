@@ -70,15 +70,26 @@ bool Object::InScreen()
 	RECT box = GetHitBox();
 	D3DXVECTOR2 camera = values->MainCamera->Position();
 
-	return false;
+	
+	if (horizontal.x + camera.x > box.right) return false;
+	if (horizontal.y + camera.x < box.left) return false;
+	if (vertical.x + +camera.y > box.top) return false;
+	if (vertical.y + +camera.y < box.bottom) return false;
+
+	return true;
 }
 
 void Object::BoundCollision(Object_Desc & desc)
 {
 }
 
-void Object::LineCollision(D3DXVECTOR2 & vec)
+void Object::LineCollision(D3DXVECTOR2 & p1, D3DXVECTOR2 & p2)
 {
+}
+
+Sprite * Object::GetSprite()
+{
+	return nullptr;
 }
 
 

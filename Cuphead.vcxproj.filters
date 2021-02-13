@@ -201,6 +201,9 @@
     <ClCompile Include="Objects\PeaShot.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\PlayerBullet.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renders">
@@ -444,6 +447,9 @@
       <Filter>PlayerState</Filter>
     </ClInclude>
     <ClInclude Include="Objects\PeaShot.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\PlayerBullet.h">
       <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>

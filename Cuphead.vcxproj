@@ -48,6 +48,7 @@
     <ClCompile Include="Objects\PeaShot.cpp" />
     <ClCompile Include="Objects\Pipe_Phase1.cpp" />
     <ClCompile Include="Objects\Player.cpp" />
+    <ClCompile Include="Objects\PlayerBullet.cpp" />
     <ClCompile Include="Objects\StaticObject.cpp" />
     <ClCompile Include="PlayerState\AimState.cpp" />
     <ClCompile Include="PlayerState\DamageState.cpp" />
@@ -126,6 +127,7 @@
     <ClInclude Include="Objects\PeaShot.h" />
     <ClInclude Include="Objects\Pipe_Phase1.h" />
     <ClInclude Include="Objects\Player.h" />
+    <ClInclude Include="Objects\PlayerBullet.h" />
     <ClInclude Include="Objects\StaticObject.h" />
     <ClInclude Include="PlayerState\AimState.h" />
     <ClInclude Include="PlayerState\DamageState.h" />
@@ -248,6 +250,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>./;../_Libraries</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

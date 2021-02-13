@@ -19,6 +19,8 @@ enum class OBJECT_LABEL
 	pipe_phase2,
 	pipe_phase3,
 	pipe_phase4,
+	duckpool,
+	duck,
 	marker
 };
 
@@ -51,10 +53,11 @@ public:
 public:
 
 	virtual D3DXVECTOR2 Position() { return position; }
-	virtual void Position(D3DXVECTOR2);
 	virtual D3DXVECTOR2 Scale() { return scale; }
-	virtual void Scale(D3DXVECTOR2);
 	virtual D3DXVECTOR3 Rotation() { return rotation; }
+
+	virtual void Position(D3DXVECTOR2);
+	virtual void Scale(D3DXVECTOR2);
 	virtual void Rotation(D3DXVECTOR3);
 	virtual void RotationDegree(float x, float y, float z);
 	virtual void RotationDegree(D3DXVECTOR3 & vec);
@@ -73,7 +76,9 @@ public:
 	virtual bool InScreen();
 
 	virtual void BoundCollision(Object_Desc & desc);
-	virtual void LineCollision(D3DXVECTOR2 & vec);
+	virtual void LineCollision(D3DXVECTOR2 & p1, D3DXVECTOR2 & p2);
+
+	virtual class Sprite* GetSprite();
 
 	
 protected:

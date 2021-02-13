@@ -201,6 +201,8 @@ void Grid::HandleCell(int x, int y, vector<Liner*> * lines)
 		if (x > 0 && y > 0) HandleUnit(unit, cells[x - 1][y - 1]); // 왼쪽 사선
 		if (x > 0 && y > NUM_CELLS - 1) HandleUnit(unit, cells[x - 1][y + 1]); // 오른쪽 사선		
 
+		HandleLine(unit, lines);
+
 		unit = unit->next;
 	}
 }
@@ -219,15 +221,26 @@ void Grid::HandleUnit(Object * unit, Object * other)
 
 void Grid::HandleLine(Object * unit, vector<Liner*>* lines)
 {
+	if (unit->object_desc.b_line_coll == false)
+		return;
+
 	for (Liner* line : *lines)
 	{
+		if (CheckLineColl(unit, line)) // 선충돌이 일어난 경우
+		{
+			D3DXVECTOR2 & p1 = line->firstMarker->position;
+			D3DXVECTOR2 & p2 = line->secondMarker->position;
 
+			unit->LineCollision(p1, p2);
+		}
 	}
 }
 
 bool Grid::distance(Object * unit, Object * other)
 {
 	bool result = false;
+	if (unit->object_desc.label == other->object_desc.label) // 같은 종류끼리는 충돌 처리를 하지 않는다.
+		return false;
 	if (unit->object_desc.b_bound_coll && other->object_desc.b_bound_coll)
 	{
 		RECT boxA = unit->GetHitBox();
@@ -247,10 +260,36 @@ bool Grid::distance(Object * unit, Object * other)
 
 bool Grid::HandleAttack(Object * unit, Object * other)
 {
+	unit->BoundCollision(unit->object_desc);
+	other->BoundCollision(unit->object_desc);
 	return false;
 }
 
 bool Grid::CheckLineColl(Object * object, Liner * liner)
 {
-	return false;
+	bool result = false;
+	Sprite* sprite = object->GetSprite();
+	D3DXMATRIX world = sprite->World();
+
+	D3DXVECTOR2 playerPosition = D3DXVECTOR2(world._41, world._42);
+
+	D3DXVECTOR2 xDir = D3DXVECTOR2(world._11, world._12) * 0.5;
+	D3DXVECTOR2 yDir = D3DXVECTOR2(world._21, world._22) * 0.5;
+
+	// 오차범위를 보정하기 위함
+	D3DXVECTOR2 yDirNormal;
+	D3DXVec2Normalize(&yDirNormal, &yDir);
+
+	// length is 7 object line;
+	// object 바닥을 기준으로 위로 5 , 아래로 2(오차범위 판정을 위함)
+	D3DXVECTOR2 line1_p1 = playerPosition - yDir - yDirNormal * 2;
+	D3DXVECTOR2 line1_p2 = playerPosition;
+
+	D3DXVECTOR2 & line2_p1 = liner->firstMarker->position;
+	D3DXVECTOR2 & line2_p2 = liner->secondMarker->position;
+
+	result = Line::LineSegmentIntersection(line1_p1, line1_p2, line2_p1, line2_p2);
+
+
+	return result;
 }

@@ -185,12 +185,56 @@ void Player::BoundCollision(Object_Desc & desc)
 	else
 	{
 		isHitted = true;
+		isDamaged = true;
 		hittedTime = 0;
+
 	}
 }
 
-void Player::LineCollision(D3DXVECTOR2 & vec)
+void Player::LineCollision(D3DXVECTOR2 & p1, D3DXVECTOR2 & p2)
 {
+	D3DXVECTOR2 line = p2 - p1;
+	D3DXVECTOR2 normalVec; // 직선의 수직벡터
+	D3DXVECTOR2 axis = { 0,1 };
+	D3DXVec2Normalize(&normalVec, &line);
+
+	moveDir = normalVec; // 이동 방향 갱신;
+	normalVec = { -normalVec.y, normalVec.x }; 
+	
+	float zDegree = Math::VectorDegree(normalVec, axis);
+
+	D3DXMATRIX & world = state->animation->GetSprite()->World();
+
+	D3DXVECTOR2 xDir = D3DXVECTOR2(world._11, world._12) * 0.5;
+	D3DXVECTOR2 yDir = D3DXVECTOR2(world._21, world._22) * 0.5;
+
+	float & x = position.x;
+	float y;
+
+	RenderType obj_renderType = state->animation->GetSprite()->GetRenderType();
+	D3DXVECTOR2 newPos;
+	switch (obj_renderType)
+	{
+	case RenderType::center:
+		y = (p2.y - p1.y) / (p2.x - p1.x) * ((position - yDir).x - p1.x) + p1.y;
+		newPos = D3DXVECTOR2(x, y);
+		newPos.y += yDir.y;
+		break;
+	case RenderType::left_bottom:
+		break;
+	case RenderType::center_bottom:
+		y = (p2.y - p1.y) / (p2.x - p1.x) * (position.x - p1.x) + p1.y;
+		newPos = D3DXVECTOR2(x, y);
+		break;
+	default:
+		break;
+	}
+	
+	Position(newPos);
+	bOnGround = true;
+
+	isCanDash = true;
+	isCanParry = true;
 }
 
 void Player::StartJump()

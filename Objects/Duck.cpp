@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Duck.h"
 
+int Duck::duckNumber = 0;
+
 Duck::Duck(Grid * grid_, Object_Desc desc, SceneValues * values)
 	:EnemyBullet(grid_, desc, values)
 {
@@ -75,6 +77,10 @@ Duck::Duck(Grid * grid_, Object_Desc desc, SceneValues * values)
 	animation[0].Play(0);
 
 	animation[0].DrawBound(true);
+
+	play_number = 0;
+
+	duckIndex = duckNumber++;
 }
 
 Duck::~Duck()
@@ -88,25 +94,62 @@ void Duck::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 	{
 		animation[play_number].Position(position);
 		animation[play_number].Update(V, P);
+
 	}
-	else if((object_desc.obj_mode == Object_Mode::Play))
+	else if ((object_desc.obj_mode == Object_Mode::Play))
 	{
 		if (inUse)
 		{
-			x += Timer->Elapsed();
-			float y_weight = 50.0f * sinf(x);
-			D3DXVECTOR2 sin_pos = position;
-			sin_pos.y += y_weight;
+			D3DXVECTOR2 newPos;
+			position.x -= Timer->Elapsed() * 50.0;
+			float y_weight = 50.0f * sinf(position.x * 0.05);
+			newPos = position;
+			newPos.y += y_weight;
 
-			animation[play_number].Position(sin_pos);
+			animation[play_number].Position(newPos);
 			animation[play_number].Update(V, P);
 		}
+
 	}
-	
 }
 
 bool Duck::bUpdate(D3DXMATRIX & V, D3DXMATRIX & P)
 {
+	if (object_desc.obj_mode == Object_Mode::Editor)
+	{
+		animation[play_number].Position(position);
+		animation[play_number].Update(V, P);
+
+		return false;
+	}
+	else if ((object_desc.obj_mode == Object_Mode::Play))
+	{
+		if (inUse)
+		{
+			if (!InScreen())// 
+			{
+				inUse = false;
+				return false;
+			}
+
+			D3DXVECTOR2 newPos;
+			position.x -= Timer->Elapsed() * 50.0;
+			float y_weight = 50.0f * sinf(position.x * 0.05);
+			newPos = position;
+			newPos.y += y_weight;
+
+			animation[play_number].Position(newPos);
+			
+			animation[play_number].Update(V, P);
+
+			grid->Move(this, newPos);
+
+			return true;
+		}
+
+		return false;
+	}
+
 	return false;
 }
 
@@ -115,6 +158,7 @@ void Duck::Render()
 	if (inUse)
 	{
 		animation[play_number].Render();
+		ImGui::Text("%d", duckIndex);
 	}
 }
 
@@ -133,55 +177,89 @@ void Duck::SetHitBox(RECT hitbox)
 ///////////////////////////////////////////////////////////////
 // DuckPool
 ///////////////////////////////////////////////////////////////
-DuckPool::DuckPool(Grid * grid_, Object_Desc desc, SceneValues * values)
-	:Object(grid_, desc, values), waitTime(0), createTime(5.0f)
+DuckPool::DuckPool(Grid * grid_, D3DXVECTOR2 position_, D3DXVECTOR2 scale_, Object_Desc desc, SceneValues * values)
+	:Object(grid_, desc, values), waitTime(0), createTime(4.0f)
 {
 	Object_Desc duck_desc;
+	duck_desc.b_bound_coll = true;
+	duck_desc.b_line_coll = false;
+	duck_desc.b_render = true;
+	duck_desc.label = OBJECT_LABEL::duck;
+	duck_desc.obj_mode = Object_Mode::Play;
 
-	ducks[0] = new Duck(grid, duck_desc, values);
 
-	for (int i = 1; i < 6-1; i++)
+	for (int i = 0; i < 8; i++)
 	{
-		ducks[i] = new Duck(grid, duck_desc, values);
-		ducks[i]->next = ducks[i + 1];
-	}
+		ducksDead.push_back(new Duck(grid, duck_desc, values));
+	}	
 
-	ducks[5] = new Duck(grid, duck_desc, values);
-	ducks[5]->next = nullptr;
+	position = position_;
+	scale = scale_;
+	rotation = { 0,0,0 };
 }
 
 DuckPool::~DuckPool()
 {
-	for (int i = 0; i < 6; i++)
-		SAFE_DELETE(ducks[i]);
+
+	for (auto d : ducksDead)
+	{
+		SAFE_DELETE(d);
+	}
+	for (auto d : ducksLive)
+	{
+		SAFE_DELETE(d);
+	}
 }
 
 void DuckPool::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 {
-	waitTime += Timer->Elapsed();
-	if (waitTime >= createTime)
+	float times = Timer->Elapsed();
+	waitTime += times;
+	
+
+	for (auto duck = ducksLive.begin(); duck != ducksLive.end(); )
 	{
-		waitTime = 0;
-		Create();
+		if (!(*duck)->bUpdate(V, P))
+		{
+			ducksDead.push_back(*duck);
+			grid->Remove((Object*)*duck);
+			duck = ducksLive.erase(duck);
+		}
+		else
+		{
+			duck++;
+		}
 	}
 
-	//for (int i = 0; i < 6; i++)
-	//{
-	//	if(bUpdate(x &))
 
-	//}
+	if (waitTime >= createTime)
+	{
+		waitTime = 0.0f;
+		Create(V, P);
+	}
 }
 
 void DuckPool::Render()
 {
-	for (int i = 0; i < 6; i++)
+	for (auto duck : ducksLive)
 	{
-		if (ducks[i]->InUse())
-			ducks[i]->Render();
+		if (duck->InUse())
+			duck->Render();
 	}
 }
 
-void DuckPool::Create()
+void DuckPool::Create(D3DXMATRIX & V, D3DXMATRIX & P)
 {
-	Duck * next = nextSpawnDuck->next;
+	Duck * & duck = ducksDead.back();
+	duck->inUse = true;
+	duck->position = position;
+	duck->rotation = rotation;
+	duck->scale = scale;
+	duck->object_desc.b_bound_coll = true;
+	duck->Update(V, P);
+
+	ducksLive.push_back(duck);
+	ducksDead.pop_back();
+
+	grid->Add(duck);
 }

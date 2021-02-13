@@ -81,12 +81,12 @@ public:
 
 public:
 	void Focus(D3DXVECTOR2* position, D3DXVECTOR2* size);
-	Sprite* GetSprite();
+	virtual class Sprite* GetSprite() override;
 
 	void SetGraphics(Graphics graphics);
 
 	virtual void BoundCollision(Object_Desc & desc) override;
-	virtual void LineCollision(D3DXVECTOR2 & vec) override;
+	virtual void LineCollision(D3DXVECTOR2 & p1, D3DXVECTOR2 & p2) override;
 
 private:
 	void StartJump();

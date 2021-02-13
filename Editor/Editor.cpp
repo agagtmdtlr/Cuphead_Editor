@@ -24,8 +24,12 @@ Editor::Editor(SceneValues * values)
 
 	{
 		Object_Desc desc;
-		desc.b_bound_coll = true;
-		testObject = new Pipe_Phase1(grid, Object_Desc(), values);
+		desc.b_bound_coll = false;
+		desc.b_line_coll = false;
+		desc.b_render = true;
+		desc.label = OBJECT_LABEL::duckpool;
+		desc.obj_mode = Object_Mode::Play;
+		testObject = new DuckPool(grid, D3DXVECTOR2(0,0), D3DXVECTOR2(1,1), desc, values);
 	}
 
 	{
@@ -35,9 +39,9 @@ Editor::Editor(SceneValues * values)
 	}
 
 	layers[1].second->layer->push_back(testObject);
-	grid->Add(testObject);
+	//grid->Add(testObject);
 	layers[1].second->layer->push_back(player);
-	grid->Add(player);
+	grid->Add((Object*)player);
 
 	backGround = new Sprite(Textures + L"cuphead/pipe/background/clown_bg_track.png", shaderFile);
 	backGround->Position(0, -300);
@@ -134,7 +138,7 @@ void Editor::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 		}
 	}
 
-	grid->HandleMelee();
+	grid->HandleMelee(&liners);
 	
 	//state->Update(nullptr, V_m, P_m);
 }

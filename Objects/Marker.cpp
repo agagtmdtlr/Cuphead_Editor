@@ -14,12 +14,7 @@ Marker::Marker(Grid* grid_, wstring shaderFile, D3DXVECTOR2 start, Object_Desc d
 
 	position = start;
 	clip->Position(position);
-	clip->Play();
-
-	if (grid != nullptr)
-	{
-		grid->Add((Object*)this);
-	}
+	clip->Play();	
 	
 }
 

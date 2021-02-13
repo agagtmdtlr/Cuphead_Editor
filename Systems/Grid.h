@@ -31,6 +31,8 @@ public:
 	
 	bool CheckLineColl(class Object* object, class Liner* liner);
 
+	
+
 private:
 	Object* cells[NUM_CELLS][NUM_CELLS];
 };
