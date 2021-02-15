@@ -47,10 +47,10 @@ Sonic::~Sonic()
 	SAFE_DELETE(player);
 	SAFE_DELETE(backGround);
 
-	sound->Shutdown();
-	SAFE_DELETE(sound);
+	//sound->Shutdown();
+	//SAFE_DELETE(sound);
 
-	SAFE_DELETE(soundClass);
+	//SAFE_DELETE(soundClass);
 }
 
 void Sonic::Update()
@@ -215,7 +215,7 @@ void Sonic::Update()
 	}
 	
 
-	if (clickedObject != nullptr)
+	if (clickedObject != 0)
 	{
 		clickedObject->Update(V, P);
 	}

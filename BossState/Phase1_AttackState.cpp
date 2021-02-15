@@ -161,7 +161,7 @@ void Phase1_AttackState::Update(Boss * boss, D3DXMATRIX & V, D3DXMATRIX & P)
 	}
 
 	
-	boss->Position(position);	
+	boss->grid->Move(boss,position);
 	animation->Position(position);
 	animation->Update(V, P);
 }

@@ -29,7 +29,18 @@ Editor::Editor(SceneValues * values)
 		desc.b_render = true;
 		desc.label = OBJECT_LABEL::duckpool;
 		desc.obj_mode = Object_Mode::Play;
-		testObject = new DuckPool(grid, D3DXVECTOR2(0,0), D3DXVECTOR2(1,1), desc, values);
+		testObject = new DuckPool(grid, D3DXVECTOR2(-300,200), D3DXVECTOR2(1,1), desc, values);
+	}
+
+	{
+		Object_Desc desc;
+		desc.b_bound_coll = true;
+		desc.b_line_coll = false;
+		desc.b_render = true;
+		desc.group = OBJECT_GROUP::enemy;
+		desc.label = OBJECT_LABEL::pipe_phase1;
+		desc.obj_mode = Object_Mode::Play;
+		testObject2 = new Pipe_Phase1(grid, desc, values);
 	}
 
 	{
@@ -39,7 +50,10 @@ Editor::Editor(SceneValues * values)
 	}
 
 	layers[1].second->layer->push_back(testObject);
+	layers[1].second->layer->push_back(testObject2);
+
 	//grid->Add(testObject);
+	grid->Add(testObject2);
 	layers[1].second->layer->push_back(player);
 	grid->Add((Object*)player);
 
@@ -49,9 +63,9 @@ Editor::Editor(SceneValues * values)
 	{
 		Object_Desc desc;
 		Marker* marker1 = new Marker(grid, Shaders + L"008_Sprite.fx",
-			D3DXVECTOR2(-300, -225), desc, values);
+			D3DXVECTOR2(-600, -225), desc, values);
 		Marker* marker2 = new Marker(grid, Shaders + L"008_Sprite.fx",
-			D3DXVECTOR2(300, -225), desc, values);
+			D3DXVECTOR2(600, -225), desc, values);
 		Liner* liner = new Liner(marker1, marker2);
 
 		objects.push_back(marker1);
@@ -154,6 +168,7 @@ void Editor::Render()
 			for (auto obj : *obj_layer.second->layer)
 			{
 				obj->Render();
+				//ImGui::Text("%d %d", obj->gridX, obj->gridY);
 			}
 		}		
 	}

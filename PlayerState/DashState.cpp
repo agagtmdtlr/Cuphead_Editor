@@ -116,8 +116,9 @@ void DashState::Update(Player * player, D3DXMATRIX & V, D3DXMATRIX & P)
 	}
 	dashCurrentTime += Timer->Elapsed();
 
-	player->animation->RotationDegree(rotation);
 	player->animation->Position(position);
+	player->animation->RotationDegree(rotation);
+	
 	player->animation->Play(bReady ? 0 : (player->bOnGround ? 1 : 2));
 	player->animation->Update(V, P);
 }

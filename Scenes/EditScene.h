@@ -10,9 +10,9 @@ public:
 	void Update() override;
 	void Render() override;
 
-	class Sound* sound;
-	class Sound* sound2;
-	class SoundClass* soundClass;
+	//class Sound* sound;
+	//class Sound* sound2;
+	//class SoundClass* soundClass;
 
 
 	class Grid* grid;

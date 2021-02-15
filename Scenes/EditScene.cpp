@@ -48,8 +48,8 @@ EditScene::~EditScene()
 	SAFE_DELETE(player);
 	SAFE_DELETE(backGround);
 
-	sound->Shutdown();
-	SAFE_DELETE(sound);
+	//sound->Shutdown();
+	//SAFE_DELETE(sound);
 }
 
 void EditScene::Update()

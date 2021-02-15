@@ -76,8 +76,8 @@ interface:
 #include "Utilities/BinaryFile.h"
 #include "Utilities/Xml.h"
 
-#include "Sounds/Sound.h"
-#include "Sounds/soundclass.h"
+//#include "Sounds/Sound.h"
+//#include "Sounds/soundclass.h"
 
 #include "Scenes/Scene.h"
 
@@ -87,6 +87,8 @@ interface:
 
 #include "Objects/Object.h" // 모든 객체는 object의 자손이다. (editor 와 모드에서 이 모든걸 관리한다)
 #include "Objects/Player.h"
+#include "Objects/PlayerBullet.h"
+
 #include "Objects/Enemy.h"
 #include "Objects/Marker.h"
 #include "Objects/Liner.h"
@@ -141,6 +143,8 @@ enum class Edit_Target
 	BackGround,
 	Marker
 };
+
+
 
 
 const wstring Shaders = L"../_Shaders/";

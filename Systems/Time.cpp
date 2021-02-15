@@ -2,6 +2,7 @@
 #include "Time.h"
 
 Time::Time()
+	:elapsed(0)
 {
 	QueryPerformanceFrequency((LARGE_INTEGER *)&tick); // 1초당 클럭수
 	QueryPerformanceCounter((LARGE_INTEGER *)&start); // 시작 클럭수

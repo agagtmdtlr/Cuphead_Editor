@@ -16,6 +16,15 @@ float Math::ToRadian(float degree) // 각도를 라디안으로
 	return degree * PI / 180.0f;
 }
 
+D3DXVECTOR3 Math::ToRadian(D3DXVECTOR3 degree)
+{
+	degree.x = ToRadian(degree.x);
+	degree.y = ToRadian(degree.y);
+	degree.z = ToRadian(degree.z);
+
+	return degree;
+}
+
 float Math::ToDegree(float radian) // 라디안을 각도로
 {
 	return radian * 180.0f / PI;

@@ -45,7 +45,6 @@
     <ClCompile Include="Objects\Liner.cpp" />
     <ClCompile Include="Objects\Marker.cpp" />
     <ClCompile Include="Objects\Object.cpp" />
-    <ClCompile Include="Objects\PeaShot.cpp" />
     <ClCompile Include="Objects\Pipe_Phase1.cpp" />
     <ClCompile Include="Objects\Player.cpp" />
     <ClCompile Include="Objects\PlayerBullet.cpp" />
@@ -75,8 +74,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="PlayerState\PlayerState.cpp" />
-    <ClCompile Include="Sounds\Sound.cpp" />
-    <ClCompile Include="Sounds\soundclass.cpp" />
+    <ClCompile Include="Sounds\Sound.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Sounds\soundclass.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -124,7 +127,6 @@
     <ClInclude Include="Objects\Liner.h" />
     <ClInclude Include="Objects\Marker.h" />
     <ClInclude Include="Objects\Object.h" />
-    <ClInclude Include="Objects\PeaShot.h" />
     <ClInclude Include="Objects\Pipe_Phase1.h" />
     <ClInclude Include="Objects\Player.h" />
     <ClInclude Include="Objects\PlayerBullet.h" />
@@ -154,8 +156,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="PlayerState\PlayerState.h" />
-    <ClInclude Include="Sounds\Sound.h" />
-    <ClInclude Include="Sounds\soundclass.h" />
+    <ClInclude Include="Sounds\Sound.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Sounds\soundclass.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Systems\CMouse.h" />
     <ClInclude Include="Systems\Device.h" />
@@ -250,7 +256,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>./;../_Libraries</AdditionalIncludeDirectories>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

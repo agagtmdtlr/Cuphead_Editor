@@ -2,6 +2,22 @@
 
 class Boss : public Object
 {
+	friend class Phase1_IdleState;
+	friend class Phase1_IntroState;
+	friend class Phase1_AttackState;
+	friend class Phase1_DeathState;
+	friend class Phase2_IdleState;
+	friend class Phase2_IntroState;
+	friend class Phase2_AttackState;
+	friend class Phase2_DeathState;
+	friend class Phase3_IdleState;
+	friend class Phase3_IntroState;
+	friend class Phase3_AttackState;
+	friend class Phase3_DeathState;
+	friend class Phase4_IdleState;
+	friend class Phase4_IntroState;
+	friend class Phase4_AttackState;
+	friend class Phase4_DeathState;
 public:
 	Boss(Grid * grid_, Object_Desc desc, SceneValues * values);
 	virtual ~Boss();

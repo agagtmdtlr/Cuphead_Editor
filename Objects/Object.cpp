@@ -3,7 +3,7 @@
 
 
 Object::Object(Grid * grid_, Object_Desc desc, SceneValues * values)
-	: grid(grid_), prev(nullptr), next(nullptr), object_desc(desc)
+	: grid(grid_), prev(0), next(0), object_desc(desc)
 	,values(values)
 {
 	object_desc.depth = Object_Depth::depth++;	

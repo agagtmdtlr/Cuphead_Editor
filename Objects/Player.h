@@ -143,4 +143,9 @@ private:
 	ParryState* parryState;
 	RunState* runState;
 	DamageState* damageState;
+
+private:
+	class PlayerBulletPool * bulletPool;
+	enum class PlAYER_BULLET_TYPE bullet_type;
+
 };

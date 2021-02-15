@@ -198,9 +198,6 @@
     <ClCompile Include="PlayerState\DamageState.cpp">
       <Filter>PlayerState</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\PeaShot.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
     <ClCompile Include="Objects\PlayerBullet.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
@@ -445,9 +442,6 @@
     </ClInclude>
     <ClInclude Include="PlayerState\DamageState.h">
       <Filter>PlayerState</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\PeaShot.h">
-      <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="Objects\PlayerBullet.h">
       <Filter>Objects</Filter>

@@ -149,8 +149,9 @@ void DuckState::Update(Player * player, D3DXMATRIX & V, D3DXMATRIX & P)
 		duckCurrentTime += Timer->Elapsed();
 	}
 
-	player->animation->RotationDegree(rotation);
 	player->animation->Position(position);
+	player->animation->RotationDegree(rotation);
+
 	player->animation->Play(bDucking ? 0 : (bShoot ? 2 : 1 ));
 	player->animation->Update(V, P);
 }

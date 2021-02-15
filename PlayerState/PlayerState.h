@@ -10,5 +10,5 @@ public:
 	virtual void Update(class Player* player, D3DXMATRIX & V, D3DXMATRIX & P);
 	virtual void Render();
 public:
-	Animation* animation;
+	Animation* animation = nullptr;
 };

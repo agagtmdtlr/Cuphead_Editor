@@ -50,6 +50,9 @@ void Phase1_DeathState::Enter(Boss * boss)
 
 void Phase1_DeathState::Update(Boss * boss, D3DXMATRIX & V, D3DXMATRIX & P)
 {
+	D3DXVECTOR2 position = boss->Position();
+
+
 	if (animation->GetClip()->CurrentFrame() >= 13 && animation_index == 0)
 	{
 		animate_time += Timer->Elapsed();
@@ -62,12 +65,11 @@ void Phase1_DeathState::Update(Boss * boss, D3DXMATRIX & V, D3DXMATRIX & P)
 
 	if (animation_index == 1) // if fall
 	{
-		D3DXVECTOR2 position = boss->Position();
 		position.y -= 500.0f * Timer->Elapsed();
-		boss->Position(position);
 		animation->Position(position);
 	}
 	
+	boss->grid->Move(boss, position);
 
 	animation->Update(V, P);
 }

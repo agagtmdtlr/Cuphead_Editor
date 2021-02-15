@@ -8,13 +8,17 @@ enum class Object_Mode
 	Play
 };
 
+enum class OBJECT_GROUP
+{
+	player,
+	enemy
+};
+
 enum class OBJECT_LABEL
 {
 	static_object,
 	player,
-	peashot,
-	homingshot,
-	spreadshot,
+	player_bullet,
 	pipe_phase1,
 	pipe_phase2,
 	pipe_phase3,
@@ -28,6 +32,7 @@ enum class OBJECT_LABEL
 struct Object_Desc
 {
 	OBJECT_LABEL label; //reference call class constructor ¤Óenum date type
+	OBJECT_GROUP group = OBJECT_GROUP::player;
 	Object_Mode obj_mode = Object_Mode::Editor; // enum date type
 	int layer_index; // insert layer
 
@@ -81,6 +86,9 @@ public:
 	virtual class Sprite* GetSprite();
 
 	
+	int gridX;
+	int gridY;
+
 protected:
 	D3DXVECTOR2 position;
 	D3DXVECTOR2 scale;

@@ -112,7 +112,7 @@ void Sprite::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 
 
 	D3DXMATRIX S, R, T;
-	D3DXMATRIX bound_S, bound_T;
+	D3DXMATRIX bound_S,bound_R, bound_T;
 	// scaling and rotation for object
 	D3DXMatrixScaling(&S, scale.x * textureSize.x, scale.y * textureSize.y, 1.0f);
 	D3DXMatrixRotationYawPitchRoll(&R, rotation.y, rotation.x, rotation.z);
@@ -120,8 +120,9 @@ void Sprite::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 	world = S * R;
 	// scailing for bound boux
 	D3DXMatrixScaling(&bound_S, scale.x * bound_textureSize.x, scale.y * bound_textureSize.y, 1.0f);
-	
-	bound_world = bound_S * R;
+	D3DXMatrixRotationYawPitchRoll(&bound_R, 0, rotation.x, 0);
+
+	bound_world = bound_S * bound_R;
 
 	D3DXVECTOR2 xDir = D3DXVECTOR2(world._11, world._12) * 0.5;
 	D3DXVECTOR2 yDir = D3DXVECTOR2(world._21, world._22) * 0.5;

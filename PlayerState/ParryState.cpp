@@ -79,8 +79,9 @@ void ParryState::Update(Player * player, D3DXMATRIX & V, D3DXMATRIX & P)
 	//position.y -= 0.5f;
 	parryCurrentTime += Timer->Elapsed();
 
-	player->animation->RotationDegree(rotation);
 	player->animation->Position(position);
+	player->animation->RotationDegree(rotation);
+
 	player->animation->Play(0);
 	player->animation->Update(V, P);
 }

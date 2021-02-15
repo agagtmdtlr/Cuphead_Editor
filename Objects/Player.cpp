@@ -13,9 +13,17 @@ Player::Player(Grid* grid_, D3DXVECTOR2 position_, D3DXVECTOR2 scale_, Object_De
 	, hittedTime(0)
 {
 	object_desc.label = OBJECT_LABEL::player;
+	object_desc.group = OBJECT_GROUP::player;
 	object_desc.b_bound_coll = true;
 	object_desc.b_line_coll = true;
 	object_desc.b_render = true;
+
+
+	{
+		Object_Desc bullet_desc;
+		bulletPool = new PlayerBulletPool(grid, position_, scale_, bullet_desc, values);
+	}
+
 
 
 	aimState = new AimState();
@@ -65,9 +73,9 @@ void Player::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 			
 			state->handleInput(this);
 			state->Update(this, V, P);
-			position = state->animation->Position();
+
 			rotation = state->animation->Rotation();
-			grid->Move(this, position);
+			grid->Move(this, state->animation->Position());
 		}
 		else if (object_desc.obj_mode == Object_Mode::Editor)
 		{
@@ -84,6 +92,86 @@ void Player::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 				object_desc.b_bound_coll = true; // 이제 충돌 가능한 상태이다.
 			}
 		}
+
+		if (Key->Down('X'))
+		{
+			switch (bullet_type)
+			{
+			case PlAYER_BULLET_TYPE::peashot:
+				bulletPool->waitTime = bulletPool->createTime[0];
+				break;
+			case PlAYER_BULLET_TYPE::homingshot:
+				bulletPool->waitTime = bulletPool->createTime[1];
+				break;
+			case PlAYER_BULLET_TYPE::spreadshot:
+				bulletPool->waitTime = bulletPool->createTime[2];
+				break;
+			default:
+				break;
+			}
+		}
+
+		if (Key->Press('X'))
+		{
+			D3DXMATRIX & world = state->animation->GetSprite()->World();
+			D3DXVECTOR2 xDir = D3DXVECTOR2(world._11, world._12) * 0.5;
+			D3DXVECTOR2 yDir = D3DXVECTOR2(world._21, world._22) * 0.5;
+			D3DXVECTOR2 bulletPos = position + yDir;
+			
+			D3DXVECTOR3 degree = RotationDegree();
+
+			shootDir = { 0,0 };
+
+			if (Key->Press(VK_UP))
+			{
+				shootDir.y = 1;
+				bulletPos += yDir;
+				degree.z = 90;
+			}
+			else if (Key->Press(VK_DOWN) && Key->Press('C'))
+			{
+				shootDir.y = -1;
+				bulletPos -= yDir;
+				degree.z = 270;
+
+			}
+			if (shootDir.y == 0)
+			{
+				if (degree.y == 180)
+				{
+					shootDir.x = -1;
+					bulletPos -= xDir;
+				}
+				else
+				{
+					shootDir.x = 1;
+					bulletPos += xDir;
+				}
+			}
+			else
+			{
+				if (Key->Press(VK_LEFT))
+				{
+					shootDir.x = -1;
+					bulletPos -= xDir;
+					degree.z = 45;
+				}
+				else if(Key->Press(VK_RIGHT))
+				{
+					shootDir.x = 1;
+					bulletPos += xDir;
+					degree.z = 45;
+				}
+			}
+
+			bulletPool->rotation = Math::ToRadian(degree);
+			bulletPool->direction = shootDir;
+			bulletPool->position = bulletPos;
+		}
+		
+
+		bulletPool->Update(V, P);
+
 }
 
 void Player::Render()
@@ -93,6 +181,8 @@ void Player::Render()
 	ImGui::SliderFloat("ydegree", &yDegree, 0, 180);
 	ImGui::LabelText("Position :", "%f %f", animation->Position().x, animation->Position().y);
 	ImGui::LabelText("velocity :", "%f", velocity);*/
+	bulletPool->Render();
+
 	if (isHitted == true)
 	{
 		if (hitSparkTime >= 0.1f)
@@ -176,19 +266,9 @@ void Player::SetGraphics(Graphics graphics)
 
 void Player::BoundCollision(Object_Desc & desc)
 {
-	if (desc.label == OBJECT_LABEL::homingshot ||
-		desc.label == OBJECT_LABEL::peashot ||
-		desc.label == OBJECT_LABEL::spreadshot)
-	{
-
-	}
-	else
-	{
-		isHitted = true;
-		isDamaged = true;
-		hittedTime = 0;
-
-	}
+	isHitted = true;
+	isDamaged = true;
+	hittedTime = 0;
 }
 
 void Player::LineCollision(D3DXVECTOR2 & p1, D3DXVECTOR2 & p2)

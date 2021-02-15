@@ -6,6 +6,7 @@ int Duck::duckNumber = 0;
 Duck::Duck(Grid * grid_, Object_Desc desc, SceneValues * values)
 	:EnemyBullet(grid_, desc, values)
 {
+	next = 0;
 	// dynamic array;
 	animation = new Animation[2];
 	// create yellow duck
@@ -80,6 +81,8 @@ Duck::Duck(Grid * grid_, Object_Desc desc, SceneValues * values)
 
 	play_number = 0;
 
+	this->object_desc.group = OBJECT_GROUP::enemy;
+
 	duckIndex = duckNumber++;
 }
 
@@ -100,13 +103,13 @@ void Duck::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 	{
 		if (inUse)
 		{
-			D3DXVECTOR2 newPos;
-			position.x -= Timer->Elapsed() * 50.0;
-			float y_weight = 50.0f * sinf(position.x * 0.05);
-			newPos = position;
-			newPos.y += y_weight;
+			//sinPosition.x -= Timer->Elapsed() * 200.0;
+			//float y_weight = 50.0f * sinf(sinPosition.x * 0.025);
+			position = sinPosition;
+			//sition.y += y_weight;
 
-			animation[play_number].Position(newPos);
+			animation[play_number].Position(position);
+
 			animation[play_number].Update(V, P);
 		}
 
@@ -132,16 +135,13 @@ bool Duck::bUpdate(D3DXMATRIX & V, D3DXMATRIX & P)
 				return false;
 			}
 
-			D3DXVECTOR2 newPos;
-			position.x -= Timer->Elapsed() * 50.0;
-			float y_weight = 50.0f * sinf(position.x * 0.05);
-			newPos = position;
+			sinPosition.x -= Timer->Elapsed() * 200.0;
+			float y_weight = 50.0f * sinf(sinPosition.x * 0.025);
+			D3DXVECTOR2 newPos = sinPosition;
 			newPos.y += y_weight;
 
-			animation[play_number].Position(newPos);
-			
+			animation[play_number].Position(newPos);			
 			animation[play_number].Update(V, P);
-
 			grid->Move(this, newPos);
 
 			return true;
@@ -158,7 +158,8 @@ void Duck::Render()
 	if (inUse)
 	{
 		animation[play_number].Render();
-		ImGui::Text("%d", duckIndex);
+		//ImGui::Text("%d %d", gridX, gridY);
+
 	}
 }
 
@@ -178,7 +179,7 @@ void Duck::SetHitBox(RECT hitbox)
 // DuckPool
 ///////////////////////////////////////////////////////////////
 DuckPool::DuckPool(Grid * grid_, D3DXVECTOR2 position_, D3DXVECTOR2 scale_, Object_Desc desc, SceneValues * values)
-	:Object(grid_, desc, values), waitTime(0), createTime(4.0f)
+	:Object(grid_, desc, values), waitTime(0), createTime(3.0f)
 {
 	Object_Desc duck_desc;
 	duck_desc.b_bound_coll = true;
@@ -252,7 +253,7 @@ void DuckPool::Create(D3DXMATRIX & V, D3DXMATRIX & P)
 {
 	Duck * & duck = ducksDead.back();
 	duck->inUse = true;
-	duck->position = position;
+	duck->sinPosition = position;
 	duck->rotation = rotation;
 	duck->scale = scale;
 	duck->object_desc.b_bound_coll = true;

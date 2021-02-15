@@ -40,6 +40,8 @@ void Pipe_Phase1::Update(D3DXMATRIX & V, D3DXMATRIX & P)
 	state[currentState]->Update(this,V, P);
 	if(object_desc.obj_mode == Object_Mode::Play)
 		grid->Move(this, position);
+
+	state[currentState]->GetSprite()->DrawBound(true);
 }
 
 void Pipe_Phase1::Render()

@@ -116,6 +116,8 @@ private:
 	vector<class Object*> objects;
 
 	Object * testObject;
+	Object * testObject2;
+
 
 	// Mode to Draw Liner
 	vector<class Marker*> markerToDrawLiner;

@@ -24,20 +24,32 @@ void Grid::Add(Object * object)
 	int cellX = (int)((object->position.x + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
 	int cellY = (int)((object->position.y + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
 
-	object->prev = nullptr;
-	object->next = this->cells[cellX][cellY];
+	object->prev = 0;
+	object->next = 0;
+
+	if (object == cells[cellX][cellY])
+	{
+		return;
+		assert(false);
+	}
+
+	if (cells[cellX][cellY] != 0)
+	{
+		object->next = cells[cellX][cellY];
+	}
 
 	if (object->next != nullptr)
 	{
 		object->next->prev = object;
 	}
+	cells[cellX][cellY] = object;
 
-	if (object->next == nullptr)
+
+	if (object == object->next)
 	{
-		cells[cellX][cellY] = object;
+		assert(false);
 	}
 
-	cells[cellX][cellY] = object;
 }
 
 void Grid::Move(Object * object, D3DXVECTOR2 position)
@@ -49,6 +61,8 @@ void Grid::Move(Object * object, D3DXVECTOR2 position)
 	int cellY = (int)((position.y + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
 
 	object->position = position;
+	object->gridX = cellX;
+	object->gridY = cellY;
 
 	if (oldCellX == cellX && oldCellY == cellY)
 	{
@@ -138,7 +152,7 @@ Object * Grid::Pop(D3DXVECTOR2 & clickPosition)
 			cells[pop_x][pop_y] = clickedobject->next;
 		}
 		// unlinking prev node
-		else if (clickedobject->prev != nullptr)
+		if (clickedobject->prev != nullptr)
 		{
 			clickedobject->prev->next = clickedobject->next;
 		}
@@ -158,13 +172,17 @@ bool Grid::Remove(Object * object)
 	int cellX = (int)((position.x + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
 	int cellY = (int)((position.y + (Grid::NUM_CELLS * Grid::CELL_SIZE * 0.5)) / Grid::CELL_SIZE);
 
+
+	
+	
+
 	// update cell head
 	if (cells[cellX][cellY] == object)
 	{
 		cells[cellX][cellY] = object->next;
 	}
 	// unlinking prev node
-	else if (object->prev != nullptr)
+	if (object->prev != nullptr)
 	{
 		object->prev->next = object->next;
 	}
@@ -174,6 +192,18 @@ bool Grid::Remove(Object * object)
 		object->next->prev = object->prev;
 	}
 
+	if (object == object->prev)
+	{
+		assert(false);
+	}
+	if (object == object->next)
+	{
+		assert(false);
+	}
+	if (object->prev == object->next && object->prev != 0 && object->next != 0)
+	{
+		assert(false);
+	}
 	return true;
 
 }
@@ -239,6 +269,16 @@ void Grid::HandleLine(Object * unit, vector<Liner*>* lines)
 bool Grid::distance(Object * unit, Object * other)
 {
 	bool result = false;
+
+	/*if (unit->object_desc.label == OBJECT_LABEL::duck &&
+		other->object_desc.label == OBJECT_LABEL::player_bullet)
+		assert(false);
+	if (other->object_desc.label == OBJECT_LABEL::duck &&
+		unit->object_desc.label == OBJECT_LABEL::player_bullet)
+		assert(false);*/
+
+	if (unit->object_desc.group == other->object_desc.group)
+		return false;
 	if (unit->object_desc.label == other->object_desc.label) // 같은 종류끼리는 충돌 처리를 하지 않는다.
 		return false;
 	if (unit->object_desc.b_bound_coll && other->object_desc.b_bound_coll)

@@ -92,8 +92,10 @@ void Phase1_IdleState::Update(Boss * boss, D3DXMATRIX & V, D3DXMATRIX & P)
 	current_time += Timer->Elapsed();
 	D3DXVECTOR2 position = boss->Position();
 	position.x += turn_speed * Timer->Elapsed() * turn_direction.x * boss->direction.x;
-	boss->Position(position);
+
+	boss->grid->Move(boss, position);
 	animation->Position(position);
+
 	animation->Update(V, P);
 }
 
